@@ -17,13 +17,22 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>com.example.config.AppConfig</param-value>
+        <param-value>com.icio.sportakuz.config.AppConfig</param-value>
     </context-param>
+
 
     <!-- DispatcherServlet (Spring MVC front controller) -->
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextClass</param-name>
+            <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+        </init-param>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>com.icio.sportakuz.config.AppConfig</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
