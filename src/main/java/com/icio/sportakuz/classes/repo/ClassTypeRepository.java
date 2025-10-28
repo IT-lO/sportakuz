@@ -1,6 +1,6 @@
-package com.icio.sportakuz.repository;
+package com.icio.sportakuz.classes.repo;
 
-import com.icio.sportakuz.domain.ClassType;
+import com.icio.sportakuz.classes.domain.ClassType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

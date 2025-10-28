@@ -1,7 +1,7 @@
-package com.icio.sportakuz.repository;
+package com.icio.sportakuz.classes.repo;
 
-import com.icio.sportakuz.domain.ClassOccurrence;
-import com.icio.sportakuz.domain.ClassStatus;
+import com.icio.sportakuz.classes.domain.ClassOccurrence;
+import com.icio.sportakuz.classes.domain.ClassStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
