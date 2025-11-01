@@ -26,9 +26,10 @@ public class ClassOccurrenceForm {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime startTime;
 
-    @NotNull(message = "Podaj godzinę zakończenia")
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime endTime;
+    @NotNull(message = "Podaj czas trwania w minutach")
+    @Positive(message = "Czas trwania musi być > 0")
+    @Max(value = 600, message = "Czas trwania nie może przekraczać 600 minut") // 10h safeguard
+    private Integer durationMinutes;
 
     @NotNull @Positive(message = "Pojemność musi być > 0")
     private Integer capacity;
@@ -51,8 +52,8 @@ public class ClassOccurrenceForm {
     public LocalTime getStartTime() { return startTime; }
     public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
 
-    public LocalTime getEndTime() { return endTime; }
-    public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
+    public Integer getDurationMinutes() { return durationMinutes; }
+    public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
 
     public Integer getCapacity() { return capacity; }
     public void setCapacity(Integer capacity) { this.capacity = capacity; }

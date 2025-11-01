@@ -1,9 +1,11 @@
 // src/main/java/com/icio/sportakuz/classes/web/ClassOccurrenceController.java
 package com.icio.sportakuz.classes.web;
 
-import com.icio.sportakuz.classes.domain.*; // encje
-import com.icio.sportakuz.classes.repo.*;   // repozytoria
+import com.icio.sportakuz.classes.domain.*;
+import com.icio.sportakuz.classes.repo.*;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +19,7 @@ import java.time.ZoneId;
 @Controller
 @RequestMapping("/classes")
 public class ClassOccurrenceController {
+    private static final Logger log = LoggerFactory.getLogger(ClassOccurrenceController.class);
 
     private final ClassOccurrenceRepository classOccurrenceRepository;
     private final ClassTypeRepository classTypeRepository;
@@ -43,9 +46,54 @@ public class ClassOccurrenceController {
     // FORMULARZ
     @GetMapping("/new")
     public String createForm(Model model) {
-        model.addAttribute("form", new ClassOccurrenceForm());
+        ClassOccurrenceForm f = new ClassOccurrenceForm();
+        f.setDurationMinutes(55); // domyślny czas trwania 55 min
+        model.addAttribute("form", f);
         addLookups(model);
         return "classes/new";
+    }
+
+    private OffsetDateTime computeStart(ClassOccurrenceForm form) {
+        if (form.getDate() == null || form.getStartTime() == null) return null;
+        var zone = ZoneId.of("Europe/Warsaw");
+        return LocalDateTime.of(form.getDate(), form.getStartTime()).atZone(zone).toOffsetDateTime();
+    }
+
+    private OffsetDateTime computeEnd(OffsetDateTime start, Integer durationMinutes) {
+        if (start == null || durationMinutes == null || durationMinutes <= 0) return null;
+        return start.plusMinutes(durationMinutes);
+    }
+
+    private void validateConflicts(ClassOccurrenceForm form, BindingResult binding, Long editingId) {
+        if (binding.hasErrors()) return; // wcześniejsze błędy
+        var start = computeStart(form);
+        var end = computeEnd(start, form.getDurationMinutes());
+        if (start == null || end == null) return; // brak danych czasowych
+
+        // Sprawdzenie kolizji sali – NIE zależy od wybranego instruktora
+        if (form.getRoomId() != null) {
+            long roomCnt = classOccurrenceRepository.countOverlappingInRoom(form.getRoomId(), start, end);
+            if (editingId != null && roomCnt > 0) {
+                roomCnt = classOccurrenceRepository.findOverlappingInRoom(form.getRoomId(), start, end)
+                        .stream().filter(c -> !c.getId().equals(editingId)).count();
+            }
+            if (roomCnt > 0) {
+                log.debug("[CONFLICT][ROOM] roomId={} start={} end={} count={}", form.getRoomId(), start, end, roomCnt);
+                binding.rejectValue("roomId", "conflict.room", "Sala zajęta w tym czasie");
+            }
+        }
+        // Sprawdzenie kolizji instruktora – tylko jeśli wybrany instruktor
+        if (form.getInstructorId() != null) {
+            long instrCnt = classOccurrenceRepository.countOverlappingForInstructor(form.getInstructorId(), start, end);
+            if (editingId != null && instrCnt > 0) {
+                instrCnt = classOccurrenceRepository.findOverlappingForInstructor(form.getInstructorId(), start, end)
+                        .stream().filter(c -> !c.getId().equals(editingId)).count();
+            }
+            if (instrCnt > 0) {
+                log.debug("[CONFLICT][INSTR] instructorId={} start={} end={} count={}", form.getInstructorId(), start, end, instrCnt);
+                binding.rejectValue("instructorId", "conflict.instructor", "Instruktor prowadzi zajęcia w tym czasie");
+            }
+        }
     }
 
     // ZAPIS
@@ -55,40 +103,37 @@ public class ClassOccurrenceController {
                          Model model,
                          RedirectAttributes ra) {
 
-        // prosta walidacja: start < end
-        if (form.getStartTime() != null && form.getEndTime() != null
-                && !form.getStartTime().isBefore(form.getEndTime())) {
-            binding.rejectValue("endTime", "time.order", "Godzina zakończenia musi być po rozpoczęciu");
+        Room room = null;
+        if (form.getRoomId() != null) {
+            room = roomRepository.findById(form.getRoomId()).orElse(null);
         }
-
-        // sprawdzenie capacity vs room.capacity – lepiej złapać to przed constraintem z DB
-        if (form.getRoomId() != null && form.getCapacity() != null) {
-            Room room = roomRepository.findById(form.getRoomId()).orElse(null);
-            if (room != null && form.getCapacity() > room.getCapacity()) {
-                binding.rejectValue("capacity", "capacity.room",
-                        "Pojemność zajęć nie może przekraczać pojemności sali (" + room.getCapacity() + ")");
-            }
+        if (form.getDurationMinutes() == null || form.getDurationMinutes() <= 0) {
+            form.setDurationMinutes(60);
         }
-
+        if (form.getDurationMinutes() != null && form.getDurationMinutes() > 10000) {
+            binding.rejectValue("durationMinutes", "duration.tooLarge", "Czas trwania zbyt duży");
+        }
+        if ((form.getCapacity() == null || form.getCapacity() <= 0) && room != null) {
+            form.setCapacity(room.getCapacity());
+        }
+        if (room != null && form.getCapacity() != null && form.getCapacity() > room.getCapacity()) {
+            form.setCapacity(room.getCapacity());
+        }
+        // walidacja kolizji
+        validateConflicts(form, binding, null);
         if (binding.hasErrors()) {
             addLookups(model);
             return "classes/new";
         }
 
-        // mapowanie form -> encja
         ClassOccurrence oc = new ClassOccurrence();
         oc.setType(classTypeRepository.findById(form.getClassTypeId()).orElseThrow());
         oc.setInstructor(instructorRepository.findById(form.getInstructorId()).orElseThrow());
         oc.setRoom(roomRepository.findById(form.getRoomId()).orElseThrow());
 
-        // budujemy LocalDateTime z date + times (strefa serwera)
         var zone = ZoneId.of("Europe/Warsaw");
-        var start = LocalDateTime.of(form.getDate(), form.getStartTime())
-                .atZone(zone)
-                .toOffsetDateTime();
-        var end   = LocalDateTime.of(form.getDate(), form.getEndTime())
-                .atZone(zone)
-                .toOffsetDateTime();
+        var start = LocalDateTime.of(form.getDate(), form.getStartTime()).atZone(zone).toOffsetDateTime();
+        var end = start.plusMinutes(form.getDurationMinutes());
         oc.setStartTime(start);
         oc.setEndTime(end);
 
@@ -139,33 +184,37 @@ public class ClassOccurrenceController {
             ra.addFlashAttribute("success", "Zajęcia nie znalezione (id=" + id + ").");
             return "redirect:/classes";
         }
-
-        // walidacje jak przy create
-        if (form.getStartTime() != null && form.getEndTime() != null
-                && !form.getStartTime().isBefore(form.getEndTime())) {
-            binding.rejectValue("endTime", "time.order", "Godzina zakończenia musi być po rozpoczęciu");
+        Room room = null;
+        if (form.getRoomId() != null) {
+            room = roomRepository.findById(form.getRoomId()).orElse(null);
         }
-        if (form.getRoomId() != null && form.getCapacity() != null) {
-            Room room = roomRepository.findById(form.getRoomId()).orElse(null);
-            if (room != null && form.getCapacity() > room.getCapacity()) {
-                binding.rejectValue("capacity", "capacity.room",
-                        "Pojemność zajęć nie może przekraczać pojemności sali (" + room.getCapacity() + ")");
-            }
+        if (form.getDurationMinutes() == null || form.getDurationMinutes() <= 0) {
+            form.setDurationMinutes(60);
         }
+        if (form.getDurationMinutes() != null && form.getDurationMinutes() > 10000) {
+            binding.rejectValue("durationMinutes", "duration.tooLarge", "Czas trwania zbyt duży");
+        }
+        if ((form.getCapacity() == null || form.getCapacity() <= 0) && room != null) {
+            form.setCapacity(room.getCapacity());
+        }
+        if (room != null && form.getCapacity() != null && form.getCapacity() > room.getCapacity()) {
+            form.setCapacity(room.getCapacity());
+        }
+        // walidacja kolizji (ignorując bieżące id)
+        validateConflicts(form, binding, id);
         if (binding.hasErrors()) {
             addLookups(model);
             model.addAttribute("editId", id);
             return "classes/edit";
         }
 
-        // aktualizacja encji
         oc.setType(classTypeRepository.findById(form.getClassTypeId()).orElseThrow());
         oc.setInstructor(instructorRepository.findById(form.getInstructorId()).orElseThrow());
         oc.setRoom(roomRepository.findById(form.getRoomId()).orElseThrow());
 
         var zone = ZoneId.of("Europe/Warsaw");
         OffsetDateTime start = LocalDateTime.of(form.getDate(), form.getStartTime()).atZone(zone).toOffsetDateTime();
-        OffsetDateTime end   = LocalDateTime.of(form.getDate(), form.getEndTime()).atZone(zone).toOffsetDateTime();
+        OffsetDateTime end = start.plusMinutes(form.getDurationMinutes());
         oc.setStartTime(start);
         oc.setEndTime(end);
         oc.setCapacity(form.getCapacity());
@@ -186,7 +235,9 @@ public class ClassOccurrenceController {
         var zone = ZoneId.of("Europe/Warsaw");
         f.setDate(start.atZoneSameInstant(zone).toLocalDate());
         f.setStartTime(start.atZoneSameInstant(zone).toLocalTime());
-        f.setEndTime(end.atZoneSameInstant(zone).toLocalTime());
+        // wyliczamy duration z różnicy czasu
+        long durationMinutes = java.time.Duration.between(start, end).toMinutes();
+        f.setDurationMinutes((int) durationMinutes);
         f.setCapacity(oc.getCapacity());
         f.setNote(oc.getNote());
         return f;

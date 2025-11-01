@@ -15,12 +15,11 @@
                 <table class="min-w-full text-sm">
                     <thead class="bg-gray-50 text-gray-700 text-xs uppercase tracking-wider border-b border-gray-200">
                     <tr>
-                        <th class="px-4 py-3 text-left font-semibold">ID</th>
+                        <th class="px-4 py-3 text-left font-semibold">Data</th>
+                        <th class="px-4 py-3 text-left font-semibold">Godziny</th>
                         <th class="px-4 py-3 text-left font-semibold">Typ</th>
                         <th class="px-4 py-3 text-left font-semibold">Instruktor</th>
                         <th class="px-4 py-3 text-left font-semibold">Sala</th>
-                        <th class="px-4 py-3 text-left font-semibold">Start</th>
-                        <th class="px-4 py-3 text-left font-semibold">Koniec</th>
                         <th class="px-4 py-3 text-left font-semibold">Pojemność</th>
                         <th class="px-4 py-3 text-left font-semibold">Status</th>
                         <th class="px-4 py-3 text-left font-semibold">Akcje</th>
@@ -28,12 +27,11 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                     <tr th:each="c : ${classes}" class="hover:bg-blue-50/40 transition">
-                        <td class="px-4 py-3 font-medium text-gray-900" th:text="${c.id}"></td>
+                        <td class="px-4 py-3 whitespace-nowrap" th:text="${#temporals.format(c.startTime, 'yyyy-MM-dd')}"></td>
+                        <td class="px-4 py-3 whitespace-nowrap" th:text="${#temporals.format(c.startTime, 'HH:mm') + ' - ' + #temporals.format(c.endTime, 'HH:mm')}"></td>
                         <td class="px-4 py-3" th:text="${c.type.name}"></td>
                         <td class="px-4 py-3" th:text="${c.instructor.firstName + ' ' + c.instructor.lastName}"></td>
                         <td class="px-4 py-3" th:text="${c.room.name}"></td>
-                        <td class="px-4 py-3 whitespace-nowrap" th:text="${#temporals.format(c.startTime, 'yyyy-MM-dd HH:mm')}"></td>
-                        <td class="px-4 py-3 whitespace-nowrap" th:text="${#temporals.format(c.endTime, 'yyyy-MM-dd HH:mm')}"></td>
                         <td class="px-4 py-3" th:text="${c.capacity}"></td>
                         <td class="px-4 py-3">
                             <span th:text="${c.status}"
@@ -45,17 +43,14 @@
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-2">
                                 <a th:href="@{'/classes/' + ${c.id} + '/edit'}" class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm">Edytuj</a>
-                                <form th:action="@{'/classes/' + ${c.id} + '/delete'}" method="post" th:object="${c}" class="inline" onsubmit="return confirm('Usunąć zajęcia #' + this.querySelector('[name=idHidden]').value + '?')">
-                                    <input type="hidden" name="idHidden" th:value="${c.id}" />
-                                    <button type="submit" class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700 shadow-sm">
-                                        Usuń
-                                    </button>
+                                <form th:action="@{'/classes/' + ${c.id} + '/delete'}" method="post" th:object="${c}" class="inline" onsubmit="return confirm('Usunąć zajęcia: ' + this.getAttribute('data-desc') + '?')" th:attr="data-desc=${#temporals.format(c.startTime,'yyyy-MM-dd') + ' ' + #temporals.format(c.startTime,'HH:mm') + '-' + #temporals.format(c.endTime,'HH:mm') + ' ' + c.room.name}">
+                                    <button type="submit" class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700 shadow-sm">Usuń</button>
                                 </form>
                             </div>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(classes)}">
-                        <td colspan="9" class="px-4 py-10 text-center text-gray-500">Brak zajęć do wyświetlenia.</td>
+                        <td colspan="8" class="px-4 py-10 text-center text-gray-500">Brak zajęć do wyświetlenia.</td>
                     </tr>
                     </tbody>
                 </table>
