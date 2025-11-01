@@ -1,6 +1,6 @@
-<!-- src/main/webapp/WEB-INF/views/classes/list.jsp -->
-<%@ taglib prefix="c"   uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt"  %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+
 
 <html>
 <head><title>Lista zajęć</title></head>
