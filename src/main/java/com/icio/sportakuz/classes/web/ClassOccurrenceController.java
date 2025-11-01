@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
 @Controller
@@ -99,6 +100,96 @@ public class ClassOccurrenceController {
 
         ra.addFlashAttribute("success", "Zajęcia dodane.");
         return "redirect:/classes";
+    }
+
+    // USUWANIE
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable("id") Long id, RedirectAttributes ra) {
+        if (id != null && classOccurrenceRepository.existsById(id)) {
+            classOccurrenceRepository.deleteById(id);
+            ra.addFlashAttribute("success", "Zajęcia #" + id + " usunięte.");
+        } else {
+            ra.addFlashAttribute("success", "Zajęcia nie znalezione (id=" + id + ").");
+        }
+        return "redirect:/classes";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable("id") Long id, Model model, RedirectAttributes ra) {
+        var oc = classOccurrenceRepository.findById(id).orElse(null);
+        if (oc == null) {
+            ra.addFlashAttribute("success", "Zajęcia nie znalezione (id=" + id + ").");
+            return "redirect:/classes";
+        }
+        ClassOccurrenceForm form = toForm(oc);
+        model.addAttribute("form", form);
+        model.addAttribute("editId", id);
+        addLookups(model);
+        return "classes/edit";
+    }
+
+    @PostMapping("/{id}")
+    public String update(@PathVariable("id") Long id,
+                         @Valid @ModelAttribute("form") ClassOccurrenceForm form,
+                         BindingResult binding,
+                         Model model,
+                         RedirectAttributes ra) {
+        var oc = classOccurrenceRepository.findById(id).orElse(null);
+        if (oc == null) {
+            ra.addFlashAttribute("success", "Zajęcia nie znalezione (id=" + id + ").");
+            return "redirect:/classes";
+        }
+
+        // walidacje jak przy create
+        if (form.getStartTime() != null && form.getEndTime() != null
+                && !form.getStartTime().isBefore(form.getEndTime())) {
+            binding.rejectValue("endTime", "time.order", "Godzina zakończenia musi być po rozpoczęciu");
+        }
+        if (form.getRoomId() != null && form.getCapacity() != null) {
+            Room room = roomRepository.findById(form.getRoomId()).orElse(null);
+            if (room != null && form.getCapacity() > room.getCapacity()) {
+                binding.rejectValue("capacity", "capacity.room",
+                        "Pojemność zajęć nie może przekraczać pojemności sali (" + room.getCapacity() + ")");
+            }
+        }
+        if (binding.hasErrors()) {
+            addLookups(model);
+            model.addAttribute("editId", id);
+            return "classes/edit";
+        }
+
+        // aktualizacja encji
+        oc.setType(classTypeRepository.findById(form.getClassTypeId()).orElseThrow());
+        oc.setInstructor(instructorRepository.findById(form.getInstructorId()).orElseThrow());
+        oc.setRoom(roomRepository.findById(form.getRoomId()).orElseThrow());
+
+        var zone = ZoneId.of("Europe/Warsaw");
+        OffsetDateTime start = LocalDateTime.of(form.getDate(), form.getStartTime()).atZone(zone).toOffsetDateTime();
+        OffsetDateTime end   = LocalDateTime.of(form.getDate(), form.getEndTime()).atZone(zone).toOffsetDateTime();
+        oc.setStartTime(start);
+        oc.setEndTime(end);
+        oc.setCapacity(form.getCapacity());
+        oc.setNote(form.getNote());
+
+        classOccurrenceRepository.save(oc);
+        ra.addFlashAttribute("success", "Zajęcia zaktualizowane.");
+        return "redirect:/classes";
+    }
+
+    private ClassOccurrenceForm toForm(ClassOccurrence oc) {
+        ClassOccurrenceForm f = new ClassOccurrenceForm();
+        f.setClassTypeId(oc.getType().getId());
+        f.setInstructorId(oc.getInstructor().getId());
+        f.setRoomId(oc.getRoom().getId());
+        var start = oc.getStartTime();
+        var end = oc.getEndTime();
+        var zone = ZoneId.of("Europe/Warsaw");
+        f.setDate(start.atZoneSameInstant(zone).toLocalDate());
+        f.setStartTime(start.atZoneSameInstant(zone).toLocalTime());
+        f.setEndTime(end.atZoneSameInstant(zone).toLocalTime());
+        f.setCapacity(oc.getCapacity());
+        f.setNote(oc.getNote());
+        return f;
     }
 
     private void addLookups(Model model) {

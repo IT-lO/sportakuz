@@ -12,6 +12,6 @@ public class ProbeController {
     public String probe(Model model) {
         model.addAttribute("sum", 2 + 2);
         model.addAttribute("names", List.of("Ala", "Ola", "Ela"));
-        return "probe"; // => /WEB-INF/views/probe.jsp
+        return "probe"; // Thymeleaf: templates/probe.html
     }
 }
