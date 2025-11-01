@@ -1,5 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib prefix="c"  uri="jakarta.tags.core" %>
-<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
-OK: 2+2=${2+2}
-<c:forEach var="n" items="${['Ala','Ola','Ela']}">${fn:toUpperCase(n)} </c:forEach>
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!-- Prosta strona testowa -->
+OK: sum=${sum}
+<br/>
+<c:forEach var="n" items="${names}">${fn:toUpperCase(n)} </c:forEach>

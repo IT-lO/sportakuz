@@ -3,7 +3,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-jsptaglibrary_3_0.xsd"
         version="3.0">
-    <tlib-version>3.0</tlib-version>
-    <short-name>fmt</short-name>
-    <uri>jakarta.tags.fmt</uri>
+    <tlib-version>0.0</tlib-version>
+    <short-name>placeholder-fmt</short-name>
+    <uri>local.placeholder.fmt</uri>
+    <description>Placeholder – nie używać. Prawdziwy JSTL fmt dostarcza JAR.</description>
 </taglib>

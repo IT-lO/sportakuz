@@ -3,7 +3,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-jsptaglibrary_3_0.xsd"
         version="3.0">
-    <tlib-version>3.0</tlib-version>
-    <short-name>fn</short-name>
-    <uri>jakarta.tags.functions</uri>
+    <tlib-version>0.0</tlib-version>
+    <short-name>placeholder-fn</short-name>
+    <uri>local.placeholder.fn</uri>
+    <description>Placeholder – nie używać. Prawdziwy JSTL fn dostarcza JAR.</description>
 </taglib>
