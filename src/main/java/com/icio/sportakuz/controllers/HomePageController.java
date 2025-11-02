@@ -1,18 +1,16 @@
 package com.icio.sportakuz.controllers;
 
 import com.icio.sportakuz.classes.domain.ClassOccurrence;
-import com.icio.sportakuz.classes.domain.ClassStatus;
 import com.icio.sportakuz.classes.repo.ClassOccurrenceRepository;
 import com.icio.sportakuz.classes.repo.ClassTypeRepository;
 import com.icio.sportakuz.classes.repo.InstructorRepository;
 import com.icio.sportakuz.classes.repo.RoomRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.OffsetDateTime;
-import java.util.Comparator;
-import java.util.List;
 
 @Controller
 public class HomePageController {
@@ -39,19 +37,15 @@ public class HomePageController {
         long instructorsTotal = instructorRepository.count();
         long roomsTotal = roomRepository.count();
 
-        // Nadchodzące zajęcia (PLANNED, start w przyszłości) – ograniczamy do 5 najbliższych
         OffsetDateTime now = OffsetDateTime.now();
-        List<ClassOccurrence> upcoming = classOccurrenceRepository.findAll().stream()
-                .filter(c -> c.getStatus() == ClassStatus.PLANNED && c.getStartTime().isAfter(now))
-                .sorted(Comparator.comparing(ClassOccurrence::getStartTime))
-                .limit(5)
-                .toList();
+        var upcoming = classOccurrenceRepository.findNextVisible(now, Pageable.ofSize(4));
+        model.addAttribute("now", now);
+        model.addAttribute("upcoming", upcoming);
 
         model.addAttribute("stats_classes", classesTotal);
         model.addAttribute("stats_types", typesTotal);
         model.addAttribute("stats_instructors", instructorsTotal);
         model.addAttribute("stats_rooms", roomsTotal);
-        model.addAttribute("upcoming", upcoming);
         return "index"; // /resources/templates/index.html
     }
 

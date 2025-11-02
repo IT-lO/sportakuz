@@ -2,6 +2,7 @@ package com.icio.sportakuz.classes.repo;
 
 import com.icio.sportakuz.classes.domain.ClassOccurrence;
 import com.icio.sportakuz.classes.domain.ClassStatus;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -64,4 +65,28 @@ public interface ClassOccurrenceRepository extends JpaRepository<ClassOccurrence
     long countOverlappingForInstructor(@Param("instructorId") Long instructorId,
                                        @Param("start") OffsetDateTime start,
                                        @Param("end") OffsetDateTime end);
+
+    @Query("""
+           select c from ClassOccurrence c
+           where c.status = com.icio.sportakuz.classes.domain.ClassStatus.PLANNED
+             and c.startTime >= :now
+           order by c.startTime asc
+           """)
+    List<ClassOccurrence> findNextPlanned(@Param("now") OffsetDateTime now, Pageable pageable);
+
+    @Query("""
+           select c from ClassOccurrence c
+           where c.status = com.icio.sportakuz.classes.domain.ClassStatus.PLANNED
+             and c.startTime > :now
+           order by c.startTime asc
+           """)
+    List<ClassOccurrence> findUpcoming(@Param("now") OffsetDateTime now);
+
+    @Query("""
+           select c from ClassOccurrence c
+           where c.status <> com.icio.sportakuz.classes.domain.ClassStatus.CANCELLED
+             and c.endTime >= :now
+           order by c.startTime asc
+           """)
+    List<ClassOccurrence> findNextVisible(@Param("now") OffsetDateTime now, Pageable pageable);
 }

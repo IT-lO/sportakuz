@@ -104,3 +104,4 @@ html.dark input:focus, html.dark select:focus, html.dark textarea:focus {outline
   .form-grid {grid-template-columns:1fr;} /* jedna kolumna na mobile */
   .site-header {gap:1rem;}
 }
+
