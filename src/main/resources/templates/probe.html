@@ -1,13 +1,15 @@
 <!DOCTYPE html>
+<!-- Strona testowa 'probe' służąca do szybkiej weryfikacji działania i przekazywania danych do modelu.
+     Prezentuje prostą sumę oraz listę imion z mapowaniem na wielkie litery. -->
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <!-- Podstawowe metadane + tytuł strony testowej -->
     <meta charset="UTF-8"/>
     <title>Probe</title>
 </head>
 <body>
-<!-- Prosta strona testowa -->
+<!-- Sekcja treści: wynik sumy oraz iteracja po kolekcji 'names' -->
 <p>OK: sum = <span th:text="${sum}"></span></p>
 <p th:each="n : ${names}" th:text="${#strings.toUpperCase(n)}"></p>
 </body>
 </html>
-

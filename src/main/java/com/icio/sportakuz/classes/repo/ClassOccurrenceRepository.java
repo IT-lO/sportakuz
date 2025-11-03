@@ -10,15 +10,22 @@ import org.springframework.data.repository.query.Param;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+/**
+ * Repozytorium pojedynczych wystąpień zajęć {@link ClassOccurrence}.
+ * Oferuje zestaw metod do wyszukiwania wg statusu, zakresów czasowych oraz kolizji w salach i u instruktorów.
+ * Zawiera również zapytania do pobierania najbliższych (widocznych) zajęć dla strony głównej.
+ */
 public interface ClassOccurrenceRepository extends JpaRepository<ClassOccurrence, Long> {
 
+    /** Wystąpienia o podanym statusie mieszczące się w przedziale czasu. */
     List<ClassOccurrence> findByStatusAndStartTimeBetween(
             ClassStatus status, OffsetDateTime from, OffsetDateTime to);
 
+    /** Przyszłe wystąpienia danego instruktora posortowane rosnąco po czasie rozpoczęcia. */
     List<ClassOccurrence> findByInstructor_IdAndStartTimeAfterOrderByStartTimeAsc(
             Long instructorId, OffsetDateTime since);
 
-    // wykrywanie kolizji w sali (przy dodawaniu/edycji)
+    /** Kolizje w sali (nakładające się przedziały czasowe) – status różny od CANCELLED. */
     @Query("""
            select c from ClassOccurrence c
            where c.room.id = :roomId
@@ -30,7 +37,7 @@ public interface ClassOccurrenceRepository extends JpaRepository<ClassOccurrence
                                                 @Param("start") OffsetDateTime start,
                                                 @Param("end") OffsetDateTime end);
 
-    // wykrywanie kolizji instruktora
+    /** Kolizje czasowe instruktora. */
     @Query("""
            select c from ClassOccurrence c
            where c.instructor.id = :instructorId
@@ -42,8 +49,10 @@ public interface ClassOccurrenceRepository extends JpaRepository<ClassOccurrence
                                                        @Param("start") OffsetDateTime start,
                                                        @Param("end") OffsetDateTime end);
 
+    /** Wszystkie wystąpienia posortowane rosnąco po czasie rozpoczęcia. */
     List<ClassOccurrence> findAllByOrderByStartTimeAsc();
 
+    /** Liczba kolidujących wystąpień w sali. */
     @Query("""
            select count(c) from ClassOccurrence c
            where c.room.id = :roomId
@@ -55,6 +64,7 @@ public interface ClassOccurrenceRepository extends JpaRepository<ClassOccurrence
                                 @Param("start") OffsetDateTime start,
                                 @Param("end") OffsetDateTime end);
 
+    /** Liczba kolidujących wystąpień u instruktora. */
     @Query("""
            select count(c) from ClassOccurrence c
            where c.instructor.id = :instructorId
@@ -66,6 +76,7 @@ public interface ClassOccurrenceRepository extends JpaRepository<ClassOccurrence
                                        @Param("start") OffsetDateTime start,
                                        @Param("end") OffsetDateTime end);
 
+    /** Najbliższe planowane zajęcia od chwili 'now'. */
     @Query("""
            select c from ClassOccurrence c
            where c.status = com.icio.sportakuz.classes.domain.ClassStatus.PLANNED
@@ -74,6 +85,7 @@ public interface ClassOccurrenceRepository extends JpaRepository<ClassOccurrence
            """)
     List<ClassOccurrence> findNextPlanned(@Param("now") OffsetDateTime now, Pageable pageable);
 
+    /** Lista wszystkich przyszłych planowanych zajęć od chwili 'now'. */
     @Query("""
            select c from ClassOccurrence c
            where c.status = com.icio.sportakuz.classes.domain.ClassStatus.PLANNED
@@ -82,6 +94,7 @@ public interface ClassOccurrenceRepository extends JpaRepository<ClassOccurrence
            """)
     List<ClassOccurrence> findUpcoming(@Param("now") OffsetDateTime now);
 
+    /** Najbliższe widoczne (nieanulowane) zajęcia z możliwością ograniczenia liczby rekordów. */
     @Query("""
            select c from ClassOccurrence c
            where c.status <> com.icio.sportakuz.classes.domain.ClassStatus.CANCELLED

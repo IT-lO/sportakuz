@@ -1,4 +1,3 @@
-// src/main/java/com/icio/sportakuz/classes/web/ClassOccurrenceController.java
 package com.icio.sportakuz.classes.web;
 
 import com.icio.sportakuz.classes.domain.*;
@@ -16,6 +15,15 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
+/**
+ * Kontroler CRUD dla pojedynczych wystąpień zajęć (ClassOccurrence).
+ * Odpowiada za:
+ *  - listowanie wszystkich wystąpień (proste bez paginacji – do rozbudowy),
+ *  - wyświetlenie formularza tworzenia / edycji,
+ *  - walidację Bean Validation oraz kolizji (sala / instruktor) przed zapisem,
+ *  - utworzenie, aktualizację oraz usuwanie wystąpień.
+ * Konwersja pomiędzy formularzem a encją uwzględnia strefę czasu (Europe/Warsaw).
+ */
 @Controller
 @RequestMapping("/classes")
 public class ClassOccurrenceController {
@@ -36,14 +44,14 @@ public class ClassOccurrenceController {
         this.roomRepository = roomRepository;
     }
 
-    // LISTA
+    /** GET /classes – lista wystąpień (do rozbudowy np. o filtrowanie/paginację). */
     @GetMapping
     public String list(Model model) {
         model.addAttribute("classes", classOccurrenceRepository.findAll()); // na start prosto
         return "classes/list";
     }
 
-    // FORMULARZ
+    /** GET /classes/new – formularz tworzenia nowego wystąpienia z domyślnym czasem trwania. */
     @GetMapping("/new")
     public String createForm(Model model) {
         ClassOccurrenceForm f = new ClassOccurrenceForm();
@@ -53,17 +61,23 @@ public class ClassOccurrenceController {
         return "classes/new";
     }
 
+    /** Wylicza OffsetDateTime startu na podstawie daty + lokalnego czasu. */
     private OffsetDateTime computeStart(ClassOccurrenceForm form) {
         if (form.getDate() == null || form.getStartTime() == null) return null;
         var zone = ZoneId.of("Europe/Warsaw");
         return LocalDateTime.of(form.getDate(), form.getStartTime()).atZone(zone).toOffsetDateTime();
     }
 
+    /** Dodaje minuty do startu zwracając czas zakończenia; zwraca null jeśli brak danych lub niepoprawne wartości. */
     private OffsetDateTime computeEnd(OffsetDateTime start, Integer durationMinutes) {
         if (start == null || durationMinutes == null || durationMinutes <= 0) return null;
         return start.plusMinutes(durationMinutes);
     }
 
+    /**
+     * Waliduje kolizje sali/instruktora w podanym przedziale czasowym.
+     * Jeśli editingId != null – ignoruje kolizję z własnym wystąpieniem podczas edycji.
+     */
     private void validateConflicts(ClassOccurrenceForm form, BindingResult binding, Long editingId) {
         if (binding.hasErrors()) return; // wcześniejsze błędy
         var start = computeStart(form);
@@ -96,7 +110,7 @@ public class ClassOccurrenceController {
         }
     }
 
-    // ZAPIS
+    /** POST /classes – tworzy nowe wystąpienie po walidacji formularza i kolizji. */
     @PostMapping
     public String create(@Valid @ModelAttribute("form") ClassOccurrenceForm form,
                          BindingResult binding,
@@ -147,7 +161,7 @@ public class ClassOccurrenceController {
         return "redirect:/classes";
     }
 
-    // USUWANIE
+    /** POST /classes/{id}/delete – usuwa wystąpienie jeśli istnieje; dodaje komunikat flash. */
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable("id") Long id, RedirectAttributes ra) {
         if (id != null && classOccurrenceRepository.existsById(id)) {
@@ -159,6 +173,7 @@ public class ClassOccurrenceController {
         return "redirect:/classes";
     }
 
+    /** GET /classes/{id}/edit – formularz edycji istniejącego wystąpienia lub redirect jeśli brak. */
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable("id") Long id, Model model, RedirectAttributes ra) {
         var oc = classOccurrenceRepository.findById(id).orElse(null);
@@ -173,6 +188,7 @@ public class ClassOccurrenceController {
         return "classes/edit";
     }
 
+    /** POST /classes/{id} – aktualizacja istniejącego wystąpienia po walidacji. */
     @PostMapping("/{id}")
     public String update(@PathVariable("id") Long id,
                          @Valid @ModelAttribute("form") ClassOccurrenceForm form,
@@ -225,6 +241,7 @@ public class ClassOccurrenceController {
         return "redirect:/classes";
     }
 
+    /** Mapuje encję na formularz (rekonstruuje datę, lokalny czas i duration z różnicy czasów). */
     private ClassOccurrenceForm toForm(ClassOccurrence oc) {
         ClassOccurrenceForm f = new ClassOccurrenceForm();
         f.setClassTypeId(oc.getType().getId());
@@ -243,6 +260,7 @@ public class ClassOccurrenceController {
         return f;
     }
 
+    /** Dodaje listy typów, instruktorów i sal do modelu dla formularzy. */
     private void addLookups(Model model) {
         model.addAttribute("types", classTypeRepository.findAll());
         model.addAttribute("instructors", instructorRepository.findAll());

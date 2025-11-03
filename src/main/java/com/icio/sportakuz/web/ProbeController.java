@@ -6,6 +6,10 @@ import org.springframework.ui.Model;
 
 import java.util.List;
 
+/**
+ * Kontroler testowy ("probe") służący do szybkiej weryfikacji działania - można usunąć.
+ * Wstawia do modelu przykładowe dane (suma, lista imion) renderowane w szablonie probe.html.
+ */
 @Controller
 public class ProbeController {
     @GetMapping("/probe")

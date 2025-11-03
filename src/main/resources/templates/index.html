@@ -1,7 +1,10 @@
 <!DOCTYPE html>
+<!-- Strona główna panelu administracyjnego.
+     Prezentuje skróty nawigacyjne (HERO), statystyki, listę nadchodzących zajęć oraz CTA do dodania nowych.
+     Wykorzystuje fragment bazowy 'base' z fragments.html przez th:replace. -->
 <html lang="pl" xmlns:th="http://www.thymeleaf.org" th:replace="fragments.html :: base('SportakUZ – Panel', ~{::section})">
 <section class="space-y-12">
-    <!-- HERO -->
+    <!-- HERO: sekcja wprowadzająca z krótkim opisem systemu i głównymi przyciskami akcji -->
     <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg">
         <div class="absolute inset-0 opacity-30 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/diagmonds.png')]"></div>
         <div class="px-6 py-12 sm:px-10 lg:px-14 relative">
@@ -18,7 +21,7 @@
         </div>
     </div>
 
-    <!-- STATYSTYKI -->
+    <!-- STATYSTYKI: szybki przegląd metryk (liczba zajęć, typów, instruktorów i sal) -->
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <div class="bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col">
             <div class="flex items-center justify-between mb-2">
@@ -54,7 +57,7 @@
         </div>
     </div>
 
-    <!-- NADCHODZĄCE -->
+    <!-- NADCHODZĄCE: kafelki najbliższych wystąpień zajęć (limit z kontrolera); pokazuje LIVE jeśli w trakcie -->
     <div class="space-y-5">
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2"><span>🔜</span>Nadchodzące zajęcia</h2>
@@ -82,7 +85,7 @@
         </div>
     </div>
 
-    <!-- CTA DO DODANIA -->
+    <!-- CTA: zachęta do szybkiego dodania nowych zajęć lub przejścia do pełnej listy -->
     <div class="mt-10">
         <div class="relative rounded-xl overflow-hidden border border-gray-200 bg-gradient-to-r from-indigo-600 to-purple-600 p-8 shadow-lg">
             <div class="max-w-3xl relative">

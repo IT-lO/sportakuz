@@ -6,6 +6,12 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 
+/**
+ * Konfiguracja Flyway ograniczona do wskazania lokalizacji migracji.
+ * Pozostawia walidację i nie wykonuje baseline na nowej bazie.
+ * Jeśli baza nie jest pusta i brak historii, ustaw chwilowo baselineOnMigrate(true).
+ */
+
 @Configuration
 public class FlywayConfig {
 

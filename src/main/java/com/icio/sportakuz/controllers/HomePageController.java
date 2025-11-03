@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.OffsetDateTime;
 
+/**
+ * Kontroler strony głównej. Odpowiada za zebranie statystyk (liczby zajęć, typów, instruktorów, sal)
+ * oraz listy najbliższych widocznych zajęć (upcoming). Dane trafiają do szablonu index.html.
+ * Udostępnia także prosty endpoint /hello do testu renderowania innego widoku.
+ */
 @Controller
 public class HomePageController {
 
@@ -30,6 +35,7 @@ public class HomePageController {
         this.roomRepository = roomRepository;
     }
 
+    /** Strona główna – pobiera statystyki i najbliższe zajęcia (limit 4). */
     @GetMapping("/")
     public String index(Model model) {
         long classesTotal = classOccurrenceRepository.count();
@@ -47,11 +53,5 @@ public class HomePageController {
         model.addAttribute("stats_instructors", instructorsTotal);
         model.addAttribute("stats_rooms", roomsTotal);
         return "index"; // /resources/templates/index.html
-    }
-
-    @GetMapping("/hello")
-    public String hello(Model model) {
-        model.addAttribute("message", "messagemessagemessagemessagemessage");
-        return "HomePageView"; // /resources/templates/HomePageView.html
     }
 }
