@@ -1,0 +1,9 @@
+<resources>
+    <Resource id="jdbc/sportakuz" type="DataSource">
+        JdbcDriver = org.postgresql.Driver
+        JdbcUrl    = jdbc:postgresql://localhost:5432/sportakuz
+        UserName   = sportakuz
+        Password   = secret
+        JtaManaged = true
+    </Resource>
+</resources>

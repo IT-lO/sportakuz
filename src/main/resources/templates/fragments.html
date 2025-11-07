@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!-- Bazowy plik fragmentów Thymeleaf.
+     Fragment 'base(pageTitle,content)' wspólny układ: nagłówek, nawigacja, główna sekcja i stopka.
+     Używa Tailwind CDN do stylizacji. -->
+<html xmlns:th="http://www.thymeleaf.org" lang="pl" th:fragment="base(pageTitle,content)">
+<!-- Sekcja <head>: meta + tytuł dynamiczny + konfiguracja Tailwind + główny arkusz stylów -->
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title th:text="${pageTitle}">SportakUZ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { brand: '#0d6efd' } } } }</script>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
+<!-- Header: logo + oznaczenie panelu + główna nawigacja -->
+<header class="bg-white/90 backdrop-blur border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <span class="text-xl font-bold text-gray-800">SportakUZ</span>
+            <span class="text-xs uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded">Panel</span>
+        </div>
+        <nav class="flex gap-2 text-sm">
+            <a th:href="@{/}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Start</a>
+            <a th:href="@{/classes}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Lista zajęć</a>
+            <a th:href="@{/classes/new}" class="px-3 py-2 rounded-md font-semibold bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition">+ Nowe</a>
+        </nav>
+    </div>
+</header>
+<!-- Main: miejsce wstawienia właściwej zawartości przy pomocy th:insert(${content}) -->
+<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" th:insert="${content}"></main>
+<!-- Footer: prosty podpis + rok; utrzymuje layout w dole dzięki flex-col (mt-auto) -->
+<footer class="border-t border-gray-200 bg-white/70 backdrop-blur mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-500">&copy; 2025 SportakUZ</div>
+</footer>
+<script>document.documentElement.classList.add('tailwind-loaded');</script>
+</body>
+</html>
+
+<!-- Dodatkowe alternatywne fragmenty:
+     'head(pageTitle)' – sam nagłówek dokumentu z meta / tytułem.
+     'layout(pageTitle,content)' – pełny układ (podobny do 'base'), opcja do użycia przez th:replace. -->
+<head th:fragment="head(pageTitle)">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title th:text="${pageTitle}">SportakUZ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body th:fragment="layout(pageTitle,content)" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
+<!-- Layout header (alternatywny) -->
+<header class="bg-white/90 backdrop-blur border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <span class="text-xl font-bold text-gray-800">SportakUZ</span>
+            <span class="text-xs uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded">Panel</span>
+        </div>
+        <nav class="flex gap-2 text-sm">
+            <a th:href="@{/}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Start</a>
+            <a th:href="@{/classes}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Lista zajęć</a>
+            <a th:href="@{/classes/new}" class="px-3 py-2 rounded-md font-semibold bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition">+ Nowe</a>
+        </nav>
+    </div>
+</header>
+<!-- Layout main slot -->
+<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" th:insert="${content}"></main>
+<!-- Layout footer -->
+<footer class="border-t border-gray-200 bg-white/70 backdrop-blur mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-500">&copy; 2025 SportakUZ</div>
+</footer>
+</body>
