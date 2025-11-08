@@ -46,8 +46,10 @@
                         <td class="px-4 py-3">
                             <div class="relative inline-block" th:attr="data-row-instr=${c.id}">
                                 <button type="button" data-instr-toggle th:attr="data-id=${c.id}"
-                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 bg-gray-100 text-gray-900"
-                                        th:text="${c.instructor.firstName + ' ' + c.instructor.lastName}"></button>
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500"
+                                        th:classappend="${c.substitutedFor != null} ? ' bg-orange-100 text-orange-900' : ' bg-gray-100 text-gray-900'"
+                                        th:title="${c.substitutedFor != null ? 'Zastępstwo za: ' + c.substitutedFor.firstName + ' ' + c.substitutedFor.lastName : ''}"
+                                        th:text="${c.instructor.firstName + ' ' + c.instructor.lastName + (c.substitutedFor != null ? ' [Z]' : '')}"></button>
                                 <div class="hidden absolute left-0 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg z-50 py-1 text-xs" data-instr-menu>
                                     <form th:each="i : ${availableInstructors[c.id]}" th:action="@{'/classes/' + ${c.id} + '/instructor'}" method="post" class="block">
                                         <input type="hidden" name="instructorId" th:value="${i.id}" />

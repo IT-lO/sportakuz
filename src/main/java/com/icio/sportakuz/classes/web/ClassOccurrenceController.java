@@ -79,7 +79,7 @@ public class ClassOccurrenceController {
     @GetMapping("/new")
     public String createForm(Model model) {
         ClassOccurrenceForm f = new ClassOccurrenceForm();
-        f.setDurationMinutes(55); // domyślny czas trwania 55 min
+        // Nie ustawiamy tutaj domyślnego czasu – zostanie wstawiony przez JS po wyborze typu.
         model.addAttribute("form", f);
         addLookups(model);
         return "classes/new";
@@ -145,8 +145,17 @@ public class ClassOccurrenceController {
         if (form.getRoomId() != null) {
             room = roomRepository.findById(form.getRoomId()).orElse(null);
         }
+        // Pobierz typ zajęć aby użyć jego domyślnego czasu jeśli formularz nie podał poprawnego
+        ClassType classType = null;
+        if (form.getClassTypeId() != null) {
+            classType = classTypeRepository.findById(form.getClassTypeId()).orElse(null);
+        }
         if (form.getDurationMinutes() == null || form.getDurationMinutes() <= 0) {
-            form.setDurationMinutes(60);
+            if (classType != null && classType.getDefaultDurationMinutes() != null && classType.getDefaultDurationMinutes() > 0) {
+                form.setDurationMinutes(classType.getDefaultDurationMinutes());
+            } else {
+                form.setDurationMinutes(60); // ogólny fallback
+            }
         }
         if (form.getDurationMinutes() != null && form.getDurationMinutes() > 10000) {
             binding.rejectValue("durationMinutes", "duration.tooLarge", "Czas trwania zbyt duży");
@@ -229,8 +238,16 @@ public class ClassOccurrenceController {
         if (form.getRoomId() != null) {
             room = roomRepository.findById(form.getRoomId()).orElse(null);
         }
+        ClassType classType = null;
+        if (form.getClassTypeId() != null) {
+            classType = classTypeRepository.findById(form.getClassTypeId()).orElse(null);
+        }
         if (form.getDurationMinutes() == null || form.getDurationMinutes() <= 0) {
-            form.setDurationMinutes(60);
+            if (classType != null && classType.getDefaultDurationMinutes() != null && classType.getDefaultDurationMinutes() > 0) {
+                form.setDurationMinutes(classType.getDefaultDurationMinutes());
+            } else {
+                form.setDurationMinutes(60);
+            }
         }
         if (form.getDurationMinutes() != null && form.getDurationMinutes() > 10000) {
             binding.rejectValue("durationMinutes", "duration.tooLarge", "Czas trwania zbyt duży");
@@ -347,8 +364,17 @@ public class ClassOccurrenceController {
             ra.addFlashAttribute("success", "Instruktor jest nieaktywny.");
             return "redirect:/classes";
         }
+        // Jeśli wybieramy ponownie aktualnego instruktora – brak zmian
         if (oc.getInstructor().getId().equals(instructorId)) {
             ra.addFlashAttribute("success", "Instruktor bez zmian.");
+            return "redirect:/classes";
+        }
+        // Jeśli mamy zastępstwo i wracamy do instruktora pierwotnego – przywróć i wyczyść substitutedFor
+        if (oc.getSubstitutedFor() != null && oc.getSubstitutedFor().getId().equals(instructorId)) {
+            oc.setInstructor(newInstr); // newInstr to oryginalny
+            oc.setSubstitutedFor(null);
+            classOccurrenceRepository.save(oc);
+            ra.addFlashAttribute("success", "Powrót do instruktora pierwotnego: " + newInstr.getFirstName() + " " + newInstr.getLastName() + ".");
             return "redirect:/classes";
         }
         // Walidacja kolizji czasowej dla nowego instruktora (ignorując bieżące wystąpienie i CANCELLED)
@@ -358,13 +384,17 @@ public class ClassOccurrenceController {
             ra.addFlashAttribute("success", "Instruktor ma kolizję w tym przedziale czasu.");
             return "redirect:/classes";
         }
+        // Ustal pierwotnego instruktora: jeśli jeszcze nie było zastępstwa, zapisz obecnego jako substitutedFor; inaczej pozostaw istniejącego.
+        if (oc.getSubstitutedFor() == null) {
+            oc.setSubstitutedFor(oc.getInstructor());
+        }
         oc.setInstructor(newInstr);
         classOccurrenceRepository.save(oc);
         ra.addFlashAttribute("success", "Instruktor zajęć " + occurrenceLabel(oc) + " zmieniony na: " + newInstr.getFirstName() + " " + newInstr.getLastName() + ".");
         return "redirect:/classes";
     }
 
-    /** Pomocnicza etykieta wystąpienia: [YYYY-MM-DD] Typ HH:mm-HH:mm - Instruktor */
+    /** Pomocnicza etykieta wystąpienia: [YYYY-MM-DD] Typ HH:mm-HH:mm - Instruktor (Zastępstwo za: Stary Instruktor) */
     private String occurrenceLabel(ClassOccurrence oc) {
         if (oc == null) return "[nieznane]";
         try {
@@ -377,7 +407,8 @@ public class ClassOccurrenceController {
             String times = timeF.format(startLocal) + "-" + timeF.format(endLocal);
             String type = oc.getType() != null ? oc.getType().getName() : "-";
             String instr = oc.getInstructor() != null ? (oc.getInstructor().getFirstName() + " " + oc.getInstructor().getLastName()) : "-";
-            return "[" + date + "] "  + type + " " + times +  " - " + instr;
+            String subst = oc.getSubstitutedFor() != null ? " (Zastępstwo za: " + oc.getSubstitutedFor().getFirstName() + " " + oc.getSubstitutedFor().getLastName() + ")" : "";
+            return "[" + date + "] "  + type + " " + times +  " - " + instr + subst;
         } catch (Exception ex) {
             return "[nieznane]";
         }
