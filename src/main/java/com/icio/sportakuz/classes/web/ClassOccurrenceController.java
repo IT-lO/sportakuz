@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Kontroler CRUD dla pojedynczych wystąpień zajęć (ClassOccurrence).
@@ -47,7 +48,30 @@ public class ClassOccurrenceController {
     /** GET /classes – lista wystąpień (do rozbudowy np. o filtrowanie/paginację). */
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("classes", classOccurrenceRepository.findAll()); // na start prosto
+        var occurrences = classOccurrenceRepository.findAll();
+        var allInstructors = instructorRepository.findAll();
+        java.util.Map<Long, java.util.List<Instructor>> availableMap = new java.util.HashMap<>();
+        for (var oc : occurrences) {
+            java.util.List<Instructor> avail = new java.util.ArrayList<>();
+            for (var instr : allInstructors) {
+                if (!instr.isActive()) continue; // tylko aktywni
+                if (instr.getId().equals(oc.getInstructor().getId())) { // obecny zawsze dostępny
+                    avail.add(instr);
+                    continue;
+                }
+                // Pobierz kolidujące zajęcia instruktora w tym przedziale, ignorując CANCELLED
+                var overlapping = classOccurrenceRepository.findOverlappingForInstructor(instr.getId(), oc.getStartTime(), oc.getEndTime())
+                    .stream().filter(c -> c.getStatus() != ClassStatus.CANCELLED).toList();
+                if (overlapping.isEmpty()) {
+                    avail.add(instr);
+                }
+            }
+            availableMap.put(oc.getId(), avail);
+        }
+        model.addAttribute("classes", occurrences);
+        model.addAttribute("allStatuses", ClassStatus.values());
+        model.addAttribute("instructors", allInstructors);
+        model.addAttribute("availableInstructors", availableMap); // mapa: classId -> lista dostępnych
         return "classes/list";
     }
 
@@ -161,12 +185,13 @@ public class ClassOccurrenceController {
         return "redirect:/classes";
     }
 
-    /** POST /classes/{id}/delete – usuwa wystąpienie jeśli istnieje; dodaje komunikat flash. */
+    /** POST /classes/{id}/delete – usuwa wystąpienie jeśli istnieje; dodaje komunikat flash z etykietą. */
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable("id") Long id, RedirectAttributes ra) {
-        if (id != null && classOccurrenceRepository.existsById(id)) {
+        var oc = classOccurrenceRepository.findById(id).orElse(null);
+        if (oc != null) {
             classOccurrenceRepository.deleteById(id);
-            ra.addFlashAttribute("success", "Zajęcia #" + id + " usunięte.");
+            ra.addFlashAttribute("success", "Zajęcia " + occurrenceLabel(oc) + " usunięte.");
         } else {
             ra.addFlashAttribute("success", "Zajęcia nie znalezione (id=" + id + ").");
         }
@@ -237,7 +262,7 @@ public class ClassOccurrenceController {
         oc.setNote(form.getNote());
 
         classOccurrenceRepository.save(oc);
-        ra.addFlashAttribute("success", "Zajęcia zaktualizowane.");
+        ra.addFlashAttribute("success", "Zajęcia " + occurrenceLabel(oc) + " zaktualizowane.");
         return "redirect:/classes";
     }
 
@@ -265,5 +290,96 @@ public class ClassOccurrenceController {
         model.addAttribute("types", classTypeRepository.findAll());
         model.addAttribute("instructors", instructorRepository.findAll());
         model.addAttribute("rooms", roomRepository.findAll());
+    }
+
+    /** Sprawdza czy przejście statusu jest dozwolone (prosta maszyna stanów). */
+    private boolean isAllowedTransition(ClassStatus current, ClassStatus target) {
+        if (current == null || target == null) return false;
+        if (current == target) return true; // pozostawienie bez zmian
+        return switch (current) {
+            case PLANNED -> (target == ClassStatus.OPEN || target == ClassStatus.CANCELLED);
+            case OPEN -> (target == ClassStatus.FINISHED || target == ClassStatus.CANCELLED);
+            case CANCELLED, FINISHED -> false; // stan końcowy / archiwalny
+        };
+    }
+
+    /** POST /classes/{id}/status – zmiana statusu pojedynczego wystąpienia zajęć. */
+    @PostMapping("/{id}/status")
+    public String updateStatus(@PathVariable("id") Long id,
+                               @RequestParam("status") ClassStatus newStatus,
+                               RedirectAttributes ra) {
+        var oc = classOccurrenceRepository.findById(id).orElse(null);
+        if (oc == null) {
+            ra.addFlashAttribute("success", "Zajęcia nie znalezione (id=" + id + ").");
+            return "redirect:/classes";
+        }
+        var current = oc.getStatus();
+        if (!isAllowedTransition(current, newStatus)) {
+            ra.addFlashAttribute("success", "Niepoprawna zmiana statusu z " + current + " na " + newStatus + ".");
+            return "redirect:/classes";
+        }
+        oc.setStatus(newStatus);
+        classOccurrenceRepository.save(oc);
+        ra.addFlashAttribute("success", "Status zajęć " + occurrenceLabel(oc) + " zmieniony na " + newStatus + ".");
+        return "redirect:/classes";
+    }
+
+    /** POST /classes/{id}/instructor – zmiana instruktora (zastępstwo) dla pojedynczego wystąpienia. */
+    @PostMapping("/{id}/instructor")
+    public String updateInstructor(@PathVariable("id") Long id,
+                                   @RequestParam("instructorId") Long instructorId,
+                                   RedirectAttributes ra) {
+        var oc = classOccurrenceRepository.findById(id).orElse(null);
+        if (oc == null) {
+            ra.addFlashAttribute("success", "Zajęcia nie znalezione (id=" + id + ").");
+            return "redirect:/classes";
+        }
+        if (instructorId == null) {
+            ra.addFlashAttribute("success", "Brak identyfikatora instruktora.");
+            return "redirect:/classes";
+        }
+        var newInstr = instructorRepository.findById(instructorId).orElse(null);
+        if (newInstr == null) {
+            ra.addFlashAttribute("success", "Instruktor nie znaleziony (id=" + instructorId + ").");
+            return "redirect:/classes";
+        }
+        if (!newInstr.isActive()) {
+            ra.addFlashAttribute("success", "Instruktor jest nieaktywny.");
+            return "redirect:/classes";
+        }
+        if (oc.getInstructor().getId().equals(instructorId)) {
+            ra.addFlashAttribute("success", "Instruktor bez zmian.");
+            return "redirect:/classes";
+        }
+        // Walidacja kolizji czasowej dla nowego instruktora (ignorując bieżące wystąpienie i CANCELLED)
+        var conflicts = classOccurrenceRepository.findOverlappingForInstructor(instructorId, oc.getStartTime(), oc.getEndTime())
+            .stream().filter(c -> !c.getId().equals(oc.getId()) && c.getStatus() != ClassStatus.CANCELLED).count();
+        if (conflicts > 0) {
+            ra.addFlashAttribute("success", "Instruktor ma kolizję w tym przedziale czasu.");
+            return "redirect:/classes";
+        }
+        oc.setInstructor(newInstr);
+        classOccurrenceRepository.save(oc);
+        ra.addFlashAttribute("success", "Instruktor zajęć " + occurrenceLabel(oc) + " zmieniony na: " + newInstr.getFirstName() + " " + newInstr.getLastName() + ".");
+        return "redirect:/classes";
+    }
+
+    /** Pomocnicza etykieta wystąpienia: [YYYY-MM-DD] Typ HH:mm-HH:mm - Instruktor */
+    private String occurrenceLabel(ClassOccurrence oc) {
+        if (oc == null) return "[nieznane]";
+        try {
+            ZoneId zone = ZoneId.of("Europe/Warsaw");
+            LocalDateTime startLocal = oc.getStartTime().atZoneSameInstant(zone).toLocalDateTime();
+            LocalDateTime endLocal = oc.getEndTime().atZoneSameInstant(zone).toLocalDateTime();
+            DateTimeFormatter dateF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            DateTimeFormatter timeF = DateTimeFormatter.ofPattern("HH:mm");
+            String date = dateF.format(startLocal);
+            String times = timeF.format(startLocal) + "-" + timeF.format(endLocal);
+            String type = oc.getType() != null ? oc.getType().getName() : "-";
+            String instr = oc.getInstructor() != null ? (oc.getInstructor().getFirstName() + " " + oc.getInstructor().getLastName()) : "-";
+            return "[" + date + "] "  + type + " " + times +  " - " + instr;
+        } catch (Exception ex) {
+            return "[nieznane]";
+        }
     }
 }
