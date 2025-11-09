@@ -8,10 +8,13 @@
         <!-- Nagłówek sekcji z przyciskiem dodania nowego wystąpienia -->
         <div class="flex items-center justify-between">
             <h1 class="text-3xl font-bold text-gray-900">Lista zajęć</h1>
-            <!-- Przejście do formularza tworzenia nowych zajęć -->
-            <a th:href="@{/classes/new}" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 transition">
-                <span class="text-lg leading-none">＋</span> Nowe zajęcia
-            </a>
+            <div class="flex gap-3">
+                <a th:href="@{/class-series}" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700 transition">Serie</a>
+                <!-- Przejście do formularza tworzenia nowych zajęć -->
+                <a th:href="@{/classes/new}" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 transition">
+                    <span class="text-lg leading-none">＋</span> Nowe zajęcia
+                </a>
+            </div>
         </div>
         <!-- Komunikat sukcesu (np. po zapisaniu / usunięciu) renderowany warunkowo -->
         <div th:if="${success}" class="p-4 rounded-md bg-green-50 border border-green-200 text-green-800 text-sm" th:text="${success}"></div>
@@ -36,13 +39,16 @@
                     <!-- Body: iteracja po kolekcji 'classes'; każdy wiersz reprezentuje jedno wystąpienie -->
                     <tbody class="divide-y divide-gray-100">
                     <tr th:each="c : ${classes}" class="hover:bg-blue-50/40 transition">
-                        <!-- Data rozpoczęcia (tylko część daty) -->
-                        <td class="px-4 py-3 whitespace-nowrap" th:text="${#temporals.format(c.startTime, 'yyyy-MM-dd')}"></td>
-                        <!-- Zakres godzin (start - end) -->
+                        <!-- Data rozpoczęcia + znacznik serii jeśli wystąpienie pochodzi z serii -->
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <span th:text="${#temporals.format(c.startTime, 'yyyy-MM-dd')}"></span>
+                            <span th:if="${c.series != null}" class="ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 text-[10px] font-semibold" th:title="${'Seria #' + c.series.id}">🔁 <span th:text="${c.series.id}"></span></span>
+                        </td>
+                        <!-- Godziny -->
                         <td class="px-4 py-3 whitespace-nowrap" th:text="${#temporals.format(c.startTime, 'HH:mm') + ' - ' + #temporals.format(c.endTime, 'HH:mm')}"></td>
-                        <!-- Nazwa typu zajęć -->
+                        <!-- Typ -->
                         <td class="px-4 py-3" th:text="${c.type.name}"></td>
-                        <!-- INSTRUKTOR z dropdownem -->
+                        <!-- Instruktor z dropdownem -->
                         <td class="px-4 py-3">
                             <div class="relative inline-block" th:attr="data-row-instr=${c.id}">
                                 <button type="button" data-instr-toggle th:attr="data-id=${c.id}"
@@ -97,6 +103,48 @@
                     </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <div class="mt-12 space-y-4">
+            <h2 class="text-xl font-semibold text-gray-800">Historia (anulowane / zakończone)</h2>
+            <div class="bg-white/70 backdrop-blur rounded-lg shadow border border-gray-200">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-xs">
+                        <thead class="bg-gray-50 text-gray-600 uppercase tracking-wider border-b border-gray-200">
+                        <tr>
+                            <th class="px-3 py-2 text-left font-semibold">Data</th>
+                            <th class="px-3 py-2 text-left font-semibold">Godziny</th>
+                            <th class="px-3 py-2 text-left font-semibold">Typ</th>
+                            <th class="px-3 py-2 text-left font-semibold">Instruktor</th>
+                            <th class="px-3 py-2 text-left font-semibold">Sala</th>
+                            <th class="px-3 py-2 text-left font-semibold">Poj.</th>
+                            <th class="px-3 py-2 text-left font-semibold">Status</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                        <tr th:each="c : ${historyClasses}" class="hover:bg-gray-50 transition">
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                <span th:text="${#temporals.format(c.startTime, 'yyyy-MM-dd')}"></span>
+                                <span th:if="${c.series != null}" class="ml-1 inline-flex items-center gap-1 px-1 py-0.5 rounded bg-purple-50 text-purple-600 text-[9px] font-semibold" th:title="${'Seria #' + c.series.id}">🔁 <span th:text="${c.series.id}"></span></span>
+                            </td>
+                            <td class="px-3 py-2 whitespace-nowrap" th:text="${#temporals.format(c.startTime, 'HH:mm') + ' - ' + #temporals.format(c.endTime, 'HH:mm')}"></td>
+                            <td class="px-3 py-2" th:text="${c.type.name}"></td>
+                            <td class="px-3 py-2" th:text="${c.instructor.firstName + ' ' + c.instructor.lastName}"></td>
+                            <td class="px-3 py-2" th:text="${c.room.name}"></td>
+                            <td class="px-3 py-2" th:text="${c.capacity}"></td>
+                            <td class="px-3 py-2">
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                                      th:classappend="${c.status.name() == 'CANCELLED' ? ' bg-red-100 text-red-700' : ' bg-green-100 text-green-700'}"
+                                      th:text="${c.status}"></span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(historyClasses)}">
+                            <td colspan="7" class="px-3 py-8 text-center text-gray-400">Brak pozycji w historii.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

@@ -48,30 +48,45 @@ public class ClassOccurrenceController {
     /** GET /classes – lista wystąpień (do rozbudowy np. o filtrowanie/paginację). */
     @GetMapping
     public String list(Model model) {
-        var occurrences = classOccurrenceRepository.findAll();
+        // Wszystkie wystąpienia posortowane po starcie
+        var all = classOccurrenceRepository.findAllByOrderByStartTimeAsc();
+        var now = java.time.OffsetDateTime.now();
+        java.util.List<ClassOccurrence> upcoming = new java.util.ArrayList<>();
+        java.util.List<ClassOccurrence> history = new java.util.ArrayList<>();
+        for (var oc : all) {
+            if (oc.getStatus() == ClassStatus.CANCELLED || oc.getStatus() == ClassStatus.FINISHED) {
+                history.add(oc);
+            } else {
+                upcoming.add(oc);
+            }
+        }
+        // Historia – odwrotnie (najnowsze na górze) – sortujemy malejąco po starcie
+        history.sort(java.util.Comparator.comparing(ClassOccurrence::getStartTime).reversed());
+
+        // Mapa dostępnych instruktorów – tylko dla upcoming
         var allInstructors = instructorRepository.findAll();
         java.util.Map<Long, java.util.List<Instructor>> availableMap = new java.util.HashMap<>();
-        for (var oc : occurrences) {
+        for (var oc : upcoming) {
             java.util.List<Instructor> avail = new java.util.ArrayList<>();
             for (var instr : allInstructors) {
-                if (!instr.isActive()) continue; // tylko aktywni
-                if (instr.getId().equals(oc.getInstructor().getId())) { // obecny zawsze dostępny
-                    avail.add(instr);
+                if (!instr.isActive()) continue;
+                if (instr.getId().equals(oc.getInstructor().getId())) {
+                    avail.add(instr); // obecny zawsze
                     continue;
                 }
-                // Pobierz kolidujące zajęcia instruktora w tym przedziale, ignorując CANCELLED
                 var overlapping = classOccurrenceRepository.findOverlappingForInstructor(instr.getId(), oc.getStartTime(), oc.getEndTime())
-                    .stream().filter(c -> c.getStatus() != ClassStatus.CANCELLED).toList();
+                        .stream().filter(c -> c.getStatus() != ClassStatus.CANCELLED).toList();
                 if (overlapping.isEmpty()) {
                     avail.add(instr);
                 }
             }
             availableMap.put(oc.getId(), avail);
         }
-        model.addAttribute("classes", occurrences);
+        model.addAttribute("classes", upcoming); // główna lista = przyszłe
+        model.addAttribute("historyClasses", history); // historia = anulowane / zakończone
         model.addAttribute("allStatuses", ClassStatus.values());
         model.addAttribute("instructors", allInstructors);
-        model.addAttribute("availableInstructors", availableMap); // mapa: classId -> lista dostępnych
+        model.addAttribute("availableInstructors", availableMap);
         return "classes/list";
     }
 
