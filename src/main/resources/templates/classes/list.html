@@ -42,7 +42,7 @@
                         <!-- Data rozpoczęcia + znacznik serii jeśli wystąpienie pochodzi z serii -->
                         <td class="px-4 py-3 whitespace-nowrap">
                             <span th:text="${#temporals.format(c.startTime, 'yyyy-MM-dd')}"></span>
-                            <span th:if="${c.series != null}" class="ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 text-[10px] font-semibold" th:title="${'Seria #' + c.series.id}">🔁 <span th:text="${c.series.id}"></span></span>
+                            <span th:if="${c.series != null}"  th:title="${'Seria #' + c.series.id}">🔁</span>
                         </td>
                         <!-- Godziny -->
                         <td class="px-4 py-3 whitespace-nowrap" th:text="${#temporals.format(c.startTime, 'HH:mm') + ' - ' + #temporals.format(c.endTime, 'HH:mm')}"></td>
@@ -55,7 +55,7 @@
                                         class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500"
                                         th:classappend="${c.substitutedFor != null} ? ' bg-orange-100 text-orange-900' : ' bg-gray-100 text-gray-900'"
                                         th:title="${c.substitutedFor != null ? 'Zastępstwo za: ' + c.substitutedFor.firstName + ' ' + c.substitutedFor.lastName : ''}"
-                                        th:text="${c.instructor.firstName + ' ' + c.instructor.lastName + (c.substitutedFor != null ? ' [Z]' : '')}"></button>
+                                        th:text="${(c.substitutedFor != null ? '[Z] ' : '') + c.instructor.firstName + ' ' + c.instructor.lastName}"></button>
                                 <div class="hidden absolute left-0 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg z-50 py-1 text-xs" data-instr-menu>
                                     <form th:each="i : ${availableInstructors[c.id]}" th:action="@{'/classes/' + ${c.id} + '/instructor'}" method="post" class="block">
                                         <input type="hidden" name="instructorId" th:value="${i.id}" />
@@ -126,7 +126,7 @@
                         <tr th:each="c : ${historyClasses}" class="hover:bg-gray-50 transition">
                             <td class="px-3 py-2 whitespace-nowrap">
                                 <span th:text="${#temporals.format(c.startTime, 'yyyy-MM-dd')}"></span>
-                                <span th:if="${c.series != null}" class="ml-1 inline-flex items-center gap-1 px-1 py-0.5 rounded bg-purple-50 text-purple-600 text-[9px] font-semibold" th:title="${'Seria #' + c.series.id}">🔁 <span th:text="${c.series.id}"></span></span>
+                                <span th:if="${c.series != null}"  th:title="${'Seria #' + c.series.id}">🔁</span>
                             </td>
                             <td class="px-3 py-2 whitespace-nowrap" th:text="${#temporals.format(c.startTime, 'HH:mm') + ' - ' + #temporals.format(c.endTime, 'HH:mm')}"></td>
                             <td class="px-3 py-2" th:text="${c.type.name}"></td>
