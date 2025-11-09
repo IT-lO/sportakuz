@@ -1,6 +1,5 @@
 package com.icio.sportakuz.panels.user.controller;
 
-import com.icio.sportakuz.classes.domain.ClassOccurrence;
 import com.icio.sportakuz.classes.repo.ClassOccurrenceRepository;
 import com.icio.sportakuz.classes.repo.ClassTypeRepository;
 import com.icio.sportakuz.classes.repo.InstructorRepository;
@@ -13,9 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.time.OffsetDateTime;
 
 /**
- * Kontroler strony głównej. Odpowiada za zebranie statystyk (liczby zajęć, typów, instruktorów, sal)
- * oraz listy najbliższych widocznych zajęć (upcoming). Dane trafiają do szablonu index.html.
- * Udostępnia także prosty endpoint /hello do testu renderowania innego widoku.
+ * Kontroler panelu użytkownika.
+ * Zbiera statystyki użytkownika (zajęcia w których uczestniczy itp.)
+ * oraz listy najbliższych widocznych zajęć (upcoming). Dane trafiają do szablonu panel/user.
  */
 @Controller
 public class UserPanelController {
