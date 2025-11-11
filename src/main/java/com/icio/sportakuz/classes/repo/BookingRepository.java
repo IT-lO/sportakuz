@@ -4,6 +4,7 @@ import com.icio.sportakuz.classes.domain.Booking;
 import com.icio.sportakuz.classes.domain.BookingStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 
@@ -21,7 +22,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                               com.icio.sportakuz.classes.domain.BookingStatus.CONFIRMED,
                               com.icio.sportakuz.classes.domain.BookingStatus.PAID)
            """)
-    long countActiveByClassId(Long classId);
+       long countActiveByClassId(@Param("classId") Long classId);
 
     /** Sprawdza czy istnieje rezerwacja użytkownika w jednym z podanych statusów. */
     boolean existsByClazz_IdAndUserNameAndStatusIn(
