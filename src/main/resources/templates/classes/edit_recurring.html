@@ -7,9 +7,11 @@
                 <h1 class="text-2xl font-semibold text-gray-900">Edycja serii #<span th:text="${editId}"></span></h1>
                 <a th:href="@{/class-series}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">← Serie</a>
             </div>
+            <!-- Formularz -->
             <form th:action="@{'/class-series/' + ${editId}}" th:object="${form}" method="post" class="space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
+                        <!-- Typ zajęć -->
                         <label class="block text-sm font-medium text-gray-700 mb-1">Typ</label>
                         <select th:field="*{classTypeId}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="typeSelect" >
                             <option value="">-- wybierz --</option>
@@ -18,6 +20,7 @@
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('classTypeId')}" th:errors="*{classTypeId}"></p>
                     </div>
                     <div>
+                        <!-- Instruktor -->
                         <label class="block text-sm font-medium text-gray-700 mb-1">Instruktor</label>
                         <select th:field="*{instructorId}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">-- wybierz --</option>
@@ -26,6 +29,7 @@
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('instructorId')}" th:errors="*{instructorId}"></p>
                     </div>
                     <div>
+                        <!-- Sala -->
                         <label class="block text-sm font-medium text-gray-700 mb-1">Sala</label>
                         <select th:field="*{roomId}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="roomSelect">
                             <option value="">-- wybierz --</option>
@@ -35,16 +39,19 @@
                         <p id="capacityHint" class="mt-1 text-xs text-gray-500"></p>
                     </div>
                     <div>
+                        <!-- Data rozpoczęcia zajęć -->
                         <label class="block text-sm font-medium text-gray-700 mb-1">Data startu (pierwsze wystąpienie)</label>
                         <input type="date" th:field="*{startDate}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></p>
                     </div>
                     <div>
+                        <!-- Godzina rozpoczęcia zajęć -->
                         <label class="block text-sm font-medium text-gray-700 mb-1">Godzina startu</label>
                         <input type="time" th:field="*{startTime}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="startTimeInput" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}"></p>
                     </div>
                     <div>
+                        <!-- Czas trwania zajęć -->
                         <label class="block text-sm font-medium text-gray-700 mb-1">Czas trwania (min)</label>
                         <input type="number" min="5" step="5" th:field="*{durationMinutes}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="durationInput" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('durationMinutes')}" th:errors="*{durationMinutes}"></p>
@@ -52,19 +59,22 @@
                         <p id="durationHint" class="mt-1 text-xs text-gray-500"></p>
                     </div>
                     <div>
+                        <!-- Do kiedy powtarzać -->
                         <label class="block text-sm font-medium text-gray-700 mb-1">Generować do</label>
                         <input type="date" th:field="*{untilDate}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('untilDate')}" th:errors="*{untilDate}"></p>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Wzorzec</label>
+                        <!-- Wybór wzorca rekurencji -->
                         <select th:field="*{recurrencePattern}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">-- wybierz --</option>
-                            <option th:each="p : ${patterns}" th:value="${p}" th:text="${p}"></option>
+                            <option th:each="p : ${patterns}" th:value="${p}" th:text="${p.label}"></option>
                         </select>
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('recurrencePattern')}" th:errors="*{recurrencePattern}"></p>
                     </div>
                     <div>
+                        <!-- Pojemność zajęć -->
                         <label class="block text-sm font-medium text-gray-700 mb-1">Pojemność</label>
                         <input type="number" min="1" th:field="*{capacity}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="capacityInput" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}"></p>
@@ -74,6 +84,7 @@
                         <input type="checkbox" th:field="*{active}" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
                     </div>
                     <div class="sm:col-span-2">
+                        <!-- Dodatkowe info o zajęciach -->
                         <label class="block text-sm font-medium text-gray-700 mb-1">Notatka</label>
                         <textarea rows="3" th:field="*{note}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Dodatkowe informacje..."></textarea>
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('note')}" th:errors="*{note}"></p>
@@ -126,4 +137,3 @@
     </script>
 </section>
 </html>
-

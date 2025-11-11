@@ -43,7 +43,7 @@
                             <td class="px-4 py-3" th:text="${#temporals.format(s.startTime,'yyyy-MM-dd HH:mm')}"></td>
                             <td class="px-4 py-3" th:text="${#temporals.format(s.endTime,'HH:mm')}"></td>
                             <td class="px-4 py-3" th:text="${#temporals.format(s.recurrenceUntil,'yyyy-MM-dd')}"></td>
-                            <td class="px-4 py-3" th:text="${s.recurrencePattern}"></td>
+                            <td class="px-4 py-3" th:text="${s.recurrencePattern.label}"></td>
                             <td class="px-4 py-3">
                                 <form th:action="@{'/class-series/' + ${s.id} + '/active'}" method="post">
                                     <input type="hidden" name="active" th:value="${!s.active}" />

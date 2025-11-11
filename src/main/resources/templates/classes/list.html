@@ -76,13 +76,13 @@
                                 <button type="button" data-status-toggle
                                         class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500"
                                         th:classappend="${c.status.name() == 'PLANNED' ? ' bg-yellow-100 text-yellow-800' : (c.status.name() == 'CANCELLED' ? ' bg-red-100 text-red-700' : (c.status.name() == 'FINISHED' ? ' bg-green-100 text-green-700' : (c.status.name() == 'OPEN' ? ' bg-blue-100 text-blue-700' : ' bg-gray-100 text-gray-700')))}"
-                                        th:text="${c.status}"></button>
+                                        th:text="${c.status.label}"></button>
                                 <div class="hidden absolute left-0 mt-1 w-36 rounded-md border border-gray-200 bg-white shadow-lg z-20 py-1 text-xs" data-status-menu>
                                     <form th:each="s : ${allStatuses}" th:action="@{'/classes/' + ${c.id} + '/status'}" method="post" class="block">
                                         <input type="hidden" name="status" th:value="${s}" />
                                         <button type="submit" class="w-full text-left px-3 py-1 hover:bg-gray-100 flex items-center gap-1"
                                                 th:classappend="${s == c.status} ? ' font-semibold text-indigo-700' : ' text-gray-700'"
-                                                th:text="${s}"></button>
+                                                th:text="${s.label}"></button>
                                     </form>
                                 </div>
                             </div>
@@ -136,7 +136,7 @@
                             <td class="px-3 py-2">
                                 <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold"
                                       th:classappend="${c.status.name() == 'CANCELLED' ? ' bg-red-100 text-red-700' : ' bg-green-100 text-green-700'}"
-                                      th:text="${c.status}"></span>
+                                      th:text="${c.status.label}"></span>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(historyClasses)}">

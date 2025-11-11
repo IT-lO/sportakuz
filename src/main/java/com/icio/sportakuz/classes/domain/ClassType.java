@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 /**
  * Definicja typu zajęć (np. Joga, Pilates). Zawiera nazwę, opis, domyślny czas trwania
- * oraz trudność (tekstowa etykieta). Używane przez ClassSeries i ClassOccurrence.
+ * oraz trudność (enum). Używane przez ClassSeries i ClassOccurrence.
  */
 @Entity
 @Table(name = "class_types",
