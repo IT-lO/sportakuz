@@ -1,4 +1,4 @@
-package com.icio.sportakuz.panels.admin.dto;
+package com.icio.sportakuz.rooms.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
