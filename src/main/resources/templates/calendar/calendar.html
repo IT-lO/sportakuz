@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl" th:replace="~{fragments :: base('Kalendarz Zajęć Sportowych', ~{::content})}">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/calendar.css}" />
+    <script src="/_sdk/data_sdk.js"></script>
+    <script src="/_sdk/element_sdk.js"></script>
+    <div class="container">
+    <div class="header">
+        <h1 id="page-title">Kalendarz Zajęć Sportowych</h1>
+        <p>Wybierz zajęcia i zarezerwuj swoje miejsce</p>
+    </div>
+    <div class="week-navigation"><button class="nav-button" id="prev-week">← Poprzedni tydzień</button>
+        <div class="week-display" id="week-display"></div><button class="nav-button" id="next-week">Następny tydzień →</button>
+    </div>
+    <div class="calendar">
+        <div class="calendar-header" id="calendar-header"></div>
+        <div class="calendar-body" id="calendar-body"></div>
+    </div>
+</div>
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <div id="success-message" style="display: none;" class="success-message"></div>
+        <div class="modal-header">
+            <h2 id="modal-title"></h2>
+        </div>
+        <div class="modal-details">
+            <div class="detail-row">
+                <div class="detail-label">
+                    Data:
+                </div>
+                <div class="detail-value" id="modal-date"></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">
+                    Godzina:
+                </div>
+                <div class="detail-value" id="modal-time"></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">
+                    Instruktor:
+                </div>
+                <div class="detail-value" id="modal-instructor"></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">
+                    Miejsca:
+                </div>
+                <div class="detail-value" id="modal-spots"></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">
+                    Poziom:
+                </div>
+                <div class="detail-value" id="modal-level"></div>
+            </div>
+        </div>
+        <div class="reservation-form">
+            <div class="form-group"><label for="user-name" class="form-label">Imię i nazwisko</label> <input type="text" id="user-name" class="form-input" placeholder="Wpisz swoje imię i nazwisko">
+            </div>
+            <div class="form-group"><label for="user-email" class="form-label">Email</label> <input type="email" id="user-email" class="form-input" placeholder="twoj@email.com">
+            </div>
+        </div>
+        <div class="modal-actions"><button class="btn btn-secondary" id="close-modal">Anuluj</button> <button class="btn btn-primary" id="confirm-booking"></button>
+        </div>
+    </div>
+</div>
+<script>
+    const defaultConfig = {
+        background_color: "#ffffff",
+        surface_color: "#f3f4f6",
+        text_color: "#333333",
+        primary_action_color: "#1e40af",
+        secondary_action_color: "#3b82f6",
+        font_family: "Segoe UI",
+        font_size: 16,
+        page_title: "Kalendarz Zajęć Sportowych",
+        booking_button_text: "Zarezerwuj"
+    };
+
+    let currentWeekStart = new Date();
+    currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1);
+    let selectedClass = null;
+    let userReservations = [];
+
+    const classes = [
+        { id: 'yoga-mon-9', name: 'Yoga', day: 0, time: '09:00', duration: 60, instructor: 'Anna Kowalska', spots: '12/15', level: 'Początkujący' },
+        { id: 'pilates-mon-11', name: 'Pilates', day: 0, time: '11:00', duration: 60, instructor: 'Maria Nowak', spots: '8/12', level: 'Średniozaawansowany' },
+        { id: 'spinning-tue-10', name: 'Spinning', day: 1, time: '10:00', duration: 45, instructor: 'Jan Wiśniewski', spots: '15/20', level: 'Wszystkie poziomy' },
+        { id: 'zumba-tue-18', name: 'Zumba', day: 1, time: '18:00', duration: 60, instructor: 'Katarzyna Lewandowska', spots: '18/25', level: 'Początkujący' },
+        { id: 'crossfit-wed-17', name: 'CrossFit', day: 2, time: '17:00', duration: 60, instructor: 'Piotr Kamiński', spots: '10/15', level: 'Zaawansowany' },
+        { id: 'yoga-wed-19', name: 'Yoga', day: 2, time: '19:00', duration: 60, instructor: 'Anna Kowalska', spots: '14/15', level: 'Średniozaawansowany' },
+        { id: 'boxing-thu-18', name: 'Boks', day: 3, time: '18:00', duration: 60, instructor: 'Marcin Zając', spots: '6/10', level: 'Początkujący' },
+        { id: 'pilates-thu-10', name: 'Pilates', day: 3, time: '10:00', duration: 60, instructor: 'Maria Nowak', spots: '10/12', level: 'Wszystkie poziomy' },
+        { id: 'spinning-fri-9', name: 'Spinning', day: 4, time: '09:00', duration: 45, instructor: 'Jan Wiśniewski', spots: '12/20', level: 'Zaawansowany' },
+        { id: 'yoga-fri-17', name: 'Yoga', day: 4, time: '17:00', duration: 60, instructor: 'Anna Kowalska', spots: '11/15', level: 'Początkujący' },
+        { id: 'zumba-sat-10', name: 'Zumba', day: 5, time: '10:00', duration: 60, instructor: 'Katarzyna Lewandowska', spots: '20/25', level: 'Wszystkie poziomy' },
+        { id: 'crossfit-sat-11', name: 'CrossFit', day: 5, time: '11:00', duration: 60, instructor: 'Piotr Kamiński', spots: '13/15', level: 'Średniozaawansowany' }
+    ];
+
+    const dataHandler = {
+        onDataChanged(data) {
+            userReservations = data;
+        }
+    };
+
+    async function initializeApp() {
+        if (window.dataSdk) {
+            const initResult = await window.dataSdk.init(dataHandler);
+            if (!initResult.isOk) {
+                console.error("Failed to initialize data SDK");
+            }
+        }
+
+        if (window.elementSdk) {
+            await window.elementSdk.init({
+                defaultConfig,
+                onConfigChange: async (config) => {
+                    const customFont = config.font_family || defaultConfig.font_family;
+                    const baseSize = config.font_size || defaultConfig.font_size;
+                    const baseFontStack = 'Tahoma, Geneva, Verdana, sans-serif';
+
+                    document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+                    document.body.style.background = config.background_color || defaultConfig.background_color;
+                    document.body.style.color = config.text_color || defaultConfig.text_color;
+                    document.body.style.fontSize = `${baseSize}px`;
+
+                    document.getElementById('page-title').textContent = config.page_title || defaultConfig.page_title;
+                    document.getElementById('page-title').style.color = config.primary_action_color || defaultConfig.primary_action_color;
+                    document.getElementById('page-title').style.fontSize = `${baseSize * 2.25}px`;
+
+                    document.querySelector('.header p').style.color = config.text_color || defaultConfig.text_color;
+                    document.querySelector('.header p').style.fontSize = `${baseSize}px`;
+
+                    const navButtons = document.querySelectorAll('.nav-button');
+                    navButtons.forEach(btn => {
+                        btn.style.background = config.primary_action_color || defaultConfig.primary_action_color;
+                        btn.style.fontSize = `${baseSize}px`;
+                    });
+
+                    document.querySelector('.week-display').style.color = config.primary_action_color || defaultConfig.primary_action_color;
+                    document.querySelector('.week-display').style.fontSize = `${baseSize * 1.25}px`;
+
+                    const calendarHeaderCells = document.querySelectorAll('.calendar-header-cell');
+                    calendarHeaderCells.forEach(cell => {
+                        cell.style.color = config.primary_action_color || defaultConfig.primary_action_color;
+                        cell.style.background = config.surface_color || defaultConfig.surface_color;
+                        cell.style.fontSize = `${baseSize * 0.875}px`;
+                    });
+
+                    const timeCells = document.querySelectorAll('.time-cell');
+                    timeCells.forEach(cell => {
+                        cell.style.color = config.text_color || defaultConfig.text_color;
+                        cell.style.fontSize = `${baseSize * 0.875}px`;
+                    });
+
+                    const classCards = document.querySelectorAll('.class-card');
+                    classCards.forEach(card => {
+                        card.style.background = `linear-gradient(135deg, ${config.secondary_action_color || defaultConfig.secondary_action_color} 0%, ${config.primary_action_color || defaultConfig.primary_action_color} 100%)`;
+                    });
+
+                    document.querySelector('#modal-title').style.color = config.primary_action_color || defaultConfig.primary_action_color;
+                    document.querySelector('#modal-title').style.fontSize = `${baseSize * 1.5}px`;
+
+                    const detailLabels = document.querySelectorAll('.detail-label');
+                    detailLabels.forEach(label => {
+                        label.style.fontSize = `${baseSize * 0.875}px`;
+                    });
+
+                    const detailValues = document.querySelectorAll('.detail-value');
+                    detailValues.forEach(value => {
+                        value.style.color = config.text_color || defaultConfig.text_color;
+                        value.style.fontSize = `${baseSize * 0.875}px`;
+                    });
+
+                    const formLabels = document.querySelectorAll('.form-label');
+                    formLabels.forEach(label => {
+                        label.style.color = config.text_color || defaultConfig.text_color;
+                        label.style.fontSize = `${baseSize * 0.875}px`;
+                    });
+
+                    const formInputs = document.querySelectorAll('.form-input');
+                    formInputs.forEach(input => {
+                        input.style.fontSize = `${baseSize * 0.875}px`;
+                    });
+
+                    const primaryBtns = document.querySelectorAll('.btn-primary');
+                    primaryBtns.forEach(btn => {
+                        btn.style.background = config.primary_action_color || defaultConfig.primary_action_color;
+                        btn.style.fontSize = `${baseSize}px`;
+                    });
+
+                    const secondaryBtns = document.querySelectorAll('.btn-secondary');
+                    secondaryBtns.forEach(btn => {
+                        btn.style.background = config.surface_color || defaultConfig.surface_color;
+                        btn.style.color = config.text_color || defaultConfig.text_color;
+                        btn.style.fontSize = `${baseSize}px`;
+                    });
+
+                    document.getElementById('confirm-booking').textContent = config.booking_button_text || defaultConfig.booking_button_text;
+                },
+                mapToCapabilities: (config) => ({
+                    recolorables: [
+                        {
+                            get: () => config.background_color || defaultConfig.background_color,
+                            set: (value) => {
+                                config.background_color = value;
+                                if (window.elementSdk) window.elementSdk.setConfig({ background_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.surface_color || defaultConfig.surface_color,
+                            set: (value) => {
+                                config.surface_color = value;
+                                if (window.elementSdk) window.elementSdk.setConfig({ surface_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.text_color || defaultConfig.text_color,
+                            set: (value) => {
+                                config.text_color = value;
+                                if (window.elementSdk) window.elementSdk.setConfig({ text_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+                            set: (value) => {
+                                config.primary_action_color = value;
+                                if (window.elementSdk) window.elementSdk.setConfig({ primary_action_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+                            set: (value) => {
+                                config.secondary_action_color = value;
+                                if (window.elementSdk) window.elementSdk.setConfig({ secondary_action_color: value });
+                            }
+                        }
+                    ],
+                    borderables: [],
+                    fontEditable: {
+                        get: () => config.font_family || defaultConfig.font_family,
+                        set: (value) => {
+                            config.font_family = value;
+                            if (window.elementSdk) window.elementSdk.setConfig({ font_family: value });
+                        }
+                    },
+                    fontSizeable: {
+                        get: () => config.font_size || defaultConfig.font_size,
+                        set: (value) => {
+                            config.font_size = value;
+                            if (window.elementSdk) window.elementSdk.setConfig({ font_size: value });
+                        }
+                    }
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ["page_title", config.page_title || defaultConfig.page_title],
+                    ["booking_button_text", config.booking_button_text || defaultConfig.booking_button_text]
+                ])
+            });
+        }
+
+        renderCalendar();
+        updateWeekDisplay();
+    }
+
+    function renderCalendar() {
+        const calendarHeader = document.getElementById('calendar-header');
+        const calendarBody = document.getElementById('calendar-body');
+        calendarHeader.innerHTML = '';
+        calendarBody.innerHTML = '';
+
+        const dayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'];
+
+        for (let day = 0; day < 7; day++) {
+            const date = new Date(currentWeekStart);
+            date.setDate(date.getDate() + day);
+
+            const dayHeader = document.createElement('div');
+            dayHeader.className = 'calendar-header-cell';
+            dayHeader.textContent = `${dayNames[day]} ${date.getDate()}.${date.getMonth() + 1}`;
+            calendarHeader.appendChild(dayHeader);
+
+            const dayColumn = document.createElement('div');
+            dayColumn.className = 'day-column';
+
+            const dayClasses = classes.filter(c => c.day === day).sort((a, b) => a.time.localeCompare(b.time));
+
+            dayClasses.forEach(classData => {
+                const classCard = document.createElement('div');
+                classCard.className = 'class-card';
+                classCard.innerHTML = `
+            <div class="class-name">${classData.name}</div>
+            <div class="class-info">🕐 ${classData.time} (${classData.duration} min)</div>
+            <div class="class-info">👤 ${classData.instructor}</div>
+            <div class="class-info">📍 Miejsca: ${classData.spots}</div>
+          `;
+                classCard.addEventListener('click', () => openModal(classData, day));
+                dayColumn.appendChild(classCard);
+            });
+
+            calendarBody.appendChild(dayColumn);
+        }
+    }
+
+    function updateWeekDisplay() {
+        const endDate = new Date(currentWeekStart);
+        endDate.setDate(endDate.getDate() + 6);
+
+        const startStr = `${currentWeekStart.getDate()}.${currentWeekStart.getMonth() + 1}.${currentWeekStart.getFullYear()}`;
+        const endStr = `${endDate.getDate()}.${endDate.getMonth() + 1}.${endDate.getFullYear()}`;
+
+        document.getElementById('week-display').textContent = `${startStr} - ${endStr}`;
+    }
+
+    function openModal(classData, day) {
+        selectedClass = { ...classData, day };
+        const date = new Date(currentWeekStart);
+        date.setDate(date.getDate() + day);
+
+        document.getElementById('modal-title').textContent = classData.name;
+        document.getElementById('modal-date').textContent = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+        document.getElementById('modal-time').textContent = `${classData.time} (${classData.duration} min)`;
+        document.getElementById('modal-instructor').textContent = classData.instructor;
+        document.getElementById('modal-spots').textContent = classData.spots;
+        document.getElementById('modal-level').textContent = classData.level;
+
+        document.getElementById('user-name').value = '';
+        document.getElementById('user-email').value = '';
+        document.getElementById('success-message').style.display = 'none';
+
+        document.getElementById('modal').classList.add('active');
+    }
+
+    document.getElementById('close-modal').addEventListener('click', () => {
+        document.getElementById('modal').classList.remove('active');
+    });
+
+    document.getElementById('modal').addEventListener('click', (e) => {
+        if (e.target.id === 'modal') {
+            document.getElementById('modal').classList.remove('active');
+        }
+    });
+
+    document.getElementById('confirm-booking').addEventListener('click', async () => {
+        const userName = document.getElementById('user-name').value.trim();
+        const userEmail = document.getElementById('user-email').value.trim();
+
+        if (!userName || !userEmail) {
+            const messageEl = document.getElementById('success-message');
+            messageEl.textContent = 'Wypełnij wszystkie pola';
+            messageEl.style.background = '#ef4444';
+            messageEl.style.display = 'block';
+            return;
+        }
+
+        if (userReservations.length >= 999) {
+            const messageEl = document.getElementById('success-message');
+            messageEl.textContent = 'Osiągnięto limit 999 rezerwacji. Usuń niektóre rezerwacje.';
+            messageEl.style.background = '#ef4444';
+            messageEl.style.display = 'block';
+            return;
+        }
+
+        const confirmBtn = document.getElementById('confirm-booking');
+        const originalText = confirmBtn.textContent;
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = `${originalText}<span class="loading"></span>`;
+
+        const date = new Date(currentWeekStart);
+        date.setDate(date.getDate() + selectedClass.day);
+
+        const reservation = {
+            class_id: selectedClass.id,
+            user_name: userName,
+            user_email: userEmail,
+            reservation_date: date.toISOString()
+        };
+
+        if (window.dataSdk) {
+            const result = await window.dataSdk.create(reservation);
+
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = originalText;
+
+            if (result.isOk) {
+                const messageEl = document.getElementById('success-message');
+                messageEl.textContent = 'Rezerwacja została potwierdzona!';
+                messageEl.style.background = '#10b981';
+                messageEl.style.display = 'block';
+
+                document.getElementById('user-name').value = '';
+                document.getElementById('user-email').value = '';
+
+                setTimeout(() => {
+                    document.getElementById('modal').classList.remove('active');
+                }, 2000);
+            } else {
+                const messageEl = document.getElementById('success-message');
+                messageEl.textContent = 'Wystąpił błąd. Spróbuj ponownie.';
+                messageEl.style.background = '#ef4444';
+                messageEl.style.display = 'block';
+            }
+        }
+    });
+
+    document.getElementById('prev-week').addEventListener('click', () => {
+        currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+        renderCalendar();
+        updateWeekDisplay();
+    });
+
+    document.getElementById('next-week').addEventListener('click', () => {
+        currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+        renderCalendar();
+        updateWeekDisplay();
+    });
+
+    initializeApp();
+    </script>
+</div>
+</html>
