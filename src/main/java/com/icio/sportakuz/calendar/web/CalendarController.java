@@ -55,15 +55,16 @@ public class CalendarController {
         String spots = reserved + "/" + c.getCapacity();
         String level = c.getType() != null ? c.getType().getDifficulty() : null;
         return new CalendarClassDto(
-                c.getId(),
-                c.getType() != null ? c.getType().getName() : "Zajęcia",
-                dayIndex,
-                date,
-                time,
-                duration,
-                c.getInstructor() != null ? (c.getInstructor().getFirstName() + " " + c.getInstructor().getLastName()) : "Instruktor",
-                spots,
-                level == null ? "" : level
+            c.getId(),
+            c.getType() != null ? c.getType().getName() : "Zajęcia",
+            dayIndex,
+            date,
+            time,
+            duration,
+            c.getRoom() != null ? c.getRoom().getName() : "Sala",
+            c.getInstructor() != null ? (c.getInstructor().getFirstName() + " " + c.getInstructor().getLastName()) : "Instruktor",
+            spots,
+            level == null ? "" : level
         );
     }
 
@@ -76,7 +77,8 @@ public class CalendarController {
      *  date        - pełna data (yyyy-MM-dd) do filtrowania tygodni
      *  time        - godzina startu (HH:mm)
      *  duration    - czas trwania w minutach
-     *  instructor  - imię i nazwisko instruktora
+    *  room        - nazwa sali
+    *  instructor  - imię i nazwisko instruktora
      *  spots       - zajęte/pojemność
      *  level       - trudność (lub pusty string)
      */
@@ -86,6 +88,7 @@ public class CalendarController {
                                    String date,
                                    String time,
                                    int duration,
+                                   String room,
                                    String instructor,
                                    String spots,
                                    String level) {}

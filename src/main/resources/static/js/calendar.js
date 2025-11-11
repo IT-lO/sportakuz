@@ -147,6 +147,7 @@
             'modal-title': classData.name,
             'modal-date': `${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`,
             'modal-time': `${classData.time} (${classData.duration} min)`,
+            'modal-room': classData.room,
             'modal-instructor': classData.instructor,
             'modal-spots': classData.spots,
             'modal-level': classData.level
