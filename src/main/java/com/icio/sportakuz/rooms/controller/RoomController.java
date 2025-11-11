@@ -4,6 +4,7 @@ import com.icio.sportakuz.classes.domain.Room;
 import com.icio.sportakuz.classes.repo.RoomRepository;
 import com.icio.sportakuz.rooms.dto.RoomForm;
 import jakarta.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/rooms") // Wszystkie adresy w tym kontrolerze będą /rooms/...
+@RequestMapping("/rooms")
 public class RoomController {
 
     private final RoomRepository roomRepository;
@@ -32,7 +33,7 @@ public class RoomController {
         List<Room> rooms = roomRepository.findAll(Sort.by("name"));
         model.addAttribute("rooms", rooms);
         model.addAttribute("pageTitle", "Sale i Pomieszczenia");
-        return "rooms/list_rooms"; // Ścieżka do nowej listy
+        return "rooms/list_rooms";
     }
 
     /**
@@ -40,10 +41,9 @@ public class RoomController {
      */
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        // Przekazujemy pusty obiekt DTO do powiązania z formularzem
         RoomForm form = new RoomForm();
-        form.setActive(true); // Domyślna wartość
-        form.setCapacity(10); // Domyślna wartość
+        form.setActive(true);
+        form.setCapacity(10);
 
         model.addAttribute("roomForm", form);
         model.addAttribute("pageTitle", "Dodaj nową salę");
@@ -82,7 +82,7 @@ public class RoomController {
 
         // 5. Przekierowanie z komunikatem sukcesu
         redirectAttributes.addFlashAttribute("globalSuccessMessage", "Sala została pomyślnie dodana.");
-        return "redirect:/rooms"; // Wróć do listy sal
+        return "redirect:/rooms";
     }
 
     /**
@@ -97,7 +97,6 @@ public class RoomController {
             return "redirect:/rooms";
         }
 
-        // Mapowanie Encji na DTO (formularz)
         Room room = roomOpt.get();
         RoomForm form = new RoomForm();
         form.setName(room.getName());
@@ -106,9 +105,9 @@ public class RoomController {
         form.setActive(room.isActive());
 
         model.addAttribute("roomForm", form);
-        model.addAttribute("roomId", id); // Potrzebne do action w formularzu
+        model.addAttribute("roomId", id);
         model.addAttribute("pageTitle", "Edytuj salę: " + room.getName());
-        return "rooms/form_edit_room"; // Ścieżka do nowego formularza edycji
+        return "rooms/form_edit_room";
     }
 
     /**
@@ -152,6 +151,36 @@ public class RoomController {
 
         // 5. Przekierowanie
         redirectAttributes.addFlashAttribute("globalSuccessMessage", "Dane sali zostały pomyślnie zaktualizowane.");
+        return "redirect:/rooms";
+    }
+
+    /**
+     * Przetwarza żądanie usunięcia sali.
+     */
+    @PostMapping("/delete/{id}")
+    public String processDelete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+
+        // 1. Sprawdzenie, czy sala istnieje
+        Optional<Room> roomOpt = roomRepository.findById(id);
+        if (roomOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("globalErrorMessage", "Nie znaleziono sali do usunięcia (ID: " + id + ").");
+            return "redirect:/rooms";
+        }
+
+        // 2. Próba usunięcia z obsługą błędu więzów integralności
+        // (Jeśli sala jest przypisana do jakichś zajęć, baza danych rzuci błędem)
+        try {
+            roomRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("globalSuccessMessage", "Sala została pomyślnie usunięta.");
+
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("globalErrorMessage",
+                    "Nie można usunąć tej sali, ponieważ jest ona powiązana z istniejącymi zajęciami. Najpierw usuń lub zmień powiązane zajęcia.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("globalErrorMessage", "Wystąpił nieoczekiwany błąd podczas usuwania sali.");
+        }
+
+        // 3. Powrót do listy
         return "redirect:/rooms";
     }
 }

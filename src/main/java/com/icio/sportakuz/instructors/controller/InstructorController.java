@@ -4,6 +4,7 @@ import com.icio.sportakuz.classes.domain.Instructor;
 import com.icio.sportakuz.classes.repo.InstructorRepository;
 import com.icio.sportakuz.instructors.dto.InstructorForm;
 import jakarta.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/instructors") // Wszystkie adresy w tym kontrolerze będą /instructors/...
+@RequestMapping("/instructors")
 public class InstructorController {
 
     private final InstructorRepository instructorRepository;
@@ -32,7 +33,7 @@ public class InstructorController {
         List<Instructor> instructors = instructorRepository.findAll(Sort.by("lastName", "firstName"));
         model.addAttribute("instructors", instructors);
         model.addAttribute("pageTitle", "Instruktorzy");
-        return "instructors/list_instructors"; // Ścieżka do nowej listy
+        return "instructors/list_instructors";
     }
 
     /**
@@ -108,9 +109,9 @@ public class InstructorController {
         form.setActive(instructor.isActive());
 
         model.addAttribute("instructorForm", form);
-        model.addAttribute("instructorId", id); // Potrzebne do action w formularzu
+        model.addAttribute("instructorId", id);
         model.addAttribute("pageTitle", "Edytuj instruktora: " + instructor.getFirstName() + " " + instructor.getLastName());
-        return "instructors/form_edit_instructor"; // Ścieżka do nowego formularza edycji
+        return "instructors/form_edit_instructor";
     }
 
     /**
@@ -156,6 +157,36 @@ public class InstructorController {
 
         // 5. Przekierowanie
         redirectAttributes.addFlashAttribute("globalSuccessMessage", "Dane instruktora zostały pomyślnie zaktualizowane.");
+        return "redirect:/instructors";
+    }
+
+    /**
+     * Przetwarza żądanie usunięcia instruktora.
+     */
+    @PostMapping("/delete/{id}")
+    public String processDelete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+
+        // 1. Sprawdzenie, czy instruktor istnieje
+        Optional<Instructor> instructorOpt = instructorRepository.findById(id);
+        if (instructorOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("globalErrorMessage", "Nie znaleziono instruktora do usunięcia (ID: " + id + ").");
+            return "redirect:/instructors";
+        }
+
+        // 2. Próba usunięcia z obsługą błędu więzów integralności
+        // (Jeśli instruktor jest przypisany do jakichś zajęć, baza danych rzuci błędem)
+        try {
+            instructorRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("globalSuccessMessage", "Instruktor został pomyślnie usunięty.");
+
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("globalErrorMessage",
+                    "Nie można usunąć tego instruktora, ponieważ jest on powiązany z istniejącymi zajęciami. Najpierw usuń lub zmień powiązane zajęcia.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("globalErrorMessage", "Wystąpił nieoczekiwany błąd podczas usuwania instruktora.");
+        }
+
+        // 3. Powrót do listy
         return "redirect:/instructors";
     }
 }

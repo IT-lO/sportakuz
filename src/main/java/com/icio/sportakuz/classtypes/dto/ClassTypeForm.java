@@ -1,13 +1,11 @@
 package com.icio.sportakuz.classtypes.dto;
 
+import com.icio.sportakuz.classtypes.DifficultyLevel;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-/**
- * DTO (Data Transfer Object) reprezentujący dane z formularza dodawania/edycji typu zajęć.
- * Zawiera walidację pól.
- */
 public class ClassTypeForm {
 
     @NotBlank(message = "Nazwa typu zajęć jest wymagana.")
@@ -17,13 +15,12 @@ public class ClassTypeForm {
     @Size(max = 5000, message = "Opis nie może przekraczać 5000 znaków.")
     private String description;
 
+    @NotNull(message = "Czas zajęć jest wymagany.")
     @Min(value = 1, message = "Domyślny czas trwania musi być liczbą dodatnią.")
-    private Integer defaultDurationMinutes; // Integer pozwala na wartość null (opcjonalność)
+    private Integer defaultDurationMinutes;
 
-    @Size(max = 20, message = "Poziom trudności nie może przekraczać 20 znaków.")
-    private String difficulty;
-
-    // Gettery i Settery
+    @NotNull(message = "Musisz wybrać poziom trudności.")
+    private DifficultyLevel difficulty; // Używamy Enuma
 
     public String getName() {
         return name;
@@ -49,11 +46,11 @@ public class ClassTypeForm {
         this.defaultDurationMinutes = defaultDurationMinutes;
     }
 
-    public String getDifficulty() {
+    public DifficultyLevel getDifficulty() {
         return difficulty;
     }
 
-    public void setDifficulty(String difficulty) {
+    public void setDifficulty(DifficultyLevel difficulty) {
         this.difficulty = difficulty;
     }
 }

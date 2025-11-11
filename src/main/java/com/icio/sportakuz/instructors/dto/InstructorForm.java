@@ -31,8 +31,6 @@ public class InstructorForm {
 
     private boolean active = true;
 
-    // Gettery i Settery
-
     public String getFirstName() {
         return firstName;
     }

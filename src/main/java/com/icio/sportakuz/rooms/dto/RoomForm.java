@@ -24,8 +24,6 @@ public class RoomForm {
 
     private boolean active = true;
 
-    // Gettery i Settery
-
     public String getName() {
         return name;
     }
