@@ -34,15 +34,18 @@ public class ClassOccurrenceController {
     private final ClassTypeRepository classTypeRepository;
     private final InstructorRepository instructorRepository;
     private final RoomRepository roomRepository;
+    private final BookingRepository bookingRepository;
 
     public ClassOccurrenceController(ClassOccurrenceRepository classOccurrenceRepository,
                                      ClassTypeRepository classTypeRepository,
                                      InstructorRepository instructorRepository,
-                                     RoomRepository roomRepository) {
+                                     RoomRepository roomRepository,
+                                     BookingRepository bookingRepository) {
         this.classOccurrenceRepository = classOccurrenceRepository;
         this.classTypeRepository = classTypeRepository;
         this.instructorRepository = instructorRepository;
         this.roomRepository = roomRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     /** GET /classes – lista wystąpień (do rozbudowy np. o filtrowanie/paginację). */
@@ -50,7 +53,6 @@ public class ClassOccurrenceController {
     public String list(Model model) {
         // Wszystkie wystąpienia posortowane po starcie
         var all = classOccurrenceRepository.findAllByOrderByStartTimeAsc();
-        var now = java.time.OffsetDateTime.now();
         java.util.List<ClassOccurrence> upcoming = new java.util.ArrayList<>();
         java.util.List<ClassOccurrence> history = new java.util.ArrayList<>();
         for (var oc : all) {
@@ -66,6 +68,7 @@ public class ClassOccurrenceController {
         // Mapa dostępnych instruktorów – tylko dla upcoming
         var allInstructors = instructorRepository.findAll();
         java.util.Map<Long, java.util.List<Instructor>> availableMap = new java.util.HashMap<>();
+        java.util.Map<Long, Long> activeBookingsCount = new java.util.HashMap<>(); //  liczności rezerwacji
         for (var oc : upcoming) {
             java.util.List<Instructor> avail = new java.util.ArrayList<>();
             for (var instr : allInstructors) {
@@ -81,12 +84,14 @@ public class ClassOccurrenceController {
                 }
             }
             availableMap.put(oc.getId(), avail);
+            activeBookingsCount.put(oc.getId(), bookingRepository.countActiveByClassId(oc.getId())); // ile aktywnych rezerwacji
         }
         model.addAttribute("classes", upcoming); // główna lista = przyszłe
         model.addAttribute("historyClasses", history); // historia = anulowane / zakończone
         model.addAttribute("allStatuses", ClassStatus.values());
         model.addAttribute("instructors", allInstructors);
         model.addAttribute("availableInstructors", availableMap);
+        model.addAttribute("activeBookings", activeBookingsCount);
         return "classes/list";
     }
 
@@ -209,16 +214,22 @@ public class ClassOccurrenceController {
         return "redirect:/classes";
     }
 
-    /** POST /classes/{id}/delete – usuwa wystąpienie jeśli istnieje; dodaje komunikat flash z etykietą. */
+    /** POST /classes/{id}/delete – usuwa wystąpienie jeśli brak aktywnych rezerwacji; inaczej blokuje. */
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable("id") Long id, RedirectAttributes ra) {
         var oc = classOccurrenceRepository.findById(id).orElse(null);
-        if (oc != null) {
-            classOccurrenceRepository.deleteById(id);
-            ra.addFlashAttribute("success", "Zajęcia " + occurrenceLabel(oc) + " usunięte.");
-        } else {
-            ra.addFlashAttribute("success", "Zajęcia nie znalezione (id=" + id + ").");
+        if (oc == null) {
+            ra.addFlashAttribute("error", "Zajęcia nie zostały znalezione (id=" + id + ").");
+            return "redirect:/classes";
         }
+        // Sprawdza, czy są jakieś aktywne rezerwacje (Requested/Confirmed/Paid)
+        long activeBookings = bookingRepository.countActiveByClassId(id);
+        if (activeBookings > 0) {
+            ra.addFlashAttribute("error", "Nie można usunąć zajęć " + occurrenceLabel(oc) + ", istnieją aktywne rezerwacje (" + activeBookings + ").");
+            return "redirect:/classes";
+        }
+        classOccurrenceRepository.deleteById(id);
+        ra.addFlashAttribute("success", "Zajęcia " + occurrenceLabel(oc) + " usunięte.");
         return "redirect:/classes";
     }
 
@@ -342,17 +353,17 @@ public class ClassOccurrenceController {
                                RedirectAttributes ra) {
         var oc = classOccurrenceRepository.findById(id).orElse(null);
         if (oc == null) {
-            ra.addFlashAttribute("success", "Zajęcia nie znalezione (id=" + id + ").");
+            ra.addFlashAttribute("error", "Zajęcia nie znalezione (id=" + id + ").");
             return "redirect:/classes";
         }
         var current = oc.getStatus();
         if (!isAllowedTransition(current, newStatus)) {
-            ra.addFlashAttribute("success", "Niepoprawna zmiana statusu z " + current + " na " + newStatus + ".");
+            ra.addFlashAttribute("error", "Niepoprawna zmiana statusu z " + current.getLabel() + " na " + newStatus.getLabel() + ".");
             return "redirect:/classes";
         }
         oc.setStatus(newStatus);
         classOccurrenceRepository.save(oc);
-        ra.addFlashAttribute("success", "Status zajęć " + occurrenceLabel(oc) + " zmieniony na " + newStatus + ".");
+        ra.addFlashAttribute("success", "Status zajęć " + occurrenceLabel(oc) + " zmieniony na " + newStatus.getLabel() + ".");
         return "redirect:/classes";
     }
 
@@ -363,20 +374,20 @@ public class ClassOccurrenceController {
                                    RedirectAttributes ra) {
         var oc = classOccurrenceRepository.findById(id).orElse(null);
         if (oc == null) {
-            ra.addFlashAttribute("success", "Zajęcia nie znalezione (id=" + id + ").");
+            ra.addFlashAttribute("error", "Zajęcia nie znalezione (id=" + id + ").");
             return "redirect:/classes";
         }
         if (instructorId == null) {
-            ra.addFlashAttribute("success", "Brak identyfikatora instruktora.");
+            ra.addFlashAttribute("error", "Brak identyfikatora instruktora.");
             return "redirect:/classes";
         }
         var newInstr = instructorRepository.findById(instructorId).orElse(null);
         if (newInstr == null) {
-            ra.addFlashAttribute("success", "Instruktor nie znaleziony (id=" + instructorId + ").");
+            ra.addFlashAttribute("error", "Instruktor nie znaleziony (id=" + instructorId + ").");
             return "redirect:/classes";
         }
         if (!newInstr.isActive()) {
-            ra.addFlashAttribute("success", "Instruktor jest nieaktywny.");
+            ra.addFlashAttribute("error", "Instruktor jest nieaktywny.");
             return "redirect:/classes";
         }
         // Jeśli wybieramy ponownie aktualnego instruktora – brak zmian
@@ -396,7 +407,7 @@ public class ClassOccurrenceController {
         var conflicts = classOccurrenceRepository.findOverlappingForInstructor(instructorId, oc.getStartTime(), oc.getEndTime())
             .stream().filter(c -> !c.getId().equals(oc.getId()) && c.getStatus() != ClassStatus.CANCELLED).count();
         if (conflicts > 0) {
-            ra.addFlashAttribute("success", "Instruktor ma kolizję w tym przedziale czasu.");
+            ra.addFlashAttribute("error", "Instruktor ma kolizję w tym przedziale czasu.");
             return "redirect:/classes";
         }
         // Ustal pierwotnego instruktora: jeśli jeszcze nie było zastępstwa, zapisz obecnego jako substitutedFor; inaczej pozostaw istniejącego.

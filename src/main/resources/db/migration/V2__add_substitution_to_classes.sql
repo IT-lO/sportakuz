@@ -7,7 +7,39 @@
 ALTER TABLE classes
     ADD COLUMN substituted_for_id BIGINT REFERENCES instructors(id);
 
--- instructors
+-- Ustawienie domyślnych wartości dla kolumny difficulty oraz default_duration w tabeli class_types, by uniknąć problemów przy migracji
+UPDATE class_types
+SET difficulty = 'ALL_LEVELS'
+WHERE difficulty IS NULL
+   OR difficulty NOT IN ('BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'ALL_LEVELS');
+
+UPDATE class_types
+SET default_duration_minutes = 55
+WHERE default_duration_minutes IS NULL
+   OR default_duration_minutes <= 0;
+
+-- Zdjęcie starych checków
+ALTER TABLE class_types
+DROP CONSTRAINT IF EXISTS class_types_default_duration_minutes_check;
+
+-- Założenie checka na typy zajęć
+ALTER TABLE class_types
+    ADD CONSTRAINT class_types_difficulty_check
+        CHECK (difficulty IN ('BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'ALL_LEVELS'));
+
+ALTER TABLE class_types
+    ADD CONSTRAINT class_types_default_duration_check
+        CHECK (default_duration_minutes > 0);
+
+-- Wymuszenie NOT NULL na kolumnach, gdzie powinno to być ustawione, a nie jest
+ALTER TABLE class_types
+    ALTER COLUMN difficulty SET NOT NULL;
+
+ALTER TABLE class_types
+    ALTER COLUMN default_duration_minutes SET NOT NULL;
+
+
+-- Przykładowi instruktorzy
 INSERT INTO instructors (first_name, last_name, email, phone, bio)
 VALUES
     ('Anna', 'Kowalska', 'anna.kowalska@example.com', '+48 600 111 222', 'Instruktorka jogi i pilatesu, 5 lat doświadczenia.'),
@@ -18,7 +50,7 @@ VALUES
     ON CONFLICT (email) DO NOTHING;
 
 
--- rooms
+-- Przykładowe sale
 INSERT INTO rooms (name, location, capacity)
 VALUES
     ('Sala Główna', 'Parter, po lewej', 25),
@@ -29,12 +61,12 @@ VALUES
     ON CONFLICT (name) DO NOTHING;
 
 
--- class_types
+-- Przykładowe typy zajęć
 INSERT INTO class_types (name, description, default_duration_minutes, difficulty)
 VALUES
-    ('Joga', 'Zajęcia rozciągająco-relaksacyjne.', 60, 'easy'),
-    ('Trening siłowy', 'Trening z obciążeniem dla całego ciała.', 50, 'medium'),
-    ('Zumba', 'Dynamiczne zajęcia taneczno-kondycyjne.', 45, 'medium'),
-    ('Pilates', 'Wzmacnianie mięśni głębokich i poprawa postawy.', 55, 'easy'),
-    ('HIIT', 'Interwały o wysokiej intensywności.', 30, 'hard')
+    ('Joga', 'Zajęcia rozciągająco-relaksacyjne.', 60, 'BEGINNER'),
+    ('Trening siłowy', 'Trening z obciążeniem dla całego ciała.', 50, 'INTERMEDIATE'),
+    ('Zumba', 'Dynamiczne zajęcia taneczno-kondycyjne.', 45, 'INTERMEDIATE'),
+    ('Pilates', 'Wzmacnianie mięśni głębokich i poprawa postawy.', 55, 'BEGINNER'),
+    ('HIIT', 'Interwały o wysokiej intensywności.', 30, 'ADVANCED')
     ON CONFLICT (name) DO NOTHING;

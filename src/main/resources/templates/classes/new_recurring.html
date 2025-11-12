@@ -69,7 +69,7 @@
                         <!-- Wybór wzorca rekurencji -->
                         <select th:field="*{recurrencePattern}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">-- wybierz --</option>
-                            <option th:each="p : ${patterns}" th:value="${p}" th:text="${p}"></option>
+                            <option th:each="p : ${patterns}" th:value="${p}" th:text="${p.label}"></option>
                         </select>
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('recurrencePattern')}" th:errors="*{recurrencePattern}"></p>
                     </div>

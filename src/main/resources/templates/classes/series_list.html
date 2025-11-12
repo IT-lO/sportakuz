@@ -9,6 +9,7 @@
                 <a th:href="@{/class-series/new}" class="px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700"><span class="text-lg leading-none">＋</span> Nowa seria</a>
             </div>
         </div>
+        <!-- Komunikat sukcesu i błędu (np. po zapisaniu / usunięciu) renderowany warunkowo -->
         <div th:if="${success}" class="p-4 rounded-md bg-green-50 border border-green-200 text-green-800 text-sm" th:text="${success}"></div>
         <div th:if="${error}" class="p-4 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm" th:text="${error}"></div>
 
@@ -56,8 +57,8 @@
                                     <form th:action="@{'/class-series/' + ${s.id} + '/generate'}" method="post" class="inline">
                                         <button type="submit" class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-blue-600 text-white hover:bg-blue-700">Generuj</button>
                                     </form>
-                                    <form th:action="@{'/class-series/' + ${s.id} + '/delete'}" method="post" class="inline" onsubmit="return confirm('Oznaczyć serię #' + [[${s.id}]] + ' jako nieaktywną?')">
-                                        <button type="submit" class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-orange-600 text-white hover:bg-orange-700">Dezaktywuj</button>
+                                    <form th:action="@{'/class-series/' + ${s.id} + '/delete'}" method="post" class="inline" onsubmit="return confirm('Usunąć serię?')">
+                                        <button type="submit" class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700">Usuń</button>
                                     </form>
                                 </div>
                             </td>
@@ -73,7 +74,9 @@
 
         <!-- Historia (nieaktywne serie) -->
         <div class="space-y-4">
-            <h2 class="text-xl font-semibold text-gray-800">Historia (nieaktywne serie)</h2>
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-semibold text-gray-800">Historia (nieaktywne serie)</h2>
+            </div>
             <div class="bg-white/70 backdrop-blur rounded-lg shadow border border-gray-200">
                 <div class="overflow-x-auto">
                     <table class="min-w-full text-xs">
@@ -98,7 +101,7 @@
                             <td class="px-3 py-2" th:text="${s.room.name}"></td>
                             <td class="px-3 py-2" th:text="${#temporals.format(s.startTime,'yyyy-MM-dd HH:mm')}"></td>
                             <td class="px-3 py-2" th:text="${#temporals.format(s.recurrenceUntil,'yyyy-MM-dd')}"></td>
-                            <td class="px-3 py-2" th:text="${s.recurrencePattern}"></td>
+                            <td class="px-3 py-2" th:text="${s.recurrencePattern.label}"></td>
                             <td class="px-3 py-2">
                                 <form th:action="@{'/class-series/' + ${s.id} + '/active'}" method="post">
                                     <input type="hidden" name="active" value="true" />
@@ -108,9 +111,6 @@
                             <td class="px-3 py-2">
                                 <div class="flex gap-2">
                                     <a th:href="@{'/class-series/' + ${s.id} + '/edit'}" class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700">Podgląd</a>
-                                    <form th:action="@{'/class-series/' + ${s.id} + '/generate'}" method="post" class="inline">
-                                        <button type="submit" class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-blue-600 text-white hover:bg-blue-700" th:disabled="${!s.active}">Generuj</button>
-                                    </form>
                                 </div>
                             </td>
                         </tr>

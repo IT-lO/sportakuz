@@ -22,11 +22,11 @@ public class ClassType {
     @Column(columnDefinition="text")
     private String description;
 
-    /** Domyślny czas trwania w minutach (opcjonalny). */
-    @Column(name="default_duration_minutes")
+    /** Domyślny czas trwania w minutach. */
+    @Column(name="default_duration_minutes", nullable=false)
     private Integer defaultDurationMinutes;
 
-    /** Poziom trudności jako etykieta (brak formalnego enumu). */
+    /** Poziom trudności jako etykieta (enum). */
     @Enumerated(EnumType.STRING)
     private DifficultyLevel difficulty;
 

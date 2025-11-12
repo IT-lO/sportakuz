@@ -98,7 +98,7 @@ public class ClassSeriesController {
     public String editForm(@PathVariable("id") Long id, Model model, RedirectAttributes ra){
         var s = classSeriesRepository.findById(id).orElse(null);
         if(s==null){
-            ra.addFlashAttribute("success", "Seria nie znaleziona (id="+id+").");
+            ra.addFlashAttribute("error", "Seria nie znaleziona (id="+id+").");
             return "redirect:/class-series";
         }
         model.addAttribute("form", toForm(s));
@@ -152,7 +152,7 @@ public class ClassSeriesController {
                 }
                 // Regeneracja świeżych wystąpień na podstawie nowego wzorca
                 generateOccurrencesForSeries(s);
-                ra.addFlashAttribute("success", "Seria zaktualizowana. Wzorzec zmieniony z " + oldPattern + " na " + s.getRecurrencePattern() + ". Usunięto " + removed + " przyszłych wystąpień i wygenerowano nowe.");
+                ra.addFlashAttribute("success", "Seria zaktualizowana. Wzorzec zmieniony z " + oldPattern.getLabel() + " na " + s.getRecurrencePattern().getLabel() + ". Usunięto " + removed + " przyszłych wystąpień i wygenerowano nowe.");
                 return "redirect:/class-series";
             } else {
                 // Remapowanie gdy wzorzec nie zmieniony (np. przesunięcie daty startu / godziny)
