@@ -143,6 +143,9 @@ public class ClassTypeController {
         return "redirect:/classtypes";
     }
 
+    /**
+     * Przetwarza żądanie usunięcia typu zajęć.
+     */
     @PostMapping("/delete/{id}")
     public String processDelete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
 
