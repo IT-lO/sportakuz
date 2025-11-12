@@ -1,5 +1,6 @@
 package com.icio.sportakuz.classes.domain;
 
+import com.icio.sportakuz.classtypes.DifficultyLevel;
 import jakarta.persistence.*;
 
 /**
@@ -26,8 +27,8 @@ public class ClassType {
     private Integer defaultDurationMinutes;
 
     /** Poziom trudności jako etykieta (brak formalnego enumu). */
-    @Column(length=20) // w DB brak enumu/constraintu
-    private String difficulty;
+    @Enumerated(EnumType.STRING)
+    private DifficultyLevel difficulty;
 
     public Long getId() {
         return id;
@@ -57,11 +58,11 @@ public class ClassType {
         this.defaultDurationMinutes = defaultDurationMinutes;
     }
 
-    public String getDifficulty() {
+    public DifficultyLevel getDifficulty() {
         return difficulty;
     }
 
-    public void setDifficulty(String difficulty) {
+    public void setDifficulty(DifficultyLevel difficulty) {
         this.difficulty = difficulty;
     }
 }
