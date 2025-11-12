@@ -59,6 +59,11 @@ public class ClassOccurrence {
     @Column(name="updated_at", nullable=false, insertable=false, updatable=false)
     private OffsetDateTime updatedAt;
 
+    /** Instruktor, za którego prowadzone są zajęcia w zastępstwie (jeśli dotyczy). */
+    @ManyToOne
+    @JoinColumn(name = "substituted_for_id")
+    private Instructor substitutedFor;
+
     public Long getId() {
         return id;
     }
@@ -149,5 +154,13 @@ public class ClassOccurrence {
 
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Instructor getSubstitutedFor() {
+        return substitutedFor;
+    }
+
+    public void setSubstitutedFor(Instructor substitutedFor) {
+        this.substitutedFor = substitutedFor;
     }
 }

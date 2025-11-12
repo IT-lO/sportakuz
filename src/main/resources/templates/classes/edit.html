@@ -17,17 +17,17 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <!-- Typ zajęć -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Typ</label>
-                        <select th:field="*{classTypeId}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="classTypeSelect">Typ</label>
+                        <select th:field="*{classTypeId}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="classTypeSelect">
                             <option value="">-- wybierz --</option>
-                            <option th:each="t : ${types}" th:value="${t.id}" th:text="${t.name}"></option>
+                            <option th:each="t : ${types}" th:value="${t.id}" th:text="${t.name}" th:attr="data-default-duration=${t.defaultDurationMinutes}"></option>
                         </select>
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('classTypeId')}" th:errors="*{classTypeId}"></p>
                     </div>
                     <!-- Instruktor -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Instruktor</label>
-                        <select th:field="*{instructorId}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="instructorSelect">Instruktor</label>
+                        <select th:field="*{instructorId}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="instructorSelect">
                             <option value="">-- wybierz --</option>
                             <option th:each="i : ${instructors}" th:value="${i.id}" th:text="${i.firstName + ' ' + i.lastName}"></option>
                         </select>
@@ -35,7 +35,7 @@
                     </div>
                     <!-- Sala -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Sala</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="roomSelect">Sala</label>
                         <select th:field="*{roomId}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="roomSelect">
                             <option value="">-- wybierz --</option>
                             <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${r.name + ' (cap: ' + r.capacity + ')'}" th:attr="data-capacity=${r.capacity}"></option>
@@ -45,33 +45,34 @@
                     </div>
                     <!-- Data -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Data</label>
-                        <input type="date" th:field="*{date}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="dateInput">Data</label>
+                        <input type="date" th:field="*{date}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="dateInput" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></p>
                     </div>
                     <!-- Start -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Start</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="startTimeInput">Start</label>
                         <input type="time" th:field="*{startTime}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="startTimeInput" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}"></p>
                     </div>
                     <!-- Czas trwania -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Czas trwania (min)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="durationInput">Czas trwania (min)</label>
                         <input type="number" min="5" step="5" th:field="*{durationMinutes}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="durationInput" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('durationMinutes')}" th:errors="*{durationMinutes}"></p>
                         <p id="endTimePreview" class="mt-1 text-xs text-gray-500"></p>
+                        <p id="durationHint" class="mt-1 text-xs text-gray-500"></p>
                     </div>
                     <!-- Pojemność -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Pojemność</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="capacityInput">Pojemność</label>
                         <input type="number" min="1" th:field="*{capacity}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="capacityInput" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}"></p>
                     </div>
                     <!-- Notatka -->
                     <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Notatka</label>
-                        <textarea rows="3" th:field="*{note}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Dodatkowe informacje..."></textarea>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="noteInput">Notatka</label>
+                        <textarea rows="3" th:field="*{note}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Dodatkowe informacje..." id="noteInput"></textarea>
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('note')}" th:errors="*{note}"></p>
                     </div>
                 </div>
@@ -88,6 +89,7 @@
     <!-- Skrypt:
          - updateCapacity(): dostosowuje pojemność względem wybranej sali; zachowuje mniejszą wartość jeśli wpisana.
          - updateEnd(): wylicza godzinę zakończenia.
+         - maybeApplyDefaultDuration(): ustawia domyślny czas trwania po zmianie typu zajęć.
          Różnice względem new.html: zachowanie istniejącej capacity jeśli <= max. -->
     <script>
         (function(){
@@ -97,6 +99,8 @@
             const startInput = document.getElementById('startTimeInput');
             const durationInput = document.getElementById('durationInput');
             const endPreview = document.getElementById('endTimePreview');
+            const typeSelect = document.getElementById('classTypeSelect');
+            const durationHint = document.getElementById('durationHint');
             function updateCapacity(){
                 if(!roomSelect||!capacityInput) return;
                 const opt = roomSelect.options[roomSelect.selectedIndex];
@@ -119,9 +123,23 @@
                 const endM = total%60;
                 endPreview.textContent = 'Godzina zakończenia: ' + pad(endH)+':'+pad(endM);
             }
+            function maybeApplyDefaultDuration(){
+                if(!typeSelect||!durationInput) return;
+                const opt = typeSelect.options[typeSelect.selectedIndex];
+                if(!opt) return;
+                const def = parseInt(opt.getAttribute('data-default-duration'),10);
+                if(def>0){
+                    durationInput.value = def; // bezwarunkowo nadpisujemy
+                    if(durationHint) durationHint.textContent = 'Domyślny czas z typu: ' + def + ' min (możesz zmienić)';
+                    updateEnd();
+                } else {
+                    if(durationHint) durationHint.textContent = '';
+                }
+            }
             roomSelect && roomSelect.addEventListener('change', updateCapacity);
             durationInput && durationInput.addEventListener('input', updateEnd);
             startInput && startInput.addEventListener('change', updateEnd);
+            typeSelect && typeSelect.addEventListener('change', maybeApplyDefaultDuration);
             updateCapacity();
             updateEnd();
         })();
