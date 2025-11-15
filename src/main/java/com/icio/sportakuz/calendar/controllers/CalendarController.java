@@ -1,4 +1,4 @@
-package com.icio.sportakuz.calendar.web;
+package com.icio.sportakuz.calendar.controllers;
 
 import com.icio.sportakuz.classes.domain.ClassOccurrence;
 import com.icio.sportakuz.classes.repo.BookingRepository;
