@@ -7,6 +7,7 @@ import com.icio.sportakuz.classes.repo.BookingRepository;
 import com.icio.sportakuz.classes.repo.ClassOccurrenceRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,12 +32,13 @@ public class BookingApiController {
      * Tworzy nową rezerwację w statusie REQUESTED dla podanego wystąpienia zajęć.
      * Walidacje: istnieje klasa, nie jest CANCELLED, nie przekroczono pojemności, brak duplikatu userName.
      */
+    @Transactional
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody CreateBookingRequest req) {
         if (req.classId() == null || req.userName() == null || req.userName().isBlank()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Brak wymaganych danych"));
         }
-        ClassOccurrence occurrence = occurrenceRepository.findById(req.classId()).orElse(null);
+        ClassOccurrence occurrence = occurrenceRepository.findByIdForUpdate(req.classId());
         if (occurrence == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Nie znaleziono zajęć"));
         }
