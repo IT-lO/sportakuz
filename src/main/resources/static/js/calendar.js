@@ -179,11 +179,13 @@
             if(result.ok){
                 showMessage(messageEl,'Rezerwacja została potwierdzona!','#10b981');
                 const nameInput = document.getElementById('user-name'); if(nameInput) nameInput.value='';
-                // Update spots locally (result.body.spots)
                 if(result.body && result.body.spots){
-                   selectedClass.spots = result.body.spots;
-                   // Re-render calendar to update card counts
-                   renderCalendar();
+                    // Update spots for the correct class in the global classes array
+                    const idx = classes.findIndex(c => c.id === selectedClass.id);
+                    if(idx !== -1){
+                        classes[idx].spots = result.body.spots;
+                    }
+                    renderCalendar();
                 }
             } else {
                 const msg = (result.body && result.body.error) ? result.body.error : 'Wystąpił błąd. Spróbuj ponownie.';
