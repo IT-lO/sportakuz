@@ -169,7 +169,7 @@
         confirmBtn.disabled = true; confirmBtn.innerHTML = `${originalText}<span class="loading"></span>`;
         const date = new Date(currentWeekStart); date.setDate(date.getDate() + selectedClass.day);
         // Send booking to backend
-        fetch('/SportakUZ_war_exploded/api/bookings', {
+        fetch('/SportakUZ_war_exploded/api/bookings/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ classId: selectedClass.id, userName })

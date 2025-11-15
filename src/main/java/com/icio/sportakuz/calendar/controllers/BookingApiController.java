@@ -31,7 +31,7 @@ public class BookingApiController {
      * Tworzy nową rezerwację w statusie REQUESTED dla podanego wystąpienia zajęć.
      * Walidacje: istnieje klasa, nie jest CANCELLED, nie przekroczono pojemności, brak duplikatu userName.
      */
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody CreateBookingRequest req) {
         if (req.classId() == null || req.userName() == null || req.userName().isBlank()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Brak wymaganych danych"));
@@ -65,6 +65,30 @@ public class BookingApiController {
         return ResponseEntity.ok(new BookingResponse(booking.getId(), spots));
     }
 
+    @PostMapping("/delete")
+    public ResponseEntity<?> delete(@RequestBody DeleteBookingRequest req) {
+        if (req.classId() == null || req.userName() == null || req.userName().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Brak wymaganych danych"));
+        }
+        ClassOccurrence occurrence = occurrenceRepository.findById(req.classId()).orElse(null);
+        if (occurrence == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Nie znaleziono zajęć"));
+        }
+
+        // Pobierz rezerwację użytkownika do usunięcia
+        Booking booking = bookingRepository.findFirstByClazz_IdAndUserNameAndStatusIn(
+                occurrence.getId(), req.userName(), List.of(BookingStatus.REQUESTED, BookingStatus.CONFIRMED, BookingStatus.PAID));
+        if (booking == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Nie znaleziono rezerwacji do usunięcia"));
+        }
+        bookingRepository.delete(booking);
+
+        long newReserved = bookingRepository.countActiveByClassId(occurrence.getId());
+        String spots = newReserved + "/" + occurrence.getCapacity();
+        return ResponseEntity.ok(new BookingResponse(booking.getId(), spots));
+    }
+
+    public record DeleteBookingRequest(Long classId, String userName) {}
     public record CreateBookingRequest(Long classId, String userName) {}
     public record BookingResponse(Long id, String spots) {}
     public record ErrorResponse(String error) {}

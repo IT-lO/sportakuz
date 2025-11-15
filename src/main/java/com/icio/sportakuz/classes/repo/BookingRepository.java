@@ -27,4 +27,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     /** Sprawdza czy istnieje rezerwacja użytkownika w jednym z podanych statusów. */
     boolean existsByClazz_IdAndUserNameAndStatusIn(
             Long classId, String userName, Collection<BookingStatus> statuses);
+
+    /** Pobiera pierwszą rezerwację użytkownika w jednym z podanych statusów. */
+    Booking findFirstByClazz_IdAndUserNameAndStatusIn(
+      Long classId, String userName, Collection<BookingStatus> statuses);
 }
