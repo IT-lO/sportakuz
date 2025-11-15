@@ -154,36 +154,42 @@
         };
         Object.entries(map).forEach(([id,val]) => { const el = document.getElementById(id); if(el) el.textContent = val; });
         const nameInput = document.getElementById('user-name'); if(nameInput) nameInput.value='';
-        const emailInput = document.getElementById('user-email'); if(emailInput) emailInput.value='';
         const successEl = document.getElementById('success-message'); if(successEl) successEl.style.display='none';
         const modal = document.getElementById('modal'); if(modal) modal.classList.add('active');
     }
 
     function handleBooking(){
         const userName = (document.getElementById('user-name')||{}).value?.trim();
-        const userEmail = (document.getElementById('user-email')||{}).value?.trim();
         const messageEl = document.getElementById('success-message');
-        if(!userName || !userEmail){ showMessage(messageEl,'Wypełnij wszystkie pola','#ef4444'); return; }
+        if(!userName){ showMessage(messageEl,'Podaj imię i nazwisko','#ef4444'); return; }
         if(userReservations.length >= 999){ showMessage(messageEl,'Osiągnięto limit 999 rezerwacji. Usuń niektóre rezerwacje.','#ef4444'); return; }
         const confirmBtn = document.getElementById('confirm-booking');
         if(!confirmBtn) return;
         const originalText = confirmBtn.textContent;
         confirmBtn.disabled = true; confirmBtn.innerHTML = `${originalText}<span class="loading"></span>`;
         const date = new Date(currentWeekStart); date.setDate(date.getDate() + selectedClass.day);
-        const reservation = { class_id: selectedClass.id, user_name: userName, user_email: userEmail, reservation_date: date.toISOString() };
-        if(window.dataSdk){
-            window.dataSdk.create(reservation).then(result => {
-                confirmBtn.disabled = false; confirmBtn.textContent = originalText;
-                if(result.isOk){
-                    showMessage(messageEl,'Rezerwacja została potwierdzona!','#10b981');
-                    const nameInput = document.getElementById('user-name'); if(nameInput) nameInput.value='';
-                    const emailInput = document.getElementById('user-email'); if(emailInput) emailInput.value='';
-                    setTimeout(()=>{ const modal = document.getElementById('modal'); if(modal) modal.classList.remove('active'); },2000);
-                } else {
-                    showMessage(messageEl,'Wystąpił błąd. Spróbuj ponownie.','#ef4444');
+        // Send booking to backend
+        fetch('/SportakUZ_war_exploded/api/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ classId: selectedClass.id, userName })
+        }).then(r => r.json().then(body => ({ ok: r.ok, body })))
+          .then(result => {
+            confirmBtn.disabled = false; confirmBtn.textContent = originalText;
+            if(result.ok){
+                showMessage(messageEl,'Rezerwacja została potwierdzona!','#10b981');
+                const nameInput = document.getElementById('user-name'); if(nameInput) nameInput.value='';
+                // Update spots locally (result.body.spots)
+                if(result.body && result.body.spots){
+                   selectedClass.spots = result.body.spots;
+                   // Re-render calendar to update card counts
+                   renderCalendar();
                 }
-            }).catch(e => { console.error('Reservation error', e); showMessage(messageEl,'Wystąpił błąd. Spróbuj ponownie.','#ef4444'); });
-        }
+            } else {
+                const msg = (result.body && result.body.error) ? result.body.error : 'Wystąpił błąd. Spróbuj ponownie.';
+                showMessage(messageEl,msg,'#ef4444');
+            }
+        }).catch(e => { console.error('Reservation error', e); confirmBtn.disabled=false; confirmBtn.textContent = originalText; showMessage(messageEl,'Wystąpił błąd połączenia.','#ef4444'); });
     }
 
     function showMessage(el, text, bg){ if(!el) return; el.textContent = text; el.style.background = bg; el.style.display='block'; }

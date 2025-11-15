@@ -1,7 +1,6 @@
 package com.icio.sportakuz.calendar.web;
 
 import com.icio.sportakuz.classes.domain.ClassOccurrence;
-import com.icio.sportakuz.classes.domain.ClassStatus;
 import com.icio.sportakuz.classes.repo.BookingRepository;
 import com.icio.sportakuz.classes.repo.ClassOccurrenceRepository;
 import org.springframework.stereotype.Controller;
