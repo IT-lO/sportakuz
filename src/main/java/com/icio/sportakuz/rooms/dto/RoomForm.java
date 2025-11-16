@@ -4,11 +4,15 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * DTO (Data Transfer Object) reprezentujący dane z formularza dodawania/edycji sali.
  * Zawiera walidację pól.
  */
+@Getter
+@Setter
 public class RoomForm {
 
     @NotBlank(message = "Nazwa sali jest wymagana.")
@@ -23,36 +27,4 @@ public class RoomForm {
     private Integer capacity;
 
     private boolean active = true;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
 }

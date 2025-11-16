@@ -3,6 +3,7 @@ package com.icio.sportakuz.classes.web;
 import com.icio.sportakuz.classes.domain.*;
 import com.icio.sportakuz.classes.repo.*;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -26,8 +27,8 @@ import java.time.ZoneId;
  */
 @Controller
 @RequestMapping("/classes")
+@Slf4j
 public class ClassOccurrenceController {
-    private static final Logger log = LoggerFactory.getLogger(ClassOccurrenceController.class);
 
     private final ClassOccurrenceRepository classOccurrenceRepository;
     private final ClassTypeRepository classTypeRepository;

@@ -1,6 +1,9 @@
 package com.icio.sportakuz.classes.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.OffsetDateTime;
 
 /**
@@ -10,6 +13,8 @@ import java.time.OffsetDateTime;
  */
 @Entity
 @Table(name = "class_series")
+@Getter
+@Setter
 public class ClassSeries {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -58,96 +63,4 @@ public class ClassSeries {
     /** Timestamp utworzenia rekordu. */
     @Column(name="created_at", nullable=false, insertable=false, updatable=false)
     private OffsetDateTime createdAt;
-
-    public Long getId() {
-        return id;
-    }
-
-    public ClassType getType() {
-        return type;
-    }
-
-    public void setType(ClassType type) {
-        this.type = type;
-    }
-
-    public Instructor getInstructor() {
-        return instructor;
-    }
-
-    public void setInstructor(Instructor instructor) {
-        this.instructor = instructor;
-    }
-
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
-    public OffsetDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(OffsetDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public OffsetDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(OffsetDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
-
-    public RecurrencePattern getRecurrencePattern() {
-        return recurrencePattern;
-    }
-
-    public void setRecurrencePattern(RecurrencePattern recurrencePattern) {
-        this.recurrencePattern = recurrencePattern;
-    }
-
-    public OffsetDateTime getRecurrenceUntil() {
-        return recurrenceUntil;
-    }
-
-    public void setRecurrenceUntil(OffsetDateTime recurrenceUntil) {
-        this.recurrenceUntil = recurrenceUntil;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }

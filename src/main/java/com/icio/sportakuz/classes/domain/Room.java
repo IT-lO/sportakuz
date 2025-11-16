@@ -1,6 +1,9 @@
 package com.icio.sportakuz.classes.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.OffsetDateTime;
 
 /**
@@ -11,6 +14,8 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "rooms",
         uniqueConstraints = @UniqueConstraint(name = "uk_rooms_name", columnNames = "name"))
+@Getter
+@Setter
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,48 +40,4 @@ public class Room {
     /** Timestamp utworzenia rekordu (ustawiany przez DB). */
     @Column(name="created_at", nullable=false, insertable=false, updatable=false)
     private OffsetDateTime createdAt;
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }

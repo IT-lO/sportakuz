@@ -1,6 +1,8 @@
 package com.icio.sportakuz.classes.web;
 
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -11,6 +13,8 @@ import java.time.LocalTime;
  * OffsetDateTime (po stronie kontrolera). Walidacje Bean Validation gwarantują podstawową
  * poprawność danych przed mapowaniem na encję.
  */
+@Getter
+@Setter
 public class ClassOccurrenceForm {
 
     /** Id typu zajęć (ClassType). */
@@ -48,28 +52,4 @@ public class ClassOccurrenceForm {
     /** Opcjonalna notatka organizacyjna (limit znaków w walidacji). */
     @Size(max = 1000)
     private String note;
-
-    public Long getClassTypeId() { return classTypeId; }
-    public void setClassTypeId(Long classTypeId) { this.classTypeId = classTypeId; }
-
-    public Long getInstructorId() { return instructorId; }
-    public void setInstructorId(Long instructorId) { this.instructorId = instructorId; }
-
-    public Long getRoomId() { return roomId; }
-    public void setRoomId(Long roomId) { this.roomId = roomId; }
-
-    public LocalDate getDate() { return date; }
-    public void setDate(LocalDate date) { this.date = date; }
-
-    public LocalTime getStartTime() { return startTime; }
-    public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
-
-    public Integer getDurationMinutes() { return durationMinutes; }
-    public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
-
-    public Integer getCapacity() { return capacity; }
-    public void setCapacity(Integer capacity) { this.capacity = capacity; }
-
-    public String getNote() { return note; }
-    public void setNote(String note) { this.note = note; }
 }

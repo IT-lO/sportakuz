@@ -1,6 +1,9 @@
 package com.icio.sportakuz.classes.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.OffsetDateTime;
 
 /**
@@ -10,6 +13,8 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "instructors",
         uniqueConstraints = @UniqueConstraint(name = "uk_instructors_email", columnNames = "email"))
+@Getter
+@Setter
 public class Instructor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,64 +47,4 @@ public class Instructor {
     /** Timestamp utworzenia rekordu (ustawiany przez DB). */
     @Column(name="created_at", nullable=false, insertable=false, updatable=false)
     private OffsetDateTime createdAt;
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }

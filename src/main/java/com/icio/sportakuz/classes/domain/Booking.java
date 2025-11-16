@@ -1,6 +1,9 @@
 package com.icio.sportakuz.classes.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.OffsetDateTime;
 
 /**
@@ -14,6 +17,8 @@ import java.time.OffsetDateTime;
                 @Index(name="idx_bookings_class", columnList="class_id"),
                 @Index(name="idx_bookings_status", columnList="status")
         })
+@Getter
+@Setter
 public class Booking {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,48 +44,4 @@ public class Booking {
     /** Timestamp anulowania (jeśli status CANCELLED). */
     @Column(name="cancelled_at")
     private OffsetDateTime cancelledAt;
-
-    public Long getId() {
-        return id;
-    }
-
-    public ClassOccurrence getClazz() {
-        return clazz;
-    }
-
-    public void setClazz(ClassOccurrence clazz) {
-        this.clazz = clazz;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public BookingStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(BookingStatus status) {
-        this.status = status;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public OffsetDateTime getCancelledAt() {
-        return cancelledAt;
-    }
-
-    public void setCancelledAt(OffsetDateTime cancelledAt) {
-        this.cancelledAt = cancelledAt;
-    }
 }
