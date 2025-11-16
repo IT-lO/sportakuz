@@ -1,4 +1,4 @@
-package com.icio.sportakuz.calendar.controllers;
+package com.icio.sportakuz.bookings.controllers;
 
 import com.icio.sportakuz.classes.domain.ClassOccurrence;
 import com.icio.sportakuz.classes.repo.BookingRepository;
@@ -40,7 +40,7 @@ public class CalendarController {
         List<ClassOccurrence> occurrences = classOccurrenceRepository.findNextVisible(OffsetDateTime.now(), org.springframework.data.domain.Pageable.unpaged());
         List<CalendarClassDto> dtoList = occurrences.stream().map(this::toDto).collect(Collectors.toList());
         model.addAttribute("classes", dtoList);
-        return "calendar/calendar";
+        return "bookings/calendar";
     }
 
     private CalendarClassDto toDto(ClassOccurrence c) {

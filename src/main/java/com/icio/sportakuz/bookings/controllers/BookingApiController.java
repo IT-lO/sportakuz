@@ -1,4 +1,4 @@
-package com.icio.sportakuz.calendar.controllers;
+package com.icio.sportakuz.bookings.controllers;
 
 import com.icio.sportakuz.classes.domain.Booking;
 import com.icio.sportakuz.classes.domain.BookingStatus;

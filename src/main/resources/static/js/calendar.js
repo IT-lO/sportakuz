@@ -1,4 +1,3 @@
-// Calendar page script extracted from template (SPORTAKUZ-16)
 (function(){
     const defaultConfig = {
         background_color: "#ffffff",
