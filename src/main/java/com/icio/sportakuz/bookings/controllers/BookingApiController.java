@@ -67,6 +67,26 @@ public class BookingApiController {
         return ResponseEntity.ok(new BookingResponse(booking.getId(), spots));
     }
 
+    /**
+     * Usuwa rezerwację na podstawie jej ID.
+     */
+    @PostMapping("/cancel")
+    public ResponseEntity<?> cancel(@RequestBody CancelBookingRequest req) {
+        if (req.bookingId() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Brak wymaganych danych"));
+        }
+
+        Booking booking = bookingRepository.findById(req.bookingId()).orElse(null);
+        if (booking == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Nie znaleziono rezerwacji do usunięcia"));
+        }
+        bookingRepository.delete(booking);
+        return ResponseEntity.ok(new CancelBookingResponse());
+    }
+
+    /**
+     * Usuwa rezerwację na podstawie ID klasy oraz nazwy użytkownika.
+     */
     @PostMapping("/delete")
     public ResponseEntity<?> delete(@RequestBody DeleteBookingRequest req) {
         if (req.classId() == null || req.userName() == null || req.userName().isBlank()) {
@@ -90,6 +110,8 @@ public class BookingApiController {
         return ResponseEntity.ok(new BookingResponse(booking.getId(), spots));
     }
 
+    public record CancelBookingRequest(Long bookingId) {}
+    public record CancelBookingResponse() {}
     public record DeleteBookingRequest(Long classId, String userName) {}
     public record CreateBookingRequest(Long classId, String userName) {}
     public record BookingResponse(Long id, String spots) {}
