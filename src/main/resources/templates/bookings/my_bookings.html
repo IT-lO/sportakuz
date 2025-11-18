@@ -22,7 +22,16 @@
                 <button class="cancel-button" type="button" th:attr="data-activity=${b.activityName}" onclick="BookingsPage.showCancelModal(this)">Anuluj rezerwację</button>
                 <div class="activity-name" th:text="${b.activityName}">Nazwa zajęć</div>
                 <div class="reservation-details">
-                    <div class="detail-item"><span class="detail-label">Instruktor:</span> <span class="detail-value instructor-name" th:text="${b.instructor}">Instruktor</span></div>
+                      <div class="detail-item">
+                        <span class="detail-label">Instruktor:</span>
+                        <span class="detail-value instructor-name"
+                            th:if="${b.isSubstitution}"
+                            th:utext="'&lt;s&gt;' + ${b.instructor} + '&lt;/s&gt;'">Instruktor</span>
+                        <span class="detail-value instructor-name"
+                            th:unless="${b.isSubstitution}"
+                            th:text="${b.instructor}">Instruktor</span>
+                      </div>
+                    <div class="detail-item" th:if="${b.isSubstitution}" ><span class="detail-label">Zastępstwo:</span> <span class="detail-value instructor-name" th:text="${b.substitutedFor}">Instruktor</span></div>
                     <div class="detail-item"><span class="detail-label">Data:</span> <span class="detail-value" th:text="${b.date}">Data</span></div>
                     <div class="detail-item"><span class="detail-label">Godzina:</span> <span class="detail-value" th:text="${b.time}">Godzina</span></div>
                     <div class="detail-item"><span class="detail-label">Czas trwania:</span> <span class="detail-value" th:text="${b.duration}">60 minut</span></div>

@@ -44,6 +44,9 @@ public class MyBookingsController {
 		String date = startZoned.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE); // yyyy-MM-dd
 		String time = startZoned.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"));
 		int duration = (int) java.time.Duration.between(startZoned.toOffsetDateTime(), endZoned.toOffsetDateTime()).toMinutes();
+		String substitutedFor = b.getClazz().getSubstitutedFor() != null
+				? (b.getClazz().getSubstitutedFor().getFirstName() + " " + b.getClazz().getSubstitutedFor().getLastName())
+				: null;
 
 		return new MyBookingDto(
 			b.getId(),
@@ -52,7 +55,9 @@ public class MyBookingsController {
 			date,
 			time,
 			duration,
-			b.getClazz().getRoom().getName()
+			b.getClazz().getRoom().getName(),
+			substitutedFor,
+			substitutedFor != null
 			);
 	}
 }

@@ -120,9 +120,16 @@
                 .sort((a,b)=>a.time.localeCompare(b.time));
             dayClasses.forEach(classData => {
                 const classCard = document.createElement('div'); classCard.className = 'class-card';
+                const instructorLine = (classData.isSubstitution && classData.substitutedFor)
+                    ? `<div class="class-info">👤 <s>${classData.instructor}</s></div>`
+                    : `<div class="class-info">👤 ${classData.instructor}</div>`;
+                const substitutionLine = (classData.isSubstitution && classData.substitutedFor)
+                    ? `<div class="class-info">🔄 ${classData.substitutedFor}</div>`
+                    : '';
                 classCard.innerHTML = `<div class="class-name">${classData.name}</div>
 <div class="class-info">🕐 ${classData.time} (${classData.duration} min)</div>
-<div class="class-info">👤 ${classData.instructor}</div>
+${instructorLine}
+${substitutionLine}
 <div class="class-info">📍 Miejsca: ${classData.spots}</div>`;
                 classCard.addEventListener('click', () => openModal(classData, day));
                 dayColumn.appendChild(classCard);
@@ -149,9 +156,18 @@
             'modal-room': classData.room,
             'modal-instructor': classData.instructor,
             'modal-spots': classData.spots,
-            'modal-level': classData.level
+            'modal-level': classData.level,
+            'modal-substituted-for': classData.isSubstitution && classData.substitutedFor ? classData.substitutedFor : ''
         };
         Object.entries(map).forEach(([id,val]) => { const el = document.getElementById(id); if(el) el.textContent = val; });
+        const substitutionRow = document.getElementById('row-substituted-for');
+        if(substitutionRow){
+            if(classData.isSubstitution && classData.substitutedFor){
+                substitutionRow.style.display='flex';
+            } else {
+                substitutionRow.style.display='none';
+            }
+        }
         const nameInput = document.getElementById('user-name'); if(nameInput) nameInput.value='';
         const successEl = document.getElementById('success-message'); if(successEl) successEl.style.display='none';
         const modal = document.getElementById('modal'); if(modal) modal.classList.add('active');

@@ -54,6 +54,9 @@ public class CalendarController {
         long reserved = bookingRepository.countActiveByClassId(c.getId());
         String spots = reserved + "/" + c.getCapacity();
         String level = c.getType() != null ? c.getType().getDifficulty().toString() : null;
+        String substitutedFor = c.getSubstitutedFor() != null
+                ? (c.getSubstitutedFor().getFirstName() + " " + c.getSubstitutedFor().getLastName())
+                : null;
 
         return new CalendarClassDto(
             c.getId(),
@@ -65,7 +68,9 @@ public class CalendarController {
             c.getRoom() != null ? c.getRoom().getName() : "Sala",
             c.getInstructor() != null ? (c.getInstructor().getFirstName() + " " + c.getInstructor().getLastName()) : "Instruktor",
             spots,
-            level == null ? "" : level
+            level == null ? "" : level,
+            substitutedFor,
+            substitutedFor != null
         );
     }
 }

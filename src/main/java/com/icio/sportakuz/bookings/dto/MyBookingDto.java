@@ -7,5 +7,7 @@ public record MyBookingDto(
         String date,
         String time,
         int duration,
-        String room
+        String room,
+        String substitutedFor,
+        boolean isSubstitution
 ) {}
