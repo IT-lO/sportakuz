@@ -1,10 +1,11 @@
 package com.icio.sportakuz.classes.domain;
 
+import com.icio.sportakuz.classtypes.DifficultyLevel;
 import jakarta.persistence.*;
 
 /**
  * Definicja typu zajęć (np. Joga, Pilates). Zawiera nazwę, opis, domyślny czas trwania
- * oraz trudność (tekstowa etykieta). Używane przez ClassSeries i ClassOccurrence.
+ * oraz trudność (enum). Używane przez ClassSeries i ClassOccurrence.
  */
 @Entity
 @Table(name = "class_types",
@@ -21,13 +22,13 @@ public class ClassType {
     @Column(columnDefinition="text")
     private String description;
 
-    /** Domyślny czas trwania w minutach (opcjonalny). */
-    @Column(name="default_duration_minutes")
+    /** Domyślny czas trwania w minutach. */
+    @Column(name="default_duration_minutes", nullable=false)
     private Integer defaultDurationMinutes;
 
-    /** Poziom trudności jako etykieta (brak formalnego enumu). */
-    @Column(length=20) // w DB brak enumu/constraintu
-    private String difficulty;
+    /** Poziom trudności jako etykieta (enum). */
+    @Enumerated(EnumType.STRING)
+    private DifficultyLevel difficulty;
 
     public Long getId() {
         return id;
@@ -57,11 +58,11 @@ public class ClassType {
         this.defaultDurationMinutes = defaultDurationMinutes;
     }
 
-    public String getDifficulty() {
+    public DifficultyLevel getDifficulty() {
         return difficulty;
     }
 
-    public void setDifficulty(String difficulty) {
+    public void setDifficulty(DifficultyLevel difficulty) {
         this.difficulty = difficulty;
     }
 }

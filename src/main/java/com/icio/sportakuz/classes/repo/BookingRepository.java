@@ -23,7 +23,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                               com.icio.sportakuz.classes.domain.BookingStatus.CONFIRMED,
                               com.icio.sportakuz.classes.domain.BookingStatus.PAID)
            """)
-       long countActiveByClassId(@Param("classId") Long classId);
+    long countActiveByClassId(@Param("classId") Long classId);
 
     /** Sprawdza czy istnieje rezerwacja użytkownika w jednym z podanych statusów. */
     boolean existsByClazz_IdAndUserNameAndStatusIn(

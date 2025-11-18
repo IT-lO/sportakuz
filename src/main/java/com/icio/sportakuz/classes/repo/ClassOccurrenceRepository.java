@@ -105,6 +105,12 @@ public interface ClassOccurrenceRepository extends JpaRepository<ClassOccurrence
            """)
     List<ClassOccurrence> findNextVisible(@Param("now") OffsetDateTime now, Pageable pageable);
 
+    /** Sprawdza czy istnieje wystąpienie w danej serii dokładnie o wskazanym starcie. */
+    boolean existsBySeries_IdAndStartTime(Long seriesId, OffsetDateTime startTime);
+
+    /** Wszystkie wystąpienia powiązane z daną serią. */
+    List<ClassOccurrence> findBySeries_Id(Long seriesId);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select c from ClassOccurrence c where c.id = :id")
     ClassOccurrence findByIdForUpdate(@Param("id") Long id);
