@@ -2,8 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pl" th:replace="~{fragments :: base('Moje Rezerwacje', ~{::content})}">
 <div th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/my_bookings.css}" />
-    <script th:src="@{/_sdk/data_sdk.js}"></script>
-    <script th:src="@{/_sdk/element_sdk.js}"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
         window.__bookings = /*[[${bookings}]]*/ [];

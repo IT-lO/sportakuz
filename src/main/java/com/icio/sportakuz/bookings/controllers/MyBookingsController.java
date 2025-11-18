@@ -2,6 +2,7 @@ package com.icio.sportakuz.bookings.controllers;
 
 import com.icio.sportakuz.classes.domain.Booking;
 import com.icio.sportakuz.classes.repo.BookingRepository;
+import com.icio.sportakuz.bookings.dto.MyBookingDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,7 +45,6 @@ public class MyBookingsController {
 		String time = startZoned.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"));
 		int duration = (int) java.time.Duration.between(startZoned.toOffsetDateTime(), endZoned.toOffsetDateTime()).toMinutes();
 
-
 		return new MyBookingDto(
 			b.getId(),
 			b.getClazz().getType() != null ? b.getClazz().getType().getName() : "Zajęcia",
@@ -55,14 +55,4 @@ public class MyBookingsController {
 			b.getClazz().getRoom().getName()
 			);
 	}
-
-	public record MyBookingDto(
-			Long id,
-			String activityName,
-			String instructor,
-			String date,
-			String time,
-			int duration,
-			String room
-	) {}
 }

@@ -3,6 +3,7 @@ package com.icio.sportakuz.bookings.controllers;
 import com.icio.sportakuz.classes.domain.ClassOccurrence;
 import com.icio.sportakuz.classes.repo.BookingRepository;
 import com.icio.sportakuz.classes.repo.ClassOccurrenceRepository;
+import com.icio.sportakuz.bookings.dto.CalendarClassDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,7 +53,8 @@ public class CalendarController {
         int duration = (int) java.time.Duration.between(startZoned.toOffsetDateTime(), endZoned.toOffsetDateTime()).toMinutes();
         long reserved = bookingRepository.countActiveByClassId(c.getId());
         String spots = reserved + "/" + c.getCapacity();
-        String level = c.getType() != null ? c.getType().getDifficulty() : null;
+        String level = c.getType() != null ? c.getType().getDifficulty().toString() : null;
+
         return new CalendarClassDto(
             c.getId(),
             c.getType() != null ? c.getType().getName() : "Zajęcia",
@@ -66,29 +68,4 @@ public class CalendarController {
             level == null ? "" : level
         );
     }
-
-    /**
-     * Uproszczony DTO przekazywany do JS (lista).
-     * Pola:
-     *  id          - identyfikator wystąpienia
-     *  name        - nazwa typu zajęć
-     *  day         - indeks dnia tygodnia (0=Pon)
-     *  date        - pełna data (yyyy-MM-dd) do filtrowania tygodni
-     *  time        - godzina startu (HH:mm)
-     *  duration    - czas trwania w minutach
-    *  room        - nazwa sali
-    *  instructor  - imię i nazwisko instruktora
-     *  spots       - zajęte/pojemność
-     *  level       - trudność (lub pusty string)
-     */
-    public record CalendarClassDto(Long id,
-                                   String name,
-                                   int day,
-                                   String date,
-                                   String time,
-                                   int duration,
-                                   String room,
-                                   String instructor,
-                                   String spots,
-                                   String level) {}
 }
