@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * REST API do tworzenia rezerwacji z widoku kalendarza.
+ * REST API do tworzenia & usuwania rezerwacji.
  */
 @RestController
 @RequestMapping("/api/bookings")

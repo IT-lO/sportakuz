@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 /**
  * Kontroler widoku kalendarza. Ładuje wystąpienia zajęć z bazy i udostępnia je
- * jako uproszczone DTO serializowane przez Thymeleaf do JS.
+ * jako DTO serializowane przez Thymeleaf do JS.
  */
 @Controller
 @RequestMapping("/calendar")

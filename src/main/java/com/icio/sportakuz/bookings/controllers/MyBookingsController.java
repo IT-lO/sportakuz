@@ -13,6 +13,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Kontroler widoku rezerwacji. Ładuje wystąpienia zajęć z bazy i udostępnia je
+ * jako DTO serializowane przez Thymeleaf do JS.
+ */
 @Controller
 @RequestMapping("/my/bookings")
 public class MyBookingsController {
