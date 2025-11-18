@@ -7,8 +7,11 @@
         window.__bookings = /*[[${bookings}]]*/ [];
         /*]]>*/
     </script>
-    <main class="container">
-        <h1 class="main-title" id="mainTitle" th:text="${pageTitle != null} ? ${pageTitle} : 'Moje rezerwacje'"></h1>
+    <div class="container">
+        <div class="header">
+            <h1 id="mainTitle" th:text="${pageTitle != null} ? ${pageTitle} : 'Moje rezerwacje'"></h1>
+            <p>Twoje aktywne rezerwacje</p>
+        </div>
         <div class="reservations-list" id="reservationsList">
             <div th:if="${#lists.isEmpty(bookings)}" class="empty-state">
                 <div class="empty-icon">📅</div>
@@ -27,7 +30,7 @@
                 </div>
             </div>
         </div>
-    </main>
+    </div>
     <div class="modal-overlay" id="cancelModal">
         <div class="modal-content">
             <div class="modal-title">Anulowanie rezerwacji</div>

@@ -67,17 +67,6 @@
     window.BookingsPage = BookingsPage;
 
     function applyConfig(cfg){
-        const baseSize = cfg.font_size || defaultConfig.font_size;
-        document.body.style.fontFamily = (cfg.font_family || defaultConfig.font_family) + ', Tahoma, Geneva, Verdana, sans-serif';
-        document.body.style.background = cfg.background_color || defaultConfig.background_color;
-        document.body.style.color = cfg.text_color || defaultConfig.text_color;
-        document.body.style.fontSize = baseSize + 'px';
-        const title = document.getElementById('mainTitle');
-        if(title){
-            title.textContent = cfg.main_title || defaultConfig.main_title;
-            title.style.color = cfg.primary_action_color || defaultConfig.primary_action_color;
-            title.style.fontSize = (baseSize * 2.5) + 'px';
-        }
         document.querySelectorAll('.cancel-button').forEach(btn => {
             btn.textContent = cfg.cancel_button_text || defaultConfig.cancel_button_text;
         });
