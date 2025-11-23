@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl" th:replace="~{fragments :: base('Kalendarz Zajęć Sportowych', ~{::content})}">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/calendar.css}" />
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.__classes = /*[[${classes}]]*/ [];
+        /*]]>*/
+    </script>
+    <div class="container">
+    <div class="header">
+        <h1 id="page-title">Kalendarz Zajęć Sportowych</h1>
+        <p>Wybierz zajęcia i zarezerwuj swoje miejsce</p>
+    </div>
+    <div class="week-navigation"><button class="nav-button" id="prev-week">← Poprzedni tydzień</button>
+        <div class="week-display" id="week-display"></div><button class="nav-button" id="next-week">Następny tydzień →</button>
+    </div>
+    <div class="calendar">
+        <div class="calendar-header" id="calendar-header"></div>
+        <div class="calendar-body" id="calendar-body"></div>
+    </div>
+</div>
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <div id="success-message" style="display: none;" class="success-message"></div>
+        <div class="modal-header">
+            <h2 id="modal-title"></h2>
+        </div>
+        <div class="modal-details">
+            <div class="detail-row">
+                <div class="detail-label">
+                    Data:
+                </div>
+                <div class="detail-value" id="modal-date"></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">
+                    Godzina:
+                </div>
+                <div class="detail-value" id="modal-time"></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">
+                    Sala:
+                </div>
+                <div class="detail-value" id="modal-room"></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">
+                    Instruktor:
+                </div>
+                <div class="detail-value" id="modal-instructor"></div>
+            </div>
+            <div class="detail-row" id="row-substituted-for" style="display:none;">
+                <div class="detail-label">
+                    Zastępstwo:
+                </div>
+                <div class="detail-value" id="modal-substituted-for"></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">
+                    Miejsca:
+                </div>
+                <div class="detail-value" id="modal-spots"></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">
+                    Poziom:
+                </div>
+                <div class="detail-value" id="modal-level"></div>
+            </div>
+        </div>
+        <div class="reservation-form">
+            <div class="form-group"><label for="user-name" class="form-label">Imię i nazwisko</label> <input type="text" id="user-name" class="form-input" placeholder="Wpisz swoje imię i nazwisko"></div>
+        </div>
+        <div class="modal-actions"><button class="btn btn-secondary" id="close-modal">Anuluj</button> <button class="btn btn-primary" id="confirm-booking">Zarezerwuj</button>
+        </div>
+    </div>
+</div>
+    <script th:src="@{/js/calendar.js}"></script>
+</div>
+</html>
