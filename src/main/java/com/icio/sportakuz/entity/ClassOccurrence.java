@@ -64,4 +64,9 @@ public class ClassOccurrence {
     /** Timestamp ostatniej aktualizacji (DB). */
     @Column(name="updated_at", nullable=false, insertable=false, updatable=false)
     private OffsetDateTime updatedAt;
+
+    /** Instruktor, za którego prowadzone są zajęcia w zastępstwie (jeśli dotyczy). */
+    @ManyToOne
+    @JoinColumn(name = "substituted_for_id")
+    private Instructor substitutedFor;
 }

@@ -1,10 +1,11 @@
-package com.icio.sportakuz.bookings.controllers;
+package com.icio.sportakuz.controller.booking;
 
-import com.icio.sportakuz.classes.domain.Booking;
-import com.icio.sportakuz.classes.domain.BookingStatus;
-import com.icio.sportakuz.classes.domain.ClassOccurrence;
-import com.icio.sportakuz.classes.repo.BookingRepository;
-import com.icio.sportakuz.classes.repo.ClassOccurrenceRepository;
+import com.icio.sportakuz.entity.Booking;
+import com.icio.sportakuz.entity.ClassOccurrence;
+import com.icio.sportakuz.repo.BookingStatus;
+import com.icio.sportakuz.repo.BookingRepository;
+import com.icio.sportakuz.repo.ClassOccurrenceRepository;
+import com.icio.sportakuz.repo.ClassStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +43,7 @@ public class BookingApiController {
         if (occurrence == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Nie znaleziono zajęć"));
         }
-        if (occurrence.getStatus() == com.icio.sportakuz.classes.domain.ClassStatus.CANCELLED) {
+        if (occurrence.getStatus() == ClassStatus.CANCELLED) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("Zajęcia anulowane"));
         }
         long reserved = bookingRepository.countActiveByClassId(occurrence.getId());

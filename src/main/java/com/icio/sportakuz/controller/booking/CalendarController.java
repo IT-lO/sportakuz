@@ -1,9 +1,9 @@
-package com.icio.sportakuz.bookings.controllers;
+package com.icio.sportakuz.controller.booking;
 
-import com.icio.sportakuz.classes.domain.ClassOccurrence;
-import com.icio.sportakuz.classes.repo.BookingRepository;
-import com.icio.sportakuz.classes.repo.ClassOccurrenceRepository;
-import com.icio.sportakuz.bookings.dto.CalendarClassDto;
+import com.icio.sportakuz.entity.ClassOccurrence;
+import com.icio.sportakuz.repo.BookingRepository;
+import com.icio.sportakuz.repo.ClassOccurrenceRepository;
+import com.icio.sportakuz.dto.booking.CalendarClassDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

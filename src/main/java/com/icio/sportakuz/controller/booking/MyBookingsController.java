@@ -1,8 +1,8 @@
-package com.icio.sportakuz.bookings.controllers;
+package com.icio.sportakuz.controller.booking;
 
-import com.icio.sportakuz.classes.domain.Booking;
-import com.icio.sportakuz.classes.repo.BookingRepository;
-import com.icio.sportakuz.bookings.dto.MyBookingDto;
+import com.icio.sportakuz.entity.Booking;
+import com.icio.sportakuz.repo.BookingRepository;
+import com.icio.sportakuz.dto.booking.MyBookingDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

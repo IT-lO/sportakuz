@@ -2,12 +2,10 @@ package com.icio.sportakuz.controller;
 
 import com.icio.sportakuz.dto.ClassOccurrenceForm;
 import com.icio.sportakuz.entity.ClassOccurrence;
+import com.icio.sportakuz.entity.ClassType;
+import com.icio.sportakuz.entity.Instructor;
 import com.icio.sportakuz.entity.Room;
-import com.icio.sportakuz.repo.ClassStatus;
-import com.icio.sportakuz.repo.ClassOccurrenceRepository;
-import com.icio.sportakuz.repo.ClassTypeRepository;
-import com.icio.sportakuz.repo.InstructorRepository;
-import com.icio.sportakuz.repo.RoomRepository;
+import com.icio.sportakuz.repo.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

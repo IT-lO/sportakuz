@@ -1,4 +1,4 @@
-package com.icio.sportakuz.bookings.dto;
+package com.icio.sportakuz.dto.booking;
 
 /**
  * DTO przekazywany do JS (lista) wykorzystywany w moich rezerwacjach (MyBookings).

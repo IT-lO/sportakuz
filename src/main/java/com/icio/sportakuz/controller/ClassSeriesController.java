@@ -1,11 +1,8 @@
-package com.icio.sportakuz.classes.web;
+package com.icio.sportakuz.controller;
 
-import com.icio.sportakuz.classes.domain.*;
-import com.icio.sportakuz.classes.repo.ClassOccurrenceRepository;
-import com.icio.sportakuz.classes.repo.ClassSeriesRepository;
-import com.icio.sportakuz.classes.repo.ClassTypeRepository;
-import com.icio.sportakuz.classes.repo.InstructorRepository;
-import com.icio.sportakuz.classes.repo.RoomRepository;
+import com.icio.sportakuz.entity.*;
+import com.icio.sportakuz.repo.*;
+import com.icio.sportakuz.dto.ClassSeriesForm;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
