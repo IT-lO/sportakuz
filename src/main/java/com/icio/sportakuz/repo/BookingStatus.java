@@ -8,5 +8,18 @@ package com.icio.sportakuz.repo;
  * CANCELLED - anulowana przez system lub użytkownika
  */
 public enum BookingStatus {
-    REQUESTED, CONFIRMED, PAID, CANCELLED
+    REQUESTED("Zgłoszona"),
+    CONFIRMED("Potwierdzona"),
+    PAID("Opłacona"),
+    CANCELLED("Anulowana");
+
+    private final String label;
+
+    BookingStatus(String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return label;
+    }
 }

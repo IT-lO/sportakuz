@@ -1,5 +1,7 @@
 package com.icio.sportakuz.repo;
 
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
 import com.icio.sportakuz.entity.ClassOccurrence;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -101,4 +103,15 @@ public interface ClassOccurrenceRepository extends JpaRepository<ClassOccurrence
            order by c.startTime asc
            """)
     List<ClassOccurrence> findNextVisible(@Param("now") OffsetDateTime now, Pageable pageable);
+
+    /** Sprawdza czy istnieje wystąpienie w danej serii dokładnie o wskazanym starcie. */
+    boolean existsBySeries_IdAndStartTime(Long seriesId, OffsetDateTime startTime);
+
+    /** Wszystkie wystąpienia powiązane z daną serią. */
+    List<ClassOccurrence> findBySeries_Id(Long seriesId);
+
+    /** Pobiera wystąpienie zajęć po ID. Blokuje wykonanie metody na czas transakcji.*/
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select c from ClassOccurrence c where c.id = :id")
+    ClassOccurrence findByIdForUpdate(@Param("id") Long id);
 }

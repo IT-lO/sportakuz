@@ -7,4 +7,20 @@ package com.icio.sportakuz.repo;
  * CANCELLED - odwołane
  * FINISHED - zakończone (archiwalne)
  */
-public enum ClassStatus {PLANNED, OPEN, CANCELLED, FINISHED}
+public enum ClassStatus {
+    PLANNED("Zaplanowane"),
+    OPEN("Otwarte"),
+    CANCELLED("Odwołane"),
+    FINISHED("Zakończone");
+
+    private final String label;
+
+    ClassStatus(String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+}
+

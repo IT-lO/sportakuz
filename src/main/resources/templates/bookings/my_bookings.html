@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl" th:replace="~{fragments :: base('Moje Rezerwacje', ~{::content})}">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/my_bookings.css}" />
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.__bookings = /*[[${bookings}]]*/ [];
+        /*]]>*/
+    </script>
+    <div class="container">
+        <div class="header">
+            <h1 id="mainTitle" th:text="${pageTitle != null} ? ${pageTitle} : 'Moje rezerwacje'"></h1>
+            <p>Twoje aktywne rezerwacje</p>
+        </div>
+        <div class="reservations-list" id="reservationsList">
+            <div th:if="${#lists.isEmpty(bookings)}" class="empty-state">
+                <div class="empty-icon">📅</div>
+                <h3>Brak aktywnych rezerwacji</h3>
+                <p>Nie masz obecnie żadnych zarezerwowanych zajęć sportowych.</p>
+            </div>
+            <div th:each="b : ${bookings}" class="reservation-card" th:attr="data-booking-id=${b.id}">
+                <button class="cancel-button" type="button" th:attr="data-activity=${b.activityName}" onclick="BookingsPage.showCancelModal(this)">Anuluj rezerwację</button>
+                <div class="activity-name" th:text="${b.activityName}">Nazwa zajęć</div>
+                <div class="reservation-details">
+                      <div class="detail-item">
+                        <span class="detail-label">Instruktor:</span>
+                        <span class="detail-value instructor-name"
+                            th:if="${b.isSubstitution}"
+                            th:utext="'&lt;s&gt;' + ${b.instructor} + '&lt;/s&gt;'">Instruktor</span>
+                        <span class="detail-value instructor-name"
+                            th:unless="${b.isSubstitution}"
+                            th:text="${b.instructor}">Instruktor</span>
+                      </div>
+                    <div class="detail-item" th:if="${b.isSubstitution}" ><span class="detail-label">Zastępstwo:</span> <span class="detail-value instructor-name" th:text="${b.substitutedFor}">Instruktor</span></div>
+                    <div class="detail-item"><span class="detail-label">Data:</span> <span class="detail-value" th:text="${b.date}">Data</span></div>
+                    <div class="detail-item"><span class="detail-label">Godzina:</span> <span class="detail-value" th:text="${b.time}">Godzina</span></div>
+                    <div class="detail-item"><span class="detail-label">Czas trwania:</span> <span class="detail-value" th:text="${b.duration}">60 minut</span></div>
+                    <div class="detail-item"><span class="detail-label">Sala:</span> <span class="detail-value" th:text="${b.room}">Sala</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="cancelModal">
+        <div class="modal-content">
+            <div class="modal-title">Anulowanie rezerwacji</div>
+            <div class="modal-message" id="modalMessage">Czy na pewno chcesz anulować tę rezerwację?</div>
+            <div class="modal-buttons">
+                <button class="modal-button confirm-button" type="button" onclick="BookingsPage.confirmCancel()">Tak, anuluj</button>
+                <button class="modal-button cancel-modal-button" type="button" onclick="BookingsPage.closeCancelModal()">Nie, zostaw</button>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/my_bookings.js}"></script>
+</div>
+</html>
