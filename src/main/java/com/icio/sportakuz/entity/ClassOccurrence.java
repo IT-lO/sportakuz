@@ -4,6 +4,8 @@ import com.icio.sportakuz.repo.ClassStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.OffsetDateTime;
 
@@ -58,11 +60,13 @@ public class ClassOccurrence {
     private String note;
 
     /** Timestamp utworzenia (DB). */
-    @Column(name="created_at", nullable=false, insertable=false, updatable=false)
+    @CreationTimestamp
+    @Column(name="created_at", nullable=false, updatable=false)
     private OffsetDateTime createdAt;
 
     /** Timestamp ostatniej aktualizacji (DB). */
-    @Column(name="updated_at", nullable=false, insertable=false, updatable=false)
+    @UpdateTimestamp
+    @Column(name="updated_at", nullable=false)
     private OffsetDateTime updatedAt;
 
     /** Instruktor, za którego prowadzone są zajęcia w zastępstwie (jeśli dotyczy). */

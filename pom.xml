@@ -74,18 +74,7 @@
             <version>6.4.8.Final</version>
         </dependency>
 
-        <!-- ===== Flyway + PostgreSQL ===== -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>10.18.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-database-postgresql</artifactId>
-            <version>10.18.2</version>
-        </dependency>
-
+        <!-- ===== PostgreSQL ===== -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>

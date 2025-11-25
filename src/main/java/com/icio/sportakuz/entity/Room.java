@@ -3,6 +3,7 @@ package com.icio.sportakuz.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.OffsetDateTime;
 
@@ -38,6 +39,7 @@ public class Room {
     private boolean active = true;
 
     /** Timestamp utworzenia rekordu (ustawiany przez DB). */
-    @Column(name="created_at", nullable=false, insertable=false, updatable=false)
+    @CreationTimestamp
+    @Column(name="created_at", nullable=false, updatable=false)
     private OffsetDateTime createdAt;
 }
