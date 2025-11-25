@@ -25,7 +25,7 @@ import java.util.HashMap;
 @EnableTransactionManagement
 // tu dopisujemy kolejne reposy
 @EnableJpaRepositories(basePackages = {
-        "com.icio.sportakuz.classes.repo"
+        "com.icio.sportakuz.repo"
 })
 public class PersistenceConfig {
 
