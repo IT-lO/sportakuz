@@ -42,7 +42,7 @@ public class PersistenceConfig {
         var shouldOverwriteDatabase = false;
 
         emf.setDataSource(ds);
-        emf.setPackagesToScan("com.icio.sportakuz");
+        emf.setPackagesToScan("com.icio");
 
         var vendor = new HibernateJpaVendorAdapter();
         vendor.setShowSql(false);
