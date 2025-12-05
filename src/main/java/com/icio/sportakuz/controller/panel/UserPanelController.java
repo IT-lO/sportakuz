@@ -1,8 +1,10 @@
 package com.icio.sportakuz.controller.panel;
 
+import com.icio.sportakuz.entity.UserRole;
 import com.icio.sportakuz.repo.ClassOccurrenceRepository;
 import com.icio.sportakuz.repo.ClassTypeRepository;
 import com.icio.sportakuz.repo.RoomRepository;
+import com.icio.sportakuz.repo.UserRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,16 +22,16 @@ public class UserPanelController {
 
     private final ClassOccurrenceRepository classOccurrenceRepository;
     private final ClassTypeRepository classTypeRepository;
-    private final InstructorRepository instructorRepository;
+    private final UserRepository userRepository;
     private final RoomRepository roomRepository;
 
     public UserPanelController(ClassOccurrenceRepository classOccurrenceRepository,
                                 ClassTypeRepository classTypeRepository,
-                                InstructorRepository instructorRepository,
+                               UserRepository userRepository,
                                 RoomRepository roomRepository) {
         this.classOccurrenceRepository = classOccurrenceRepository;
         this.classTypeRepository = classTypeRepository;
-        this.instructorRepository = instructorRepository;
+        this.userRepository = userRepository;
         this.roomRepository = roomRepository;
     }
 
@@ -38,7 +40,7 @@ public class UserPanelController {
     public String index(Model model) {
         long classesTotal = classOccurrenceRepository.count();
         long typesTotal = classTypeRepository.count();
-        long instructorsTotal = instructorRepository.count();
+        long instructorsTotal = userRepository.countByRole(UserRole.ROLE_INSTRUCTOR);
         long roomsTotal = roomRepository.count();
 
         OffsetDateTime now = OffsetDateTime.now();

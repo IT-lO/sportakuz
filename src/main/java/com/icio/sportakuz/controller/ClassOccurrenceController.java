@@ -4,6 +4,7 @@ import com.icio.sportakuz.dto.ClassOccurrenceForm;
 import com.icio.sportakuz.entity.ClassOccurrence;
 import com.icio.sportakuz.entity.ClassType;
 import com.icio.sportakuz.entity.Room;
+import com.icio.sportakuz.entity.User;
 import com.icio.sportakuz.repo.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -34,18 +35,18 @@ public class ClassOccurrenceController {
 
     private final ClassOccurrenceRepository classOccurrenceRepository;
     private final ClassTypeRepository classTypeRepository;
-    private final InstructorRepository instructorRepository;
+    private final UserRepository userRepository;
     private final RoomRepository roomRepository;
     private final BookingRepository bookingRepository;
 
     public ClassOccurrenceController(ClassOccurrenceRepository classOccurrenceRepository,
                                      ClassTypeRepository classTypeRepository,
-                                     InstructorRepository instructorRepository,
+                                     UserRepository userRepository,
                                      RoomRepository roomRepository,
                                      BookingRepository bookingRepository) {
         this.classOccurrenceRepository = classOccurrenceRepository;
         this.classTypeRepository = classTypeRepository;
-        this.instructorRepository = instructorRepository;
+        this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.bookingRepository = bookingRepository;
     }
@@ -68,11 +69,11 @@ public class ClassOccurrenceController {
         history.sort(java.util.Comparator.comparing(ClassOccurrence::getStartTime).reversed());
 
         // Mapa dostępnych instruktorów – tylko dla upcoming
-        var allInstructors = instructorRepository.findAll();
-        java.util.Map<Long, java.util.List<Instructor>> availableMap = new java.util.HashMap<>();
+        var allInstructors = userRepository.findAll();
+        java.util.Map<Long, java.util.List<User>> availableMap = new java.util.HashMap<>();
         java.util.Map<Long, Long> activeBookingsCount = new java.util.HashMap<>(); //  liczności rezerwacji
         for (var oc : upcoming) {
-            java.util.List<Instructor> avail = new java.util.ArrayList<>();
+            java.util.List<User> avail = new java.util.ArrayList<>();
             for (var instr : allInstructors) {
                 if (!instr.isActive()) continue;
                 if (instr.getId().equals(oc.getInstructor().getId())) {
@@ -197,7 +198,7 @@ public class ClassOccurrenceController {
 
         ClassOccurrence oc = new ClassOccurrence();
         oc.setType(classTypeRepository.findById(form.getClassTypeId()).orElseThrow());
-        oc.setInstructor(instructorRepository.findById(form.getInstructorId()).orElseThrow());
+        oc.setInstructor(userRepository.findById(form.getInstructorId()).orElseThrow());
         oc.setRoom(roomRepository.findById(form.getRoomId()).orElseThrow());
 
         var zone = ZoneId.of("Europe/Warsaw");
@@ -295,7 +296,7 @@ public class ClassOccurrenceController {
         }
 
         oc.setType(classTypeRepository.findById(form.getClassTypeId()).orElseThrow());
-        oc.setInstructor(instructorRepository.findById(form.getInstructorId()).orElseThrow());
+        oc.setInstructor(userRepository.findById(form.getInstructorId()).orElseThrow());
         oc.setRoom(roomRepository.findById(form.getRoomId()).orElseThrow());
 
         var zone = ZoneId.of("Europe/Warsaw");
@@ -333,7 +334,7 @@ public class ClassOccurrenceController {
     /** Dodaje listy typów, instruktorów i sal do modelu dla formularzy. */
     private void addLookups(Model model) {
         model.addAttribute("types", classTypeRepository.findAll());
-        model.addAttribute("instructors", instructorRepository.findAll());
+        model.addAttribute("instructors", userRepository.findAll());
         model.addAttribute("rooms", roomRepository.findAll());
     }
 
@@ -383,7 +384,7 @@ public class ClassOccurrenceController {
             ra.addFlashAttribute("error", "Brak identyfikatora instruktora.");
             return "redirect:/classes";
         }
-        var newInstr = instructorRepository.findById(instructorId).orElse(null);
+        var newInstr = userRepository.findById(instructorId).orElse(null);
         if (newInstr == null) {
             ra.addFlashAttribute("error", "Instruktor nie znaleziony (id=" + instructorId + ").");
             return "redirect:/classes";

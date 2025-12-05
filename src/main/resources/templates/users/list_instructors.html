@@ -7,7 +7,7 @@
             <h1 class="text-3xl font-bold tracking-tight text-gray-900" th:text="${pageTitle}">Instruktorzy</h1>
             <div class="flex items-center gap-4">
                 <a th:href="@{/panel/admin}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">← Powrót do panelu</a>
-                <a th:href="@{/instructors/new}" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-semibold shadow hover:bg-indigo-500 transition">
+                <a th:href="@{/users/new}" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-semibold shadow hover:bg-indigo-500 transition">
                     <span class="text-lg">➕</span> Dodaj nowego instruktora
                 </a>
             </div>
@@ -45,10 +45,10 @@
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div class="flex items-center justify-end gap-x-4">
 
-                            <a th:href="@{/instructors/edit/{id}(id=${instructor.id})}"
+                            <a th:href="@{/users/edit/{id}(id=${instructor.id})}"
                                class="text-indigo-600 hover:text-indigo-900">Edytuj</a>
 
-                            <form th:action="@{/instructors/delete/{id}(id=${instructor.id})}"
+                            <form th:action="@{/users/delete/{id}(id=${instructor.id})}"
                                   method="post"
                                   onsubmit="return confirm('Czy na pewno chcesz usunąć tego instruktora? Tej operacji nie można cofnąć.');">
 

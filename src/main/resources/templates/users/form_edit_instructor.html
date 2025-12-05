@@ -5,10 +5,10 @@
 
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-3xl font-bold tracking-tight text-gray-900" th:text="${pageTitle}">Edytuj instruktora</h1>
-            <a th:href="@{/instructors}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">← Wróć do listy</a>
+            <a th:href="@{/users}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">← Wróć do listy</a>
         </div>
 
-        <form th:action="@{/instructors/edit/{id}(id=${instructorId})}" th:object="${instructorForm}" method="post" class="space-y-6 bg-white border border-gray-200 p-8 rounded-xl shadow-sm">
+        <form th:action="@{/users/edit/{id}(id=${instructorId})}" th:object="${instructorForm}" method="post" class="space-y-6 bg-white border border-gray-200 p-8 rounded-xl shadow-sm">
 
             <div>
                 <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">Imię</label>
@@ -60,7 +60,7 @@
 
 
             <div class="pt-5 border-t border-gray-200 flex items-center justify-end gap-4">
-                <a th:href="@{/instructors}" class="px-5 py-2.5 rounded-md text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 transition">Anuluj</a>
+                <a th:href="@{/users}" class="px-5 py-2.5 rounded-md text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 transition">Anuluj</a>
                 <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-indigo-600 text-white font-semibold shadow hover:bg-indigo-500 transition">
                     <span class="text-lg">💾</span> Zapisz zmiany
                 </button>

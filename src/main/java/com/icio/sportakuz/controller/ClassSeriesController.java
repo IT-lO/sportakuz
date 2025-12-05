@@ -27,19 +27,18 @@ public class ClassSeriesController {
     private final ClassSeriesRepository classSeriesRepository;
     private final ClassOccurrenceRepository classOccurrenceRepository;
     private final ClassTypeRepository classTypeRepository;
-    private final InstructorRepository instructorRepository;
     private final RoomRepository roomRepository;
+    private final UserRepository userRepository;
 
     public ClassSeriesController(ClassSeriesRepository classSeriesRepository,
                                  ClassOccurrenceRepository classOccurrenceRepository,
                                  ClassTypeRepository classTypeRepository,
-                                 InstructorRepository instructorRepository,
-                                 RoomRepository roomRepository) {
+                                 RoomRepository roomRepository, UserRepository userRepository) {
         this.classSeriesRepository = classSeriesRepository;
         this.classOccurrenceRepository = classOccurrenceRepository;
         this.classTypeRepository = classTypeRepository;
-        this.instructorRepository = instructorRepository;
         this.roomRepository = roomRepository;
+        this.userRepository = userRepository;
     }
 
     /** Lista serii */
@@ -270,7 +269,7 @@ public class ClassSeriesController {
 
     private void mapToEntity(ClassSeriesForm form, ClassSeries s){
         s.setType(classTypeRepository.findById(form.getClassTypeId()).orElseThrow());
-        s.setInstructor(instructorRepository.findById(form.getInstructorId()).orElseThrow());
+        s.setInstructor(userRepository.findById(form.getInstructorId()).orElseThrow());
         s.setRoom(roomRepository.findById(form.getRoomId()).orElseThrow());
         ZoneId zone = ZoneId.of("Europe/Warsaw");
         OffsetDateTime start = LocalDateTime.of(form.getStartDate(), form.getStartTime()).atZone(zone).toOffsetDateTime();
@@ -306,7 +305,7 @@ public class ClassSeriesController {
 
     private void addLookups(Model model){
         model.addAttribute("types", classTypeRepository.findAll());
-        model.addAttribute("instructors", instructorRepository.findAll());
+        model.addAttribute("instructors", userRepository.findAll());
         model.addAttribute("rooms", roomRepository.findAll());
         model.addAttribute("patterns", RecurrencePattern.values());
     }
