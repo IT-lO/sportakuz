@@ -26,8 +26,9 @@ public class ClassSeries {
     private ClassType type;
 
     /** Instruktor prowadzący serię. */
-    @ManyToOne(optional=false) @JoinColumn(name="instructor_id", nullable=false)
-    private Instructor instructor;
+    @ManyToOne(optional=false)
+    @JoinColumn(name="instructor_id", nullable=false)
+    private User instructor;
 
     /** Domyślna sala dla wystąpień serii. */
     @ManyToOne(optional=false) @JoinColumn(name="room_id", nullable=false)

@@ -31,8 +31,9 @@ public class ClassOccurrence {
     private ClassType type;
 
     /** Instruktor prowadzący to wystąpienie. */
-    @ManyToOne(optional=false) @JoinColumn(name="instructor_id", nullable=false)
-    private Instructor instructor;
+    @ManyToOne(optional=false)
+    @JoinColumn(name="instructor_id", nullable=false)
+    private User instructor;
 
     /** Sala, w której odbywa się wystąpienie. */
     @ManyToOne(optional=false) @JoinColumn(name="room_id", nullable=false)
