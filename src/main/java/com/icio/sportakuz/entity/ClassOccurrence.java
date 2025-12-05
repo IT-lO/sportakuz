@@ -73,5 +73,5 @@ public class ClassOccurrence {
     /** Instruktor, za którego prowadzone są zajęcia w zastępstwie (jeśli dotyczy). */
     @ManyToOne
     @JoinColumn(name = "substituted_for_id")
-    private Instructor substitutedFor;
+    private User substitutedFor;
 }
