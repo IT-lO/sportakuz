@@ -1,7 +1,5 @@
 package com.icio.sportakuz.controller;
 
-import com.icio.sportakuz.entity.Instructor;
-import com.icio.sportakuz.repo.InstructorRepository;
 import com.icio.sportakuz.dto.InstructorForm;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;

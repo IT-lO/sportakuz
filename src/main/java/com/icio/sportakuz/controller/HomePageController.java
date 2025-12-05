@@ -2,7 +2,6 @@ package com.icio.sportakuz.controller;
 
 import com.icio.sportakuz.repo.ClassOccurrenceRepository;
 import com.icio.sportakuz.repo.ClassTypeRepository;
-import com.icio.sportakuz.repo.InstructorRepository;
 import com.icio.sportakuz.repo.RoomRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;

@@ -3,7 +3,6 @@ package com.icio.sportakuz.controller;
 import com.icio.sportakuz.dto.ClassOccurrenceForm;
 import com.icio.sportakuz.entity.ClassOccurrence;
 import com.icio.sportakuz.entity.ClassType;
-import com.icio.sportakuz.entity.Instructor;
 import com.icio.sportakuz.entity.Room;
 import com.icio.sportakuz.repo.*;
 import jakarta.validation.Valid;
