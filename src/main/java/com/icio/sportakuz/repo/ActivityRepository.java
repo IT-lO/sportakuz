@@ -16,7 +16,7 @@ import java.util.List;
  * Oferuje zestaw metod do wyszukiwania wg statusu, zakresów czasowych oraz kolizji w salach i u instruktorów.
  * Zawiera również zapytania do pobierania najbliższych (widocznych) zajęć dla strony głównej.
  */
-public interface ClassOccurrenceRepository extends JpaRepository<Activity, Long> {
+public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
     /** Wystąpienia o podanym statusie mieszczące się w przedziale czasu. */
     List<Activity> findByStatusAndStartTimeBetween(

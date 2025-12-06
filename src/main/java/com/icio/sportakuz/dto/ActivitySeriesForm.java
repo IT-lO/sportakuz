@@ -8,17 +8,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-/**
- * Formularz tworzenia/edycji serii zajęć (ClassSeries).
- * Dane czasowe (data początkowa + lokalny start + czas trwania) pozwalają odtworzyć start/end pierwszego wystąpienia.
- */
 @Getter
 @Setter
-public class ClassSeriesForm {
+public class ActivitySeriesForm {
+
+    // ZMIANA: Integer -> Long (Kluczowe dla działania ActivityTypeRepository)
     @NotNull(message="Wybierz typ zajęć")
     private Integer activityTypeId;
+
     @NotNull(message="Wybierz instruktora")
     private Long instructorId;
+
     @NotNull(message="Wybierz salę")
     private Long roomId;
 
@@ -31,7 +31,7 @@ public class ClassSeriesForm {
     private LocalTime startTime;
 
     @NotNull(message="Podaj czas trwania")
-    @Positive @Max(value=600, message="Max 600 minut")
+    @Positive @Max(value=600, message="Max 600 minut (10h)")
     private Integer durationMinutes;
 
     @NotNull(message="Podaj datę końcową generowania")
@@ -41,12 +41,12 @@ public class ClassSeriesForm {
     @NotNull(message="Wybierz wzorzec")
     private RecurrencePattern recurrencePattern;
 
-    @NotNull @Positive(message="Pojemność > 0")
+    @NotNull(message = "Pojemność jest wymagana")
+    @Min(value = 1, message = "Minimum 1 miejsce")
     private Integer capacity;
 
-    @Size(max=1000)
+    @Size(max=1000, message = "Notatka zbyt długa")
     private String note;
 
     private boolean active = true;
 }
-

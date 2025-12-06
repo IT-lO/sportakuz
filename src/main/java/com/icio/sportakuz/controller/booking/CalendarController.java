@@ -2,7 +2,7 @@ package com.icio.sportakuz.controller.booking;
 
 import com.icio.sportakuz.entity.Activity;
 import com.icio.sportakuz.repo.BookingRepository;
-import com.icio.sportakuz.repo.ClassOccurrenceRepository;
+import com.icio.sportakuz.repo.ActivityRepository;
 import com.icio.sportakuz.dto.booking.CalendarClassDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/calendar")
 public class CalendarController {
 
-    private final ClassOccurrenceRepository classOccurrenceRepository;
+    private final ActivityRepository activityRepository;
     private final BookingRepository bookingRepository;
     private final ZoneId zone = ZoneId.of("Europe/Warsaw");
 
-    public CalendarController(ClassOccurrenceRepository classOccurrenceRepository,
+    public CalendarController(ActivityRepository activityRepository,
                               BookingRepository bookingRepository) {
-        this.classOccurrenceRepository = classOccurrenceRepository;
+        this.activityRepository = activityRepository;
         this.bookingRepository = bookingRepository;
     }
 
@@ -38,7 +38,7 @@ public class CalendarController {
     public String calendarRoot(Model model) {
         model.addAttribute("pageTitle", "Kalendarz Zajęć Sportowych");
         // Pobieramy tylko przyszłe nieanulowane zajęcia (widoczne w kalendarzu)
-        List<Activity> occurrences = classOccurrenceRepository.findNextVisible(OffsetDateTime.now(), org.springframework.data.domain.Pageable.unpaged());
+        List<Activity> occurrences = activityRepository.findNextVisible(OffsetDateTime.now(), org.springframework.data.domain.Pageable.unpaged());
         List<CalendarClassDto> dtoList = occurrences.stream().map(this::toDto).collect(Collectors.toList());
         model.addAttribute("classes", dtoList);
         return "bookings/calendar";

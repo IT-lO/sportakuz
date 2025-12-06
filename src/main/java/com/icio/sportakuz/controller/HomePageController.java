@@ -1,7 +1,7 @@
 package com.icio.sportakuz.controller;
 
 import com.icio.sportakuz.entity.UserRole;
-import com.icio.sportakuz.repo.ClassOccurrenceRepository;
+import com.icio.sportakuz.repo.ActivityRepository;
 import com.icio.sportakuz.repo.ActivityTypeRepository;
 import com.icio.sportakuz.repo.RoomRepository;
 import com.icio.sportakuz.repo.UserRepository;
@@ -20,15 +20,15 @@ import java.time.OffsetDateTime;
 @Controller
 public class HomePageController {
 
-    private final ClassOccurrenceRepository classOccurrenceRepository;
+    private final ActivityRepository activityRepository;
     private final ActivityTypeRepository activityTypeRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
-    public HomePageController(ClassOccurrenceRepository classOccurrenceRepository,
+    public HomePageController(ActivityRepository activityRepository,
                               ActivityTypeRepository activityTypeRepository,
                               RoomRepository roomRepository, UserRepository userRepository) {
-        this.classOccurrenceRepository = classOccurrenceRepository;
+        this.activityRepository = activityRepository;
         this.activityTypeRepository = activityTypeRepository;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
@@ -37,13 +37,13 @@ public class HomePageController {
     /** Strona główna – pobiera statystyki i najbliższe zajęcia (limit 4). */
     @GetMapping("/")
     public String index(Model model) {
-        long classesTotal = classOccurrenceRepository.count();
+        long classesTotal = activityRepository.count();
         long typesTotal = activityTypeRepository.count();
         long instructorsTotal = userRepository.countByRole(UserRole.ROLE_INSTRUCTOR);
         long roomsTotal = roomRepository.count();
 
         OffsetDateTime now = OffsetDateTime.now();
-        var upcoming = classOccurrenceRepository.findNextVisible(now, Pageable.ofSize(4));
+        var upcoming = activityRepository.findNextVisible(now, Pageable.ofSize(4));
         model.addAttribute("now", now);
         model.addAttribute("upcoming", upcoming);
 

@@ -36,18 +36,18 @@ import java.util.Map;
 @Slf4j
 public class ClassOccurrenceController {
 
-    private final ClassOccurrenceRepository classOccurrenceRepository;
+    private final ActivityRepository activityRepository;
     private final ActivityTypeRepository activityTypeRepository;
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
     private final BookingRepository bookingRepository;
 
-    public ClassOccurrenceController(ClassOccurrenceRepository classOccurrenceRepository,
+    public ClassOccurrenceController(ActivityRepository activityRepository,
                                      ActivityTypeRepository activityTypeRepository,
                                      UserRepository userRepository,
                                      RoomRepository roomRepository,
                                      BookingRepository bookingRepository) {
-        this.classOccurrenceRepository = classOccurrenceRepository;
+        this.activityRepository = activityRepository;
         this.activityTypeRepository = activityTypeRepository;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
@@ -58,7 +58,7 @@ public class ClassOccurrenceController {
     @GetMapping
     public String list(Model model) {
         // Wszystkie wystąpienia posortowane po starcie
-        var all = classOccurrenceRepository.findAllByOrderByStartTimeAsc();
+        var all = activityRepository.findAllByOrderByStartTimeAsc();
         java.util.List<Activity> upcoming = new java.util.ArrayList<>();
         java.util.List<Activity> history = new java.util.ArrayList<>();
         for (var oc : all) {
@@ -83,7 +83,7 @@ public class ClassOccurrenceController {
                     avail.add(instr); // obecny zawsze
                     continue;
                 }
-                var overlapping = classOccurrenceRepository.findOverlappingForInstructor(instr.getId(), oc.getStartTime(), oc.getEndTime())
+                var overlapping = activityRepository.findOverlappingForInstructor(instr.getId(), oc.getStartTime(), oc.getEndTime())
                         .stream().filter(c -> c.getStatus() != ClassStatus.CANCELLED).toList();
                 if (overlapping.isEmpty()) {
                     avail.add(instr);
@@ -136,9 +136,9 @@ public class ClassOccurrenceController {
 
         // Sprawdzenie kolizji sali – NIE zależy od wybranego instruktora
         if (form.getRoomId() != null) {
-            long roomCnt = classOccurrenceRepository.countOverlappingInRoom(form.getRoomId(), start, end);
+            long roomCnt = activityRepository.countOverlappingInRoom(form.getRoomId(), start, end);
             if (editingId != null && roomCnt > 0) {
-                roomCnt = classOccurrenceRepository.findOverlappingInRoom(form.getRoomId(), start, end)
+                roomCnt = activityRepository.findOverlappingInRoom(form.getRoomId(), start, end)
                         .stream().filter(c -> !c.getId().equals(editingId)).count();
             }
             if (roomCnt > 0) {
@@ -148,9 +148,9 @@ public class ClassOccurrenceController {
         }
         // Sprawdzenie kolizji instruktora – tylko jeśli wybrany instruktor
         if (form.getInstructorId() != null) {
-            long instrCnt = classOccurrenceRepository.countOverlappingForInstructor(form.getInstructorId(), start, end);
+            long instrCnt = activityRepository.countOverlappingForInstructor(form.getInstructorId(), start, end);
             if (editingId != null && instrCnt > 0) {
-                instrCnt = classOccurrenceRepository.findOverlappingForInstructor(form.getInstructorId(), start, end)
+                instrCnt = activityRepository.findOverlappingForInstructor(form.getInstructorId(), start, end)
                         .stream().filter(c -> !c.getId().equals(editingId)).count();
             }
             if (instrCnt > 0) {
@@ -213,7 +213,7 @@ public class ClassOccurrenceController {
         oc.setStatus(ClassStatus.PLANNED); // na start
         oc.setNote(form.getNote());
 
-        classOccurrenceRepository.save(oc);
+        activityRepository.save(oc);
 
         ra.addFlashAttribute("success", "Zajęcia dodane.");
         return "redirect:/activities";
@@ -222,7 +222,7 @@ public class ClassOccurrenceController {
     /** POST /activities/{id}/delete – usuwa wystąpienie jeśli brak aktywnych rezerwacji; inaczej blokuje. */
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable("id") Long id, RedirectAttributes ra) {
-        var oc = classOccurrenceRepository.findById(id).orElse(null);
+        var oc = activityRepository.findById(id).orElse(null);
         if (oc == null) {
             ra.addFlashAttribute("error", "Zajęcia nie zostały znalezione (id=" + id + ").");
             return "redirect:/activities";
@@ -233,7 +233,7 @@ public class ClassOccurrenceController {
             ra.addFlashAttribute("error", "Nie można usunąć zajęć " + occurrenceLabel(oc) + ", istnieją aktywne rezerwacje (" + activeBookings + ").");
             return "redirect:/activities";
         }
-        classOccurrenceRepository.deleteById(id);
+        activityRepository.deleteById(id);
         ra.addFlashAttribute("success", "Zajęcia " + occurrenceLabel(oc) + " usunięte.");
         return "redirect:/activities";
     }
@@ -241,7 +241,7 @@ public class ClassOccurrenceController {
     /** GET /activities/{id}/edit – formularz edycji istniejącego wystąpienia lub redirect jeśli brak. */
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable("id") Long id, Model model, RedirectAttributes ra) {
-        var oc = classOccurrenceRepository.findById(id).orElse(null);
+        var oc = activityRepository.findById(id).orElse(null);
         if (oc == null) {
             ra.addFlashAttribute("success", "Zajęcia nie znalezione (id=" + id + ").");
             return "redirect:/activities";
@@ -260,7 +260,7 @@ public class ClassOccurrenceController {
                          BindingResult binding,
                          Model model,
                          RedirectAttributes ra) {
-        var oc = classOccurrenceRepository.findById(id).orElse(null);
+        var oc = activityRepository.findById(id).orElse(null);
         if (oc == null) {
             ra.addFlashAttribute("success", "Zajęcia nie znalezione (id=" + id + ").");
             return "redirect:/activities";
@@ -309,7 +309,7 @@ public class ClassOccurrenceController {
         oc.setCapacity(form.getCapacity());
         oc.setNote(form.getNote());
 
-        classOccurrenceRepository.save(oc);
+        activityRepository.save(oc);
         ra.addFlashAttribute("success", "Zajęcia " + occurrenceLabel(oc) + " zaktualizowane.");
         return "redirect:/activities";
     }
@@ -356,7 +356,7 @@ public class ClassOccurrenceController {
     public String updateStatus(@PathVariable("id") Long id,
                                @RequestParam("status") ClassStatus newStatus,
                                RedirectAttributes ra) {
-        var oc = classOccurrenceRepository.findById(id).orElse(null);
+        var oc = activityRepository.findById(id).orElse(null);
         if (oc == null) {
             ra.addFlashAttribute("error", "Zajęcia nie znalezione (id=" + id + ").");
             return "redirect:/activities";
@@ -367,7 +367,7 @@ public class ClassOccurrenceController {
             return "redirect:/activities";
         }
         oc.setStatus(newStatus);
-        classOccurrenceRepository.save(oc);
+        activityRepository.save(oc);
         ra.addFlashAttribute("success", "Status zajęć " + occurrenceLabel(oc) + " zmieniony na " + newStatus.getLabel() + ".");
         return "redirect:/activities";
     }
@@ -377,7 +377,7 @@ public class ClassOccurrenceController {
     public String updateInstructor(@PathVariable("id") Long id,
                                    @RequestParam("instructorId") Long instructorId,
                                    RedirectAttributes ra) {
-        var oc = classOccurrenceRepository.findById(id).orElse(null);
+        var oc = activityRepository.findById(id).orElse(null);
         if (oc == null) {
             ra.addFlashAttribute("error", "Zajęcia nie znalezione (id=" + id + ").");
             return "redirect:/activities";
@@ -404,12 +404,12 @@ public class ClassOccurrenceController {
         if (oc.getSubstitutedFor() != null && oc.getSubstitutedFor().getId().equals(instructorId)) {
             oc.setInstructor(newInstr); // newInstr to oryginalny
             oc.setSubstitutedFor(null);
-            classOccurrenceRepository.save(oc);
+            activityRepository.save(oc);
             ra.addFlashAttribute("success", "Powrót do instruktora pierwotnego: " + newInstr.getFirstName() + " " + newInstr.getLastName() + ".");
             return "redirect:/activities";
         }
         // Walidacja kolizji czasowej dla nowego instruktora (ignorując bieżące wystąpienie i CANCELLED)
-        var conflicts = classOccurrenceRepository.findOverlappingForInstructor(instructorId, oc.getStartTime(), oc.getEndTime())
+        var conflicts = activityRepository.findOverlappingForInstructor(instructorId, oc.getStartTime(), oc.getEndTime())
             .stream().filter(c -> !c.getId().equals(oc.getId()) && c.getStatus() != ClassStatus.CANCELLED).count();
         if (conflicts > 0) {
             ra.addFlashAttribute("error", "Instruktor ma kolizję w tym przedziale czasu.");
@@ -420,7 +420,7 @@ public class ClassOccurrenceController {
             oc.setSubstitutedFor(oc.getInstructor());
         }
         oc.setInstructor(newInstr);
-        classOccurrenceRepository.save(oc);
+        activityRepository.save(oc);
         ra.addFlashAttribute("success", "Instruktor zajęć " + occurrenceLabel(oc) + " zmieniony na: " + newInstr.getFirstName() + " " + newInstr.getLastName() + ".");
         return "redirect:/activities";
     }

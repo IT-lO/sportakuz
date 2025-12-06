@@ -4,7 +4,7 @@ import com.icio.sportakuz.entity.Booking;
 import com.icio.sportakuz.entity.Activity;
 import com.icio.sportakuz.repo.BookingStatus;
 import com.icio.sportakuz.repo.BookingRepository;
-import com.icio.sportakuz.repo.ClassOccurrenceRepository;
+import com.icio.sportakuz.repo.ActivityRepository;
 import com.icio.sportakuz.repo.ClassStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +21,10 @@ import java.util.List;
 public class BookingApiController {
 
     private final BookingRepository bookingRepository;
-    private final ClassOccurrenceRepository occurrenceRepository;
+    private final ActivityRepository occurrenceRepository;
 
     public BookingApiController(BookingRepository bookingRepository,
-                                ClassOccurrenceRepository occurrenceRepository) {
+                                ActivityRepository occurrenceRepository) {
         this.bookingRepository = bookingRepository;
         this.occurrenceRepository = occurrenceRepository;
     }

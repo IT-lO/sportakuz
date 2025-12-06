@@ -23,7 +23,7 @@ public class Activity {
     private Long id;
 
     @ManyToOne @JoinColumn(name="series_id")
-    private ClassSeries series;
+    private ActivitySeries series;
 
     @ManyToOne(optional=false) @JoinColumn(name="type_id", nullable=false)
     private ActivityType type;
