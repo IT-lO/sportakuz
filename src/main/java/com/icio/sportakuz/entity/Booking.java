@@ -28,7 +28,7 @@ public class Booking {
     /** Wystąpienie zajęć, którego dotyczy rezerwacja. */
     @ManyToOne(optional=false)
     @JoinColumn(name="class_id", nullable=false)
-    private ClassOccurrence clazz;
+    private Activity activity;
 
     /** Nazwa / identyfikator użytkownika dokonującego rezerwacji. */
     @Column(name="user_name", nullable=false, length=100)

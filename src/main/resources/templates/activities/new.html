@@ -1,33 +1,40 @@
 <!DOCTYPE html>
-<!-- Szablon tworzenia nowego wystąpienia zajęć.
-     Wykorzystuje główny layout przez th:replace (fragments.html :: base).
-     Formularz powiązany z obiektem 'form' zawiera wybór typu, instruktora, sali, daty, czasu startu,
-     czasu trwania (z dynamicznym obliczaniem godziny zakończenia), pojemności (auto-ustawianej na max sali) oraz notatki. -->
-<html lang="pl" xmlns:th="http://www.thymeleaf.org" th:replace="fragments.html :: base('Nowe zajęcia', ~{::section})">
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments.html :: base('Nowe zajęcia', ~{::section})}">
 <section>
-    <!-- Kontener główny: karta formularza -->
     <div class="max-w-3xl mx-auto space-y-8">
         <div class="bg-white/90 backdrop-blur rounded-lg shadow-md border border-gray-200 p-6">
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-2xl font-semibold text-gray-900">Dodaj nowe zajęcia</h1>
-                <!-- Link powrotu do listy zajęć -->
-                <a th:href="@{/templates/activities}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">← Lista</a>
+                <a th:href="@{/activities}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">← Lista</a>
             </div>
-            <!-- Formularz tworzenia zajęć.
-                 th:object = ${form} – wiązanie pól przez th:field.
-                 Walidacja: wyświetlanie błędów przez th:errors i #fields.hasErrors. -->
-            <form th:action="@{/templates/activities}" th:object="${form}" method="post" class="space-y-6">
+            <form th:action="@{/activities}" th:object="${form}" method="post" class="space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <!-- Wybór typu zajęć -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1" for="activityTypeSelect">Typ</label>
+
+                    <div class="sm:col-span-2"> <label class="block text-sm font-medium text-gray-700 mb-1" for="activityTypeSelect">Typ zajęć</label>
                         <select th:field="*{activityTypeId}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="activityTypeSelect">
-                            <option value="">-- wybierz --</option>
-                            <option th:each="t : ${types}" th:value="${t.id}" th:text="${t.name}" th:attr="data-default-duration=${t.defaultDurationMinutes}"></option>
+                            <option value="">-- wybierz typ zajęć --</option>
+                            <option th:each="t : ${types}"
+                                    th:value="${t.id}"
+                                    th:text="${t.activityName}"
+                                    th:attr="data-default-duration=${t.duration},
+                                             data-difficulty=${t.difficulty},
+                                             data-description=${t.description}"></option>
                         </select>
-                        <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('classTypeId')}" th:errors="*{activityTypeId}"></p>
+                        <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('activityTypeId')}" th:errors="*{activityTypeId}"></p>
+
+                        <div id="activityTypeInfo" class="hidden mt-3 p-4 bg-blue-50 border border-blue-100 rounded-md text-sm text-blue-900 shadow-sm">
+                            <div class="flex items-start gap-3">
+                                <div class="shrink-0 text-blue-500 mt-0.5">ℹ️</div>
+                                <div>
+                                    <p class="font-semibold mb-1">
+                                        Poziom: <span id="infoDifficulty" class="font-normal text-blue-800"></span>
+                                    </p>
+                                    <p class="text-blue-800/80 leading-relaxed" id="infoDescription"></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <!-- Wybór instruktora -->
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1" for="instructorSelect">Instruktor</label>
                         <select th:field="*{instructorId}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="instructorSelect">
@@ -36,7 +43,7 @@
                         </select>
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('instructorId')}" th:errors="*{instructorId}"></p>
                     </div>
-                    <!-- Wybór sali; capacity automatycznie ustawiane na max przez JS -->
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1" for="roomSelect">Sala</label>
                         <select th:field="*{roomId}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="roomSelect">
@@ -46,54 +53,50 @@
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}"></p>
                         <p id="capacityHint" class="mt-1 text-xs text-gray-500"></p>
                     </div>
-                    <!-- Data zajęć -->
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1" for="dateInput">Data</label>
                         <input type="date" th:field="*{date}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="dateInput" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></p>
                     </div>
-                    <!-- Godzina startu -->
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1" for="startTimeInput">Start</label>
                         <input type="time" th:field="*{startTime}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="startTimeInput" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}"></p>
                     </div>
-                    <!-- Czas trwania; dynamicznie obliczana godzina końcowa pokazywana poniżej -->
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1" for="durationInput">Czas trwania (min)</label>
                         <input type="number" min="5" step="5" th:field="*{durationMinutes}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="durationInput" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('durationMinutes')}" th:errors="*{durationMinutes}"></p>
-                        <p id="endTimePreview" class="mt-1 text-xs text-gray-500"></p>
-                        <p id="durationHint" class="mt-1 text-xs text-gray-500"></p>
+                        <p id="endTimePreview" class="mt-1 text-xs text-gray-500 font-medium"></p>
+                        <p id="durationHint" class="mt-1 text-xs text-green-600"></p>
                     </div>
-                    <!-- Pojemność ustawiana na max sali; JS nadpisuje wartość po zmianie sali -->
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1" for="capacityInput">Pojemność</label>
                         <input type="number" min="1" th:field="*{capacity}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" id="capacityInput" />
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}"></p>
                     </div>
-                    <!-- Notatka organizacyjna -->
+
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1" for="noteInput">Notatka</label>
                         <textarea rows="3" th:field="*{note}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Dodatkowe informacje..." id="noteInput"></textarea>
                         <p class="mt-1 text-xs text-red-600" th:if="${#fields.hasErrors('note')}" th:errors="*{note}"></p>
                     </div>
                 </div>
-                <!-- Przyciski akcji: zapis / anulowanie -->
-                <div class="flex items-center gap-3 pt-2">
-                    <button type="submit" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-md bg-blue-600 text-white font-medium shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                        Zapisz
+
+                <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+                    <button type="submit" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-blue-600 text-white font-medium shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                        Zapisz zajęcia
                     </button>
-                    <a th:href="@{/templates/activities}" class="inline-flex items-center px-5 py-2.5 rounded-md border border-gray-300 bg-white text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Anuluj</a>
+                    <a th:href="@{/activities}" class="inline-flex items-center px-5 py-2.5 rounded-md border border-gray-300 bg-white text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">Anuluj</a>
                 </div>
             </form>
         </div>
     </div>
-    <!-- Skrypt pomocniczy:
-         - updateCapacity(): ustawia capacity na maksymalną wartość sali i pokazuje podpowiedź.
-         - updateEnd(): oblicza godzinę zakończenia na podstawie start + duration.
-         - maybeApplyDefaultDuration(): ustawia domyślny czas trwania z wybranego typu zajęć, jeśli pole czasu trwania jest puste lub ma niepoprawną wartość.
-         Wywołania inicjalizacyjne wykonane na końcu IIFE. -->
+
     <script>
         (function(){
             const roomSelect = document.getElementById('roomSelect');
@@ -102,49 +105,84 @@
             const startInput = document.querySelector('input[name="startTime"]');
             const durationInput = document.getElementById('durationInput');
             const endPreview = document.getElementById('endTimePreview');
+
+            // Elementy związane z Typem zajęć
             const typeSelect = document.getElementById('activityTypeSelect');
             const durationHint = document.getElementById('durationHint');
+            const typeInfoBox = document.getElementById('activityTypeInfo');
+            const infoDifficulty = document.getElementById('infoDifficulty');
+            const infoDescription = document.getElementById('infoDescription');
+
             function updateCapacity(){
-                if(!roomSelect||!capacityInput) return;
+                if(!roomSelect || !capacityInput) return;
                 const opt = roomSelect.options[roomSelect.selectedIndex];
-                if(!opt||!opt.getAttribute('data-capacity')) { if(capacityHint) capacityHint.textContent=''; return; }
-                const max = parseInt(opt.getAttribute('data-capacity'),10);
-                capacityInput.value = max; // zawsze ustaw na max
+                if(!opt || !opt.getAttribute('data-capacity')) {
+                    if(capacityHint) capacityHint.textContent='';
+                    return;
+                }
+                const max = parseInt(opt.getAttribute('data-capacity'), 10);
+                capacityInput.value = max;
                 capacityInput.max = max;
                 if(capacityHint) capacityHint.textContent = 'Maksymalna pojemność sali: ' + max;
             }
+
             function pad(n){return (n<10?'0':'')+n;}
+
             function updateEnd(){
-                if(!startInput||!durationInput) return;
+                if(!startInput || !durationInput) return;
                 const startVal = startInput.value;
-                const dur = parseInt(durationInput.value,10);
-                if(!startVal||isNaN(dur)||dur<=0){ endPreview.textContent=''; return; }
+                const dur = parseInt(durationInput.value.toString(), 10);
+                if(!startVal || isNaN(dur) || dur<=0){
+                    endPreview.textContent='';
+                    return;
+                }
                 const [h,m] = startVal.split(':').map(Number);
                 const total = h*60 + m + dur;
                 const endH = Math.floor(total/60)%24;
                 const endM = total%60;
-                endPreview.textContent = 'Godzina zakończenia: ' + pad(endH)+':'+pad(endM);
+                endPreview.textContent = '🏁 Godzina zakończenia: ' + pad(endH)+':'+pad(endM);
             }
-            function maybeApplyDefaultDuration(){
-                if(!typeSelect||!durationInput) return;
+
+            function handleTypeChange(){
+                if(!typeSelect) return;
                 const opt = typeSelect.options[typeSelect.selectedIndex];
-                if(!opt) return;
-                const def = parseInt(opt.getAttribute('data-default-duration'),10);
-                if(def>0){
-                    durationInput.value = def; // zawsze nadpisujemy jak capacity
-                    if(durationHint) durationHint.textContent = 'Domyślny czas z typu: ' + def + ' min (możesz zmienić)';
-                    updateEnd();
-                } else {
+
+                if(!opt || opt.value === "") {
+                    // Ukryj info jeśli nic nie wybrano
+                    if(typeInfoBox) typeInfoBox.classList.add('hidden');
                     if(durationHint) durationHint.textContent = '';
+                    return;
+                }
+
+                // 1. Pobierz dane z atrybutów
+                const defDur = parseInt(opt.getAttribute('data-default-duration'), 10);
+                const difficulty = opt.getAttribute('data-difficulty');
+                const description = opt.getAttribute('data-description');
+
+                // 2. Aktualizuj czas trwania
+                if(defDur > 0 && durationInput){
+                    durationInput.value = defDur;
+                    if(durationHint) durationHint.textContent = '✨ Wczytano domyślny czas: ' + defDur + ' min';
+                    updateEnd();
+                }
+
+                // 3. Aktualizuj i pokaż panel informacyjny
+                if(typeInfoBox) {
+                    typeInfoBox.classList.remove('hidden');
+                    if(infoDifficulty) infoDifficulty.textContent = difficulty || 'Brak danych';
+                    if(infoDescription) infoDescription.textContent = description || 'Brak opisu dla tego typu zajęć.';
                 }
             }
-            roomSelect && roomSelect.addEventListener('change', updateCapacity);
-            durationInput && durationInput.addEventListener('input', updateEnd);
-            startInput && startInput.addEventListener('change', updateEnd);
-            typeSelect && typeSelect.addEventListener('change', maybeApplyDefaultDuration);
+
+            // Listenery
+            if(roomSelect) roomSelect.addEventListener('change', updateCapacity);
+            if(durationInput) durationInput.addEventListener('input', updateEnd);
+            if(startInput) startInput.addEventListener('change', updateEnd);
+            if(typeSelect) typeSelect.addEventListener('change', handleTypeChange);
+
+            // Inicjalizacja przy starcie strony (np. przy edycji lub powrocie z błędem walidacji)
             updateCapacity();
-            maybeApplyDefaultDuration();
-            updateEnd();
+            handleTypeChange(); // To też odświeży updateEnd wewnątrz
         })();
     </script>
 </section>

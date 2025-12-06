@@ -321,7 +321,7 @@ public class ClassSeriesController {
         int created = 0;
         while(!cursor.isAfter(limit)){
             if(!classOccurrenceRepository.existsBySeries_IdAndStartTime(s.getId(), cursor)){
-                ClassOccurrence oc = new ClassOccurrence();
+                Activity oc = new Activity();
                 oc.setSeries(s);
                 oc.setType(s.getType());
                 oc.setInstructor(s.getInstructor());

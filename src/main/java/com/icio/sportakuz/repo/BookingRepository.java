@@ -17,7 +17,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     /** Liczba aktywnych rezerwacji dla danego wystąpienia zajęć (REQUESTED/CONFIRMED/PAID). */
     @Query("""
            select count(b) from Booking b
-           where b.clazz.id = :classId
+           where b.activity.id = :classId
              and b.status in (com.icio.sportakuz.repo.BookingStatus.REQUESTED,
                               com.icio.sportakuz.repo.BookingStatus.CONFIRMED,
                               com.icio.sportakuz.repo.BookingStatus.PAID)
@@ -25,11 +25,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     long countActiveByClassId(@Param("classId") Long classId);
 
     /** Sprawdza czy istnieje rezerwacja użytkownika w jednym z podanych statusów. */
-    boolean existsByClazz_IdAndUserNameAndStatusIn(
+    boolean existsByActivity_IdAndUserNameAndStatusIn(
             Long classId, String userName, Collection<BookingStatus> statuses);
 
     /** Pobiera pierwszą rezerwację użytkownika w jednym z podanych statusów. */
-    Booking findFirstByClazz_IdAndUserNameAndStatusIn(
+    Booking findFirstByActivity_IdAndUserNameAndStatusIn(
       Long classId, String userName, Collection<BookingStatus> statuses);
 
     /** Pobiera wszystkie rezerwację użytkownika. */

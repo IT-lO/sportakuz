@@ -1,6 +1,6 @@
 package com.icio.sportakuz.controller.booking;
 
-import com.icio.sportakuz.entity.ClassOccurrence;
+import com.icio.sportakuz.entity.Activity;
 import com.icio.sportakuz.repo.BookingRepository;
 import com.icio.sportakuz.repo.ClassOccurrenceRepository;
 import com.icio.sportakuz.dto.booking.CalendarClassDto;
@@ -38,13 +38,13 @@ public class CalendarController {
     public String calendarRoot(Model model) {
         model.addAttribute("pageTitle", "Kalendarz Zajęć Sportowych");
         // Pobieramy tylko przyszłe nieanulowane zajęcia (widoczne w kalendarzu)
-        List<ClassOccurrence> occurrences = classOccurrenceRepository.findNextVisible(OffsetDateTime.now(), org.springframework.data.domain.Pageable.unpaged());
+        List<Activity> occurrences = classOccurrenceRepository.findNextVisible(OffsetDateTime.now(), org.springframework.data.domain.Pageable.unpaged());
         List<CalendarClassDto> dtoList = occurrences.stream().map(this::toDto).collect(Collectors.toList());
         model.addAttribute("classes", dtoList);
         return "bookings/calendar";
     }
 
-    private CalendarClassDto toDto(ClassOccurrence c) {
+    private CalendarClassDto toDto(Activity c) {
         var startZoned = c.getStartTime().atZoneSameInstant(zone);
         var endZoned = c.getEndTime().atZoneSameInstant(zone);
         int dayIndex = startZoned.getDayOfWeek().getValue() - 1; // Monday->0

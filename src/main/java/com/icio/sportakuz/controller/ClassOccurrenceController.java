@@ -2,7 +2,7 @@ package com.icio.sportakuz.controller;
 
 import com.icio.sportakuz.dto.ClassOccurrenceForm;
 import com.icio.sportakuz.entity.ActivityType;
-import com.icio.sportakuz.entity.ClassOccurrence;
+import com.icio.sportakuz.entity.Activity;
 import com.icio.sportakuz.entity.Room;
 import com.icio.sportakuz.entity.User;
 import com.icio.sportakuz.repo.*;
@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Kontroler CRUD dla pojedynczych wystąpień zajęć (ClassOccurrence).
@@ -56,8 +59,8 @@ public class ClassOccurrenceController {
     public String list(Model model) {
         // Wszystkie wystąpienia posortowane po starcie
         var all = classOccurrenceRepository.findAllByOrderByStartTimeAsc();
-        java.util.List<ClassOccurrence> upcoming = new java.util.ArrayList<>();
-        java.util.List<ClassOccurrence> history = new java.util.ArrayList<>();
+        java.util.List<Activity> upcoming = new java.util.ArrayList<>();
+        java.util.List<Activity> history = new java.util.ArrayList<>();
         for (var oc : all) {
             if (oc.getStatus() == ClassStatus.CANCELLED || oc.getStatus() == ClassStatus.FINISHED) {
                 history.add(oc);
@@ -66,12 +69,12 @@ public class ClassOccurrenceController {
             }
         }
         // Historia – odwrotnie (najnowsze na górze) – sortujemy malejąco po starcie
-        history.sort(java.util.Comparator.comparing(ClassOccurrence::getStartTime).reversed());
+        history.sort(java.util.Comparator.comparing(Activity::getStartTime).reversed());
 
         // Mapa dostępnych instruktorów – tylko dla upcoming
         var allInstructors = userRepository.findAll();
-        java.util.Map<Long, java.util.List<User>> availableMap = new java.util.HashMap<>();
-        java.util.Map<Long, Long> activeBookingsCount = new java.util.HashMap<>(); //  liczności rezerwacji
+        Map<Long, List<User>> availableMap = new HashMap<>();
+        Map<Long, Long> activeBookingsCount = new HashMap<>(); //  liczności rezerwacji
         for (var oc : upcoming) {
             java.util.List<User> avail = new java.util.ArrayList<>();
             for (var instr : allInstructors) {
@@ -196,16 +199,15 @@ public class ClassOccurrenceController {
             return "activities/new";
         }
 
-        ClassOccurrence oc = new ClassOccurrence();
+        Activity oc = new Activity();
         oc.setType(activityTypeRepository.findById(form.getActivityTypeId()).orElseThrow());
         oc.setInstructor(userRepository.findById(form.getInstructorId()).orElseThrow());
         oc.setRoom(roomRepository.findById(form.getRoomId()).orElseThrow());
 
         var zone = ZoneId.of("Europe/Warsaw");
         var start = LocalDateTime.of(form.getDate(), form.getStartTime()).atZone(zone).toOffsetDateTime();
-        var end = start.plusMinutes(form.getDurationMinutes());
         oc.setStartTime(start);
-        oc.setEndTime(end);
+        oc.setDurationMinutes(form.getDurationMinutes());
 
         oc.setCapacity(form.getCapacity());
         oc.setStatus(ClassStatus.PLANNED); // na start
@@ -313,7 +315,7 @@ public class ClassOccurrenceController {
     }
 
     /** Mapuje encję na formularz (rekonstruuje datę, lokalny czas i duration z różnicy czasów). */
-    private ClassOccurrenceForm toForm(ClassOccurrence oc) {
+    private ClassOccurrenceForm toForm(Activity oc) {
         ClassOccurrenceForm f = new ClassOccurrenceForm();
         f.setActivityTypeId(oc.getType().getId());
         f.setInstructorId(oc.getInstructor().getId());
@@ -424,7 +426,7 @@ public class ClassOccurrenceController {
     }
 
     /** Pomocnicza etykieta wystąpienia: [YYYY-MM-DD] Typ HH:mm-HH:mm - Instruktor (Zastępstwo za: Stary Instruktor) */
-    private String occurrenceLabel(ClassOccurrence oc) {
+    private String occurrenceLabel(Activity oc) {
         if (oc == null) return "[nieznane]";
         try {
             ZoneId zone = ZoneId.of("Europe/Warsaw");

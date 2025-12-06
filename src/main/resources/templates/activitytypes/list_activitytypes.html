@@ -26,7 +26,7 @@
                 </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                <tr th:each="type : ${classTypes}">
+                <tr th:each="type : ${activitytypes}">
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm font-medium text-gray-900" th:text="${type.activityName}"></div>
                     </td>
@@ -56,7 +56,7 @@
                     </td>
                 </tr>
 
-                <tr th:if="${#lists.isEmpty(classTypes)}">
+                <tr th:if="${#lists.isEmpty(activitytypes)}">
                     <td colspan="4" class="px-6 py-12 text-center">
                         <p class="text-sm text-gray-500">Nie dodano jeszcze żadnych typów zajęć.</p>
                     </td>
