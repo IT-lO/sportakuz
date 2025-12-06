@@ -19,7 +19,7 @@ public class ClassOccurrenceForm {
 
     /** Id typu zajęć (ClassType). */
     @NotNull(message = "Wybierz typ zajęć")
-    private Long classTypeId;
+    private Integer activityTypeId;
 
     /** Id instruktora prowadzącego. */
     @NotNull(message = "Wybierz instruktora")

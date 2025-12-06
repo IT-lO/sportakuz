@@ -2,7 +2,7 @@ package com.icio.sportakuz.controller.panel;
 
 import com.icio.sportakuz.entity.UserRole;
 import com.icio.sportakuz.repo.ClassOccurrenceRepository;
-import com.icio.sportakuz.repo.ClassTypeRepository;
+import com.icio.sportakuz.repo.ActivityTypeRepository;
 import com.icio.sportakuz.repo.RoomRepository;
 import com.icio.sportakuz.repo.UserRepository;
 import org.springframework.data.domain.Pageable;
@@ -21,16 +21,16 @@ import java.time.OffsetDateTime;
 public class UserPanelController {
 
     private final ClassOccurrenceRepository classOccurrenceRepository;
-    private final ClassTypeRepository classTypeRepository;
+    private final ActivityTypeRepository activityTypeRepository;
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
 
     public UserPanelController(ClassOccurrenceRepository classOccurrenceRepository,
-                                ClassTypeRepository classTypeRepository,
+                                ActivityTypeRepository activityTypeRepository,
                                UserRepository userRepository,
                                 RoomRepository roomRepository) {
         this.classOccurrenceRepository = classOccurrenceRepository;
-        this.classTypeRepository = classTypeRepository;
+        this.activityTypeRepository = activityTypeRepository;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
     }
@@ -39,7 +39,7 @@ public class UserPanelController {
     @GetMapping("/panel/user")
     public String index(Model model) {
         long classesTotal = classOccurrenceRepository.count();
-        long typesTotal = classTypeRepository.count();
+        long typesTotal = activityTypeRepository.count();
         long instructorsTotal = userRepository.countByRole(UserRole.ROLE_INSTRUCTOR);
         long roomsTotal = roomRepository.count();
 

@@ -26,17 +26,17 @@ public class ClassSeriesController {
 
     private final ClassSeriesRepository classSeriesRepository;
     private final ClassOccurrenceRepository classOccurrenceRepository;
-    private final ClassTypeRepository classTypeRepository;
+    private final ActivityTypeRepository activityTypeRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
     public ClassSeriesController(ClassSeriesRepository classSeriesRepository,
                                  ClassOccurrenceRepository classOccurrenceRepository,
-                                 ClassTypeRepository classTypeRepository,
+                                 ActivityTypeRepository activityTypeRepository,
                                  RoomRepository roomRepository, UserRepository userRepository) {
         this.classSeriesRepository = classSeriesRepository;
         this.classOccurrenceRepository = classOccurrenceRepository;
-        this.classTypeRepository = classTypeRepository;
+        this.activityTypeRepository = activityTypeRepository;
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
     }
@@ -268,7 +268,7 @@ public class ClassSeriesController {
     }
 
     private void mapToEntity(ClassSeriesForm form, ClassSeries s){
-        s.setType(classTypeRepository.findById(form.getClassTypeId()).orElseThrow());
+        s.setType(activityTypeRepository.findById(form.getActivityTypeId()).orElseThrow());
         s.setInstructor(userRepository.findById(form.getInstructorId()).orElseThrow());
         s.setRoom(roomRepository.findById(form.getRoomId()).orElseThrow());
         ZoneId zone = ZoneId.of("Europe/Warsaw");
@@ -287,7 +287,7 @@ public class ClassSeriesController {
 
     private ClassSeriesForm toForm(ClassSeries s){
         ClassSeriesForm f = new ClassSeriesForm();
-        f.setClassTypeId(s.getType().getId());
+        f.setActivityTypeId(s.getType().getId());
         f.setInstructorId(s.getInstructor().getId());
         f.setRoomId(s.getRoom().getId());
         ZoneId zone = ZoneId.of("Europe/Warsaw");
@@ -304,7 +304,7 @@ public class ClassSeriesController {
     }
 
     private void addLookups(Model model){
-        model.addAttribute("types", classTypeRepository.findAll());
+        model.addAttribute("types", activityTypeRepository.findAll());
         model.addAttribute("instructors", userRepository.findAll());
         model.addAttribute("rooms", roomRepository.findAll());
         model.addAttribute("patterns", RecurrencePattern.values());

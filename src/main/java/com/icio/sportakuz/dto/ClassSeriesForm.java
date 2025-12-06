@@ -16,7 +16,7 @@ import java.time.LocalTime;
 @Setter
 public class ClassSeriesForm {
     @NotNull(message="Wybierz typ zajęć")
-    private Long classTypeId;
+    private Integer activityTypeId;
     @NotNull(message="Wybierz instruktora")
     private Long instructorId;
     @NotNull(message="Wybierz salę")

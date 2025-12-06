@@ -60,7 +60,7 @@ public class CalendarController {
 
         return new CalendarClassDto(
             c.getId(),
-            c.getType() != null ? c.getType().getName() : "Zajęcia",
+            c.getType() != null ? c.getType().getActivityName() : "Zajęcia",
             dayIndex,
             date,
             time,

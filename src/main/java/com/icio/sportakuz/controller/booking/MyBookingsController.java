@@ -54,7 +54,7 @@ public class MyBookingsController {
 
 		return new MyBookingDto(
 			b.getId(),
-			b.getClazz().getType() != null ? b.getClazz().getType().getName() : "Zajęcia",
+			b.getClazz().getType() != null ? b.getClazz().getType().getActivityName() : "Zajęcia",
 			b.getClazz().getInstructor() != null ? (b.getClazz().getInstructor().getFirstName() + " " + b.getClazz().getInstructor().getLastName()) : "Instruktor",
 			date,
 			time,

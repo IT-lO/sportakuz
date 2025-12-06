@@ -1,5 +1,6 @@
 package com.icio.sportakuz.entity;
 
+import com.icio.sportakuz.repo.ActivityTypeRepository;
 import com.icio.sportakuz.repo.RecurrencePattern;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class ClassSeries {
 
     /** Typ zajęć dla całej serii. */
     @ManyToOne(optional=false) @JoinColumn(name="type_id", nullable=false)
-    private ClassType type;
+    private ActivityType type;
 
     /** Instruktor prowadzący serię. */
     @ManyToOne(optional=false)

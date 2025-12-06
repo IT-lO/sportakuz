@@ -28,7 +28,7 @@ public class ClassOccurrence {
 
     /** Typ zajęć. */
     @ManyToOne(optional=false) @JoinColumn(name="type_id", nullable=false)
-    private ClassType type;
+    private ActivityType type;
 
     /** Instruktor prowadzący to wystąpienie. */
     @ManyToOne(optional=false)
