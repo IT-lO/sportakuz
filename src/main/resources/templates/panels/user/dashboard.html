@@ -1,43 +1,57 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org" th:replace="fragments.html :: base('SportakUZ – Mój Panel', ~{::section})">
+<html lang="pl" xmlns:th="http://www.thymeleaf.org"
+      th:replace="fragments.html :: base('SportakUZ – Mój Panel', ~{::section})">
+
 <section class="space-y-12">
-    <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg">
+
+    <!-- HERO -->
+    <div class="home-hero relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg">
         <div class="absolute inset-0 opacity-30 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/diagmonds.png')]"></div>
         <div class="px-6 py-12 sm:px-10 lg:px-14 relative">
 
             <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Witaj, Użytkowniku!</h1>
 
-            <p class="max-w-2xl text-blue-100 text-sm sm:text-base leading-relaxed">Tutaj znajdziesz swoje nadchodzące rezerwacje, sprawdzisz status karnetu i zapiszesz się na nowe zajęcia. Miłego treningu!</p>
+            <p class="max-w-2xl text-blue-100 text-sm sm:text-base leading-relaxed">
+                Tutaj znajdziesz swoje nadchodzące rezerwacje, sprawdzisz status karnetu i zapiszesz się na nowe zajęcia.
+                Miłego treningu!
+            </p>
+
             <div class="mt-6 flex flex-wrap gap-4">
-                <a th:href="@{/calendar}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
+                <a th:href="@{/calendar}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
                     <span class="text-lg">📅</span> Przeglądaj grafik
                 </a>
-                <a th:href="@{/my/bookings}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-indigo-500 hover:bg-indigo-400 font-semibold shadow text-white transition">
+                <a th:href="@{/my/bookings}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
                     <span class="text-lg">🎟️</span> Moje rezerwacje
                 </a>
-                <a th:href="@{/instructors}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
+                <a th:href="@{/instructors}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
                     <span class="text-lg">👥</span> Nasi instruktorzy
                 </a>
-                <a th:href="@{/rooms}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
+                <a th:href="@{/rooms}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
                     <span class="text-lg">🚪</span> Nasze sale
                 </a>
-                <a th:href="@{/classtypes}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
+                <a th:href="@{/classtypes}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
                     <span class="text-lg">📚</span> Dostępne zajęcia
                 </a>
             </div>
         </div>
     </div>
 
+    <!-- STATYSTYKI -->
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col">
+        <div class="home-card bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-medium tracking-wider text-gray-500 uppercase">Nadchodzące</span>
                 <span class="text-blue-600">↗</span>
             </div>
-            <div class="text-3xl font-bold text-gray-800" >0</div>
+            <div class="text-3xl font-bold text-gray-800">0</div>
             <p class="mt-1 text-xs text-gray-500">Twoje rezerwacje</p>
         </div>
-        <div class="bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col">
+        <div class="home-card bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-medium tracking-wider text-gray-500 uppercase">Odbyte (30 dni)</span>
                 <span class="text-indigo-600">✓</span>
@@ -45,7 +59,7 @@
             <div class="text-3xl font-bold text-gray-800">0</div>
             <p class="mt-1 text-xs text-gray-500">Zajęcia w tym miesiącu</p>
         </div>
-        <div class="bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col">
+        <div class="home-card bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-medium tracking-wider text-gray-500 uppercase">Karnet</span>
                 <span class="text-purple-600">💳</span>
@@ -55,15 +69,20 @@
         </div>
     </div>
 
+    <!-- MOJE NADCHODZĄCE ZAJĘCIA -->
     <div class="space-y-5">
         <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2"><span>🎟️</span>Moje nadchodzące zajęcia</h2>
-            <a th:href="@{/my-bookings}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">Zobacz wszystkie →</a>
+            <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                <span>🎟️</span>Moje nadchodzące zajęcia
+            </h2>
+            <a th:href="@{/my/bookings}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                Zobacz wszystkie →
+            </a>
         </div>
 
         <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
 
-            <div class="group relative bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition flex flex-col gap-3">
+            <div class="home-card group relative bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition flex flex-col gap-3">
                 <div class="flex items-start justify-between">
                     <h3 class="font-semibold text-gray-800">Joga dynamiczna</h3>
                     <span class="text-xs font-medium px-2 py-1 rounded bg-blue-50 text-blue-700">10.11 18:00</span>
@@ -73,13 +92,18 @@
                     <span class="font-medium text-gray-700">Sala Fitness A</span>
                     <span class="font-semibold text-green-700">Potwierdzona</span>
                 </div>
-                <div class_commented="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-green-600 text-white text-[10px] font-bold tracking-wide animate-pulse">TRWA NA ŻYWO</span>
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-green-600 text-white text-[10px] font-bold tracking-wide animate-pulse">
+                        TRWA NA ŻYWO
+                    </span>
                 </div>
-                <a href="#" class="absolute bottom-4 right-4 text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">Anuluj</a>
+                <a href="#"
+                   class="absolute bottom-4 right-4 text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Anuluj
+                </a>
             </div>
 
-            <div class="group relative bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition flex flex-col gap-3">
+            <div class="home-card group relative bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition flex flex-col gap-3">
                 <div class="flex items-start justify-between">
                     <h3 class="font-semibold text-gray-800">Trening obwodowy</h3>
                     <span class="text-xs font-medium px-2 py-1 rounded bg-blue-50 text-blue-700">11.11 19:00</span>
@@ -89,28 +113,37 @@
                     <span class="font-medium text-gray-700">Sala Cross</span>
                     <span class="font-semibold text-green-700">Potwierdzona</span>
                 </div>
-                <a href="#" class="absolute bottom-4 right-4 text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">Anuluj</a>
+                <a href="#"
+                   class="absolute bottom-4 right-4 text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Anuluj
+                </a>
             </div>
 
         </div>
-
     </div>
 
+    <!-- CTA NA DOLE -->
     <div class="mt-10">
-        <div class="relative rounded-xl overflow-hidden border border-gray-200 bg-gradient-to-r from-indigo-600 to-purple-600 p-8 shadow-lg">
+        <div class="home-hero relative rounded-xl overflow-hidden border border-gray-200 bg-gradient-to-r from-indigo-600 to-purple-600 p-8 shadow-lg">
             <div class="max-w-3xl relative">
                 <h2 class="text-2xl font-bold text-white mb-3">Znajdź coś dla siebie</h2>
-                <p class="text-indigo-100 text-sm leading-relaxed mb-6">Przeglądaj pełny grafik zajęć, filtruj według instruktorów lub typu aktywności i zarezerwuj miejsce jednym kliknięciem.</p>
+                <p class="text-indigo-100 text-sm leading-relaxed mb-6">
+                    Przeglądaj pełny grafik zajęć, filtruj według instruktorów lub typu aktywności i zarezerwuj miejsce jednym
+                    kliknięciem.
+                </p>
                 <div class="flex flex-wrap gap-4">
-                    <a th:href="@{/schedule}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-indigo-700 font-semibold shadow hover:bg-indigo-50 transition">
+                    <a th:href="@{/schedule}"
+                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-indigo-700 font-semibold shadow hover:bg-indigo-50 transition">
                         📅 Pełny grafik
                     </a>
-                    <a th:href="@{/account}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-indigo-500 text-white font-semibold shadow hover:bg-indigo-400 transition">
+                    <a th:href="@{/account}"
+                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-indigo-700 font-semibold shadow hover:bg-indigo-50 transition">
                         👤 Moje konto
                     </a>
                 </div>
             </div>
         </div>
     </div>
+
 </section>
 </html>
