@@ -9,7 +9,17 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title th:text="${pageTitle}">SportakUZ</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { theme: { extend: { colors: { brand: '#0d6efd' } } } }</script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#0d6efd'
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" th:href="@{/css/app.css}" />
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
@@ -20,12 +30,19 @@
             <span class="text-xl font-bold text-gray-800">SportakUZ</span>
             <span class="text-xs uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded">Panel</span>
         </div>
-        <nav class="flex gap-2 text-sm">
+        <nav class="flex gap-2 text-sm items-center">
             <a th:href="@{/}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Start</a>
             <a th:href="@{/calendar}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Kalendarz</a>
             <a th:href="@{/my/bookings}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Moje rezerwacje</a>
             <a th:href="@{/classes}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Lista zajęć</a>
             <a th:href="@{/classes/new}" class="px-3 py-2 rounded-md font-semibold bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition">+ Nowe</a>
+
+            <!-- Przycisk trybu ciemnego (jedyna nowość w headerze) -->
+            <button type="button"
+                    class="ml-3 px-3 py-2 rounded-md font-medium border border-gray-300 text-gray-700 bg-white/70 hover:bg-gray-100 transition"
+                    onclick="toggleTheme()">
+                <span id="theme-icon">🌙</span>
+            </button>
         </nav>
     </div>
 </header>
@@ -35,6 +52,43 @@
 <footer class="border-t border-gray-200 bg-white/70 backdrop-blur mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-500">&copy; 2025 SportakUZ</div>
 </footer>
+
+<!-- Skrypt motywu (light/dark) – korzysta z html.dark w app.css -->
+<script>
+    function applyTheme(theme) {
+        const root = document.documentElement;
+
+        if (theme === 'dark') {
+            root.classList.add('dark');
+        } else {
+            root.classList.remove('dark');
+        }
+
+        localStorage.setItem('theme', theme);
+
+        const icon1 = document.getElementById('theme-icon');
+        const icon2 = document.getElementById('theme-icon-layout');
+        if (icon1) icon1.textContent = theme === 'dark' ? '☀️' : '🌙';
+        if (icon2) icon2.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    function toggleTheme() {
+        const isDark = document.documentElement.classList.contains('dark');
+        applyTheme(isDark ? 'light' : 'dark');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const saved = localStorage.getItem('theme');
+
+        if (saved === 'dark' || saved === 'light') {
+            applyTheme(saved);
+        } else {
+            // domyślnie jasny
+            applyTheme('light');
+        }
+    });
+</script>
+
 <script>document.documentElement.classList.add('tailwind-loaded');</script>
 </body>
 </html>
@@ -47,8 +101,20 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title th:text="${pageTitle}">SportakUZ</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#0d6efd'
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" th:href="@{/css/app.css}" />
 </head>
+
 <body th:fragment="layout(pageTitle,content)" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
 <!-- Layout header (alternatywny) -->
 <header class="bg-white/90 backdrop-blur border-b border-gray-200 shadow-sm">
@@ -57,12 +123,19 @@
             <span class="text-xl font-bold text-gray-800">SportakUZ</span>
             <span class="text-xs uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded">Panel</span>
         </div>
-        <nav class="flex gap-2 text-sm">
+        <nav class="flex gap-2 text-sm items-center">
             <a th:href="@{/}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Start</a>
             <a th:href="@{/calendar}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Kalendarz</a>
             <a th:href="@{/my/bookings}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Moje rezerwacje</a>
             <a th:href="@{/classes}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Lista zajęć</a>
             <a th:href="@{/classes/new}" class="px-3 py-2 rounded-md font-semibold bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition">+ Nowe</a>
+
+            <!-- Przycisk trybu ciemnego w layoucie -->
+            <button type="button"
+                    class="ml-3 px-3 py-2 rounded-md font-medium border border-gray-300 text-gray-700 bg-white/70 hover:bg-gray-100 transition"
+                    onclick="toggleTheme()">
+                <span id="theme-icon-layout">🌙</span>
+            </button>
         </nav>
     </div>
 </header>
@@ -72,4 +145,41 @@
 <footer class="border-t border-gray-200 bg-white/70 backdrop-blur mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-500">&copy; 2025 SportakUZ</div>
 </footer>
+
+<!-- Ten sam skrypt motywu, aby działało także przy użyciu fragmentu layout -->
+<script>
+    function applyTheme(theme) {
+        const root = document.documentElement;
+
+        if (theme === 'dark') {
+            root.classList.add('dark');
+        } else {
+            root.classList.remove('dark');
+        }
+
+        localStorage.setItem('theme', theme);
+
+        const icon1 = document.getElementById('theme-icon');
+        const icon2 = document.getElementById('theme-icon-layout');
+        if (icon1) icon1.textContent = theme === 'dark' ? '☀️' : '🌙';
+        if (icon2) icon2.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    function toggleTheme() {
+        const isDark = document.documentElement.classList.contains('dark');
+        applyTheme(isDark ? 'light' : 'dark');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const saved = localStorage.getItem('theme');
+
+        if (saved === 'dark' || saved === 'light') {
+            applyTheme(saved);
+        } else {
+            applyTheme('light');
+        }
+    });
+</script>
+
+<script>document.documentElement.classList.add('tailwind-loaded');</script>
 </body>
