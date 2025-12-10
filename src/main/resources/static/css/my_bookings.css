@@ -28,3 +28,107 @@
 .empty-state { text-align:center; padding:60px 20px; color:#6b7280; }
 .empty-icon { font-size:4rem; margin-bottom:16px; color:#d1d5db; }
 @media (max-width:768px) { .reservation-card { padding:20px; } .cancel-button { position:static; width:100%; margin-top:16px; } .reservation-details { grid-template-columns:1fr; } .header h1 { font-size:2rem; } }
+
+/* =========================
+   TRYB CIEMNY – lista rezerwacji
+   ========================= */
+
+html.dark .header h1 {
+    color: #e5e7eb;
+}
+
+html.dark .header p {
+    color: #9ca3af;
+}
+
+/* Karta rezerwacji */
+html.dark .reservation-card {
+    background: #2a333b;
+    border-color: #3a444d;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+html.dark .reservation-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+}
+
+/* Teksty na karcie */
+html.dark .activity-name {
+    color: #bfdbfe;
+}
+
+html.dark .detail-label {
+    color: #e5e7eb;
+}
+
+html.dark .detail-value {
+    color: #9ca3af;
+}
+
+html.dark .instructor-name {
+    color: #bfdbfe;
+}
+
+/* Przycisk anulowania na karcie */
+html.dark .cancel-button {
+    background: #991b1b;
+    color: #f9fafb;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+}
+
+html.dark .cancel-button:hover {
+    background: #7f1d1d;
+}
+
+/* Modal */
+html.dark .modal-overlay {
+    background: rgba(15,23,42,0.75);
+}
+
+html.dark .modal-content {
+    background: #020617;
+    box-shadow: 0 20px 30px rgba(0,0,0,0.9);
+}
+
+html.dark .modal-title {
+    color: #e5e7eb;
+}
+
+html.dark .modal-message {
+    color: #9ca3af;
+}
+
+/* Przyciski w modalu */
+html.dark .modal-button {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+
+html.dark .confirm-button {
+    background: #991b1b;
+    color: #f9fafb;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+}
+
+html.dark .confirm-button:hover {
+    background: #7f1d1d;
+}
+
+html.dark .cancel-modal-button {
+    background: #111827;
+    color: #e5e7eb;
+    border: 1px solid #374151;
+}
+
+html.dark .cancel-modal-button:hover {
+    background: #020617;
+}
+
+/* Pusty stan */
+html.dark .empty-state {
+    color: #9ca3af;
+}
+
+html.dark .empty-icon {
+    color: #4b5563;
+}

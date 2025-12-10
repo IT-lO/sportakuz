@@ -231,6 +231,18 @@ button:hover, .btn:hover {
 }
 
 /* =========================
+   HOME – karty dashboardów (LIGHT)
+   ========================= */
+.home-card {
+  background:rgba(255,255,255,0.9);
+  border-radius:0.75rem;
+  border:1px solid #e5e7eb;
+  padding:1.25rem;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(8px);
+}
+
+/* =========================
    Narzędzia nad tabelą
    ========================= */
 .table-tools {
@@ -402,7 +414,7 @@ html.dark .home-hero {
   background: linear-gradient(135deg, #111827, #1f2937, #312e81);
 }
 
-/* Wszystkie kafelki (statystyki + nadchodzące) – jeden styl */
+/* Wszystkie kafelki (statystyki + nadchodzące) – jeden styl w dark */
 html.dark .home-card {
   background:#2a333b;
   border-color:#3a444d;
@@ -474,7 +486,6 @@ html.dark h2.text-xl.font-semibold.text-gray-900 {
   background-color:#e0edff;      /* coś w stylu bg-blue-50 */
   color:#1d4ed8;
 }
-
 
 /* =========================
    HERO / CTA – przyciski (DARK)
