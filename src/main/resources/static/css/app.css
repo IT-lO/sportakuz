@@ -511,3 +511,40 @@ html.dark .home-hero a:hover {
   th,td {padding:.45rem .5rem; font-size:.8rem;}
   .form-grid {grid-template-columns:1fr;} /* jedna kolumna na mobile */
 }
+/* Formularz – pola na całą szerokość w gridzie */
+.form-group--wide {
+  grid-column: 1 / -1;
+}
+
+/* Labelki w dark mode */
+html.dark .form-group label {
+  color: #e5e7eb;
+}
+
+/* =========================
+   TRYB CIEMNY – ikonki w inputach date/time
+   ========================= */
+/* Mówimy przeglądarce: użyj ciemnego stylu natywnych kontrolek */
+html.dark input[type="date"],
+html.dark input[type="time"] {
+  color-scheme: dark;
+}
+
+/* WebKit (Chrome/Edge/Opera/Safari) – rozjaśnij ikonkę */
+html.dark input[type="date"]::-webkit-calendar-picker-indicator,
+html.dark input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.2);
+  opacity: 0.9;
+}
+
+/* Większy odstęp między kolejnymi polami
+   w formularzach jednokolumnowych (.form-card > .form-group) */
+.form-card > .form-group:not(:last-child) {
+  margin-bottom: 0.75rem;   /* możesz podbić do 1rem jak chcesz więcej */
+}
+
+/* Trochę mniejszy odstęp label -> pole,
+   żeby kontrast między "w środku" a "między polami" był większy */
+.form-group label {
+  margin-bottom: 0.25rem;   /* wcześniej było .35rem */
+}
