@@ -13,7 +13,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.icio")
+@ComponentScan(basePackages = "com.icio.sportakuz")
 public class AppConfig implements WebMvcConfigurer {
 
 	/*

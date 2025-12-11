@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org"
+      th:replace="fragments :: base(${pageTitle}, ~{::content})">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/forms.css}" />
+<section>
+    <div class="max-w-3xl mx-auto">
+
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-3xl font-bold tracking-tight" th:text="${pageTitle}">
+                Dodaj nowy typ zajęć
+            </h1>
+            <a th:href="@{/panel/admin}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                ← Powrót do panelu
+            </a>
+        </div>
+
+        <form th:action="@{/activitytypes/new}" th:object="${activityTypeForm}" method="post" class="form-card">
+
+            <div class="form-group">
+                <label for="name">Nazwa typu zajęć</label>
+                <input type="text"
+                       id="name"
+                       th:field="*{activityName}"
+                       class="form-input"> <p th:if="${#fields.hasErrors('activityName')}"
+                                              th:errors="*{activityName}"
+                                              class="error"></p>
+            </div>
+
+            <div class="form-group">
+                <label for="defaultDurationMinutes">Domyślny czas trwania (opcjonalnie)</label>
+                <input type="number"
+                       id="defaultDurationMinutes"
+                       th:field="*{duration}"
+                       class="form-input">
+                <p class="muted">Np. „60” (w minutach).</p>
+                <p th:if="${#fields.hasErrors('duration')}"
+                   th:errors="*{duration}"
+                   class="error"></p>
+            </div>
+
+            <!-- Poziom trudności -->
+            <div class="form-group">
+                <label for="difficulty">Poziom trudności</label>
+                <select id="difficulty"
+                        th:field="*{difficulty}"
+                        aria-describedby="difficulty-error">
+                    <option value="">-- Wybierz poziom --</option>
+                    <option th:each="level : ${difficultyLevels}"
+                            th:value="${level}"
+                            th:text="${level.displayName}">
+                        Dla początkujących
+                    </option>
+                </select>
+                <p class="muted">Wybierz poziom trudności z listy.</p>
+                <p th:if="${#fields.hasErrors('difficulty')}"
+                   th:errors="*{difficulty}"
+                   id="difficulty-error"
+                   class="error"></p>
+            </div>
+
+            <!-- Opis -->
+            <div class="form-group">
+                <label for="description">Opis (opcjonalnie)</label>
+                <textarea id="description"
+                          th:field="*{description}"
+                          rows="5"
+                          aria-describedby="description-error"></textarea>
+                <p class="muted">Rozszerzony opis typu zajęć, widoczny dla użytkowników.</p>
+                <p th:if="${#fields.hasErrors('description')}"
+                   th:errors="*{description}"
+                   id="description-error"
+                   class="error"></p>
+            </div>
+
+            <!-- Przyciski -->
+            <div class="actions" style="justify-content: flex-end; border-top: 1px solid var(--border); padding-top: .75rem; margin-top:.5rem;">
+                <a th:href="@{/panel/admin}" class="btn btn-secondary">
+                    Anuluj
+                </a>
+                <button type="submit" class="btn">
+                    <span class="text-lg">💾</span> Zapisz typ zajęć
+                </button>
+            </div>
+
+        </form>
+    </div>
+</section>
+</div>
+</html>

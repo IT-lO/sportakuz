@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org"
+      th:replace="fragments :: base(${pageTitle}, ~{::content})">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/lists.css}" />
+<section>
+    <div class="max-w-6xl mx-auto">
+
+        <!-- Nagłówek strony -->
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-3xl font-bold tracking-tight" th:text="${pageTitle}">Typy Zajęć</h1>
+
+            <div class="flex items-center gap-4">
+                <a th:href="@{/panel/admin}"
+                   class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                    ← Powrót do panelu
+                </a>
+
+                <a th:href="@{/activitytypes/new}"
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-semibold shadow hover:bg-indigo-500 transition">
+                    <span class="text-lg">➕</span> Dodaj nowy typ
+                </a>
+            </div>
+        </div>
+
+        <!-- Tabela typów zajęć -->
+        <div class="table-wrapper">
+            <div class="table-responsive">
+                <table class="min-w-full text-sm">
+                    <thead>
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                            Nazwa
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                            Domyślny czas trwania
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                            Poziom trudności
+                        </th>
+                        <th scope="col" class="relative px-6 py-3">
+                            <span class="sr-only">Edytuj</span>
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="type : ${activitytypes}">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium" th:text="${type.activityName}"></div>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span th:if="${type.duration != null}"
+                                  th:text="${type.duration + ' min'}"
+                                  class="text-sm"></span>
+                            <span th:unless="${type.duration != null}"
+                                  class="text-sm muted">
+                                Brak
+                            </span>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span th:if="${type.difficulty != null}"
+                                  th:text="${type.difficulty.displayName}"
+                                  class="text-sm"></span>
+                            <span th:unless="${type.difficulty != null}"
+                                  class="text-sm muted">
+                                Brak
+                            </span>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex items-center justify-end gap-x-2">
+                                <a th:href="@{/activitytypes/edit/{id}(id=${type.id})}"
+                                   class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm">
+                                    Edytuj
+                                </a>
+
+                                <form th:action="@{/activitytypes/delete/{id}(id=${type.id})}"
+                                      method="post"
+                                      onsubmit="return confirm('Czy na pewno chcesz usunąć ten typ zajęć? Tej operacji nie można cofnąć.');">
+                                    <button type="submit"
+                                            class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700 shadow-sm">
+                                        Usuń
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(activitytypes)}">
+                        <td colspan="4" class="px-6 py-12 text-center">
+                            <p class="muted text-sm">
+                                Nie dodano jeszcze żadnych typów zajęć.
+                            </p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</section>
+</div>
+</html>

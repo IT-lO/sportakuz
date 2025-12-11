@@ -43,23 +43,23 @@ public class MyBookingsController {
 	}
 
 	private MyBookingDto toDto(Booking b) {
-		var startZoned = b.getClazz().getStartTime().atZoneSameInstant(zone);
-		var endZoned = b.getClazz().getEndTime().atZoneSameInstant(zone);
+		var startZoned = b.getActivity().getStartTime().atZoneSameInstant(zone);
+		var endZoned = b.getActivity().getEndTime().atZoneSameInstant(zone);
 		String date = startZoned.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE); // yyyy-MM-dd
 		String time = startZoned.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"));
 		int duration = (int) java.time.Duration.between(startZoned.toOffsetDateTime(), endZoned.toOffsetDateTime()).toMinutes();
-		String substitutedFor = b.getClazz().getSubstitutedFor() != null
-				? (b.getClazz().getSubstitutedFor().getFirstName() + " " + b.getClazz().getSubstitutedFor().getLastName())
+		String substitutedFor = b.getActivity().getSubstitutedFor() != null
+				? (b.getActivity().getSubstitutedFor().getFirstName() + " " + b.getActivity().getSubstitutedFor().getLastName())
 				: null;
 
 		return new MyBookingDto(
 			b.getId(),
-			b.getClazz().getType() != null ? b.getClazz().getType().getName() : "Zajęcia",
-			b.getClazz().getInstructor() != null ? (b.getClazz().getInstructor().getFirstName() + " " + b.getClazz().getInstructor().getLastName()) : "Instruktor",
+			b.getActivity().getType() != null ? b.getActivity().getType().getActivityName() : "Zajęcia",
+			b.getActivity().getInstructor() != null ? (b.getActivity().getInstructor().getFirstName() + " " + b.getActivity().getInstructor().getLastName()) : "Instruktor",
 			date,
 			time,
 			duration,
-			b.getClazz().getRoom().getName(),
+			b.getActivity().getRoom().getName(),
 			substitutedFor,
 			substitutedFor != null
 			);

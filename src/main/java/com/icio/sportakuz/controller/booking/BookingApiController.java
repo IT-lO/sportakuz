@@ -1,10 +1,10 @@
 package com.icio.sportakuz.controller.booking;
 
 import com.icio.sportakuz.entity.Booking;
-import com.icio.sportakuz.entity.ClassOccurrence;
+import com.icio.sportakuz.entity.Activity;
 import com.icio.sportakuz.repo.BookingStatus;
 import com.icio.sportakuz.repo.BookingRepository;
-import com.icio.sportakuz.repo.ClassOccurrenceRepository;
+import com.icio.sportakuz.repo.ActivityRepository;
 import com.icio.sportakuz.repo.ClassStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +21,10 @@ import java.util.List;
 public class BookingApiController {
 
     private final BookingRepository bookingRepository;
-    private final ClassOccurrenceRepository occurrenceRepository;
+    private final ActivityRepository occurrenceRepository;
 
     public BookingApiController(BookingRepository bookingRepository,
-                                ClassOccurrenceRepository occurrenceRepository) {
+                                ActivityRepository occurrenceRepository) {
         this.bookingRepository = bookingRepository;
         this.occurrenceRepository = occurrenceRepository;
     }
@@ -39,7 +39,7 @@ public class BookingApiController {
         if (req.classId() == null || req.userName() == null || req.userName().isBlank()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Brak wymaganych danych"));
         }
-        ClassOccurrence occurrence = occurrenceRepository.findByIdForUpdate(req.classId());
+        Activity occurrence = occurrenceRepository.findByIdForUpdate(req.classId());
         if (occurrence == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Nie znaleziono zajęć"));
         }
@@ -51,14 +51,14 @@ public class BookingApiController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("Brak wolnych miejsc"));
         }
         // Sprawdź duplikat aktywnej rezerwacji użytkownika
-        boolean already = bookingRepository.existsByClazz_IdAndUserNameAndStatusIn(
+        boolean already = bookingRepository.existsByActivity_IdAndUserNameAndStatusIn(
                 occurrence.getId(), req.userName(), List.of(BookingStatus.REQUESTED, BookingStatus.CONFIRMED, BookingStatus.PAID));
         if (already) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("Masz już aktywną rezerwację"));
         }
 
         Booking booking = new Booking();
-        booking.setClazz(occurrence);
+        booking.setActivity(occurrence);
         booking.setUserName(req.userName().trim());
         booking.setStatus(BookingStatus.REQUESTED);
         bookingRepository.save(booking);
@@ -93,13 +93,13 @@ public class BookingApiController {
         if (req.classId() == null || req.userName() == null || req.userName().isBlank()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Brak wymaganych danych"));
         }
-        ClassOccurrence occurrence = occurrenceRepository.findById(req.classId()).orElse(null);
+        Activity occurrence = occurrenceRepository.findById(req.classId()).orElse(null);
         if (occurrence == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Nie znaleziono zajęć"));
         }
 
         // Pobierz rezerwację użytkownika do usunięcia
-        Booking booking = bookingRepository.findFirstByClazz_IdAndUserNameAndStatusIn(
+        Booking booking = bookingRepository.findFirstByActivity_IdAndUserNameAndStatusIn(
                 occurrence.getId(), req.userName(), List.of(BookingStatus.REQUESTED, BookingStatus.CONFIRMED, BookingStatus.PAID));
         if (booking == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Nie znaleziono rezerwacji do usunięcia"));

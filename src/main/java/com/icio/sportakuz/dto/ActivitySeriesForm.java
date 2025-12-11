@@ -1,0 +1,52 @@
+package com.icio.sportakuz.dto;
+
+import com.icio.sportakuz.repo.RecurrencePattern;
+import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+@Getter
+@Setter
+public class ActivitySeriesForm {
+
+    // ZMIANA: Integer -> Long (Kluczowe dla działania ActivityTypeRepository)
+    @NotNull(message="Wybierz typ zajęć")
+    private Integer activityTypeId;
+
+    @NotNull(message="Wybierz instruktora")
+    private Long instructorId;
+
+    @NotNull(message="Wybierz salę")
+    private Long roomId;
+
+    @NotNull(message="Podaj datę startu")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private LocalDate startDate;
+
+    @NotNull(message="Podaj godzinę startu")
+    @DateTimeFormat(pattern="HH:mm")
+    private LocalTime startTime;
+
+    @NotNull(message="Podaj czas trwania")
+    @Positive @Max(value=600, message="Max 600 minut (10h)")
+    private Integer durationMinutes;
+
+    @NotNull(message="Podaj datę końcową generowania")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private LocalDate untilDate;
+
+    @NotNull(message="Wybierz wzorzec")
+    private RecurrencePattern recurrencePattern;
+
+    @NotNull(message = "Pojemność jest wymagana")
+    @Min(value = 1, message = "Minimum 1 miejsce")
+    private Integer capacity;
+
+    @Size(max=1000, message = "Notatka zbyt długa")
+    private String note;
+
+    private boolean active = true;
+}

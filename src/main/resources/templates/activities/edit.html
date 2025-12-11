@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<!-- Szablon edycji istniejącego wystąpienia zajęć. -->
+<html lang="pl" xmlns:th="http://www.thymeleaf.org"
+      th:replace="fragments :: base('Edycja zajęć', ~{::content})">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/forms.css}" />
+<section>
+    <!-- Karta edycji -->
+    <div class="max-w-3xl mx-auto space-y-8">
+        <div class="form-card">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-2xl font-semibold">
+                    Edytuj zajęcia #<span th:text="${editId}"></span>
+                </h1>
+                <!-- Powrót do listy -->
+                <a th:href="@{/activities}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                    ← Lista
+                </a>
+            </div>
+
+            <!-- Formularz edycji -->
+            <form th:action="@{'/activities/' + ${editId}}" th:object="${form}" method="post">
+                <div class="form-grid">
+                    <!-- Typ zajęć -->
+                    <div class="form-group">
+                        <label for="activityTypeId">Typ</label>
+                        <select th:field="*{activityTypeId}" id="activityTypeId">
+                            <option value="">-- wybierz --</option>
+                            <option th:each="t : ${types}"
+                                    th:value="${t.id}"
+                                    th:text="${t.activityName}"
+                                    th:attr="data-default-duration=${t.duration}">
+                            </option>
+                        </select>
+                        <p class="error"
+                           th:if="${#fields.hasErrors('activityTypeId')}"
+                           th:errors="*{activityTypeId}"></p>
+                    </div>
+
+                    <!-- Instruktor -->
+                    <div class="form-group">
+                        <label for="instructorSelect">Instruktor</label>
+                        <select th:field="*{instructorId}" id="instructorSelect">
+                            <option value="">-- wybierz --</option>
+                            <option th:each="i : ${instructors}"
+                                    th:value="${i.id}"
+                                    th:text="${i.firstName + ' ' + i.lastName}">
+                            </option>
+                        </select>
+                        <p class="error"
+                           th:if="${#fields.hasErrors('instructorId')}"
+                           th:errors="*{instructorId}"></p>
+                    </div>
+
+                    <!-- Sala -->
+                    <div class="form-group">
+                        <label for="roomSelect">Sala</label>
+                        <select th:field="*{roomId}" id="roomSelect">
+                            <option value="">-- wybierz --</option>
+                            <option th:each="r : ${rooms}"
+                                    th:value="${r.id}"
+                                    th:text="${r.name + ' (cap: ' + r.capacity + ')'}"
+                                    th:attr="data-capacity=${r.capacity}">
+                            </option>
+                        </select>
+                        <p class="error"
+                           th:if="${#fields.hasErrors('roomId')}"
+                           th:errors="*{roomId}"></p>
+                        <p id="capacityHint" class="muted"></p>
+                    </div>
+
+                    <!-- Data -->
+                    <div class="form-group">
+                        <label for="dateInput">Data</label>
+                        <input type="date"
+                               th:field="*{date}"
+                               id="dateInput" />
+                        <p class="error"
+                           th:if="${#fields.hasErrors('date')}"
+                           th:errors="*{date}"></p>
+                    </div>
+
+                    <!-- Start -->
+                    <div class="form-group">
+                        <label for="startTimeInput">Start</label>
+                        <input type="time"
+                               th:field="*{startTime}"
+                               id="startTimeInput" />
+                        <p class="error"
+                           th:if="${#fields.hasErrors('startTime')}"
+                           th:errors="*{startTime}"></p>
+                    </div>
+
+                    <!-- Czas trwania -->
+                    <div class="form-group">
+                        <label for="durationInput">Czas trwania (min)</label>
+                        <input type="number"
+                               min="5" step="5"
+                               th:field="*{durationMinutes}"
+                               id="durationInput" />
+                        <p class="error"
+                           th:if="${#fields.hasErrors('durationMinutes')}"
+                           th:errors="*{durationMinutes}"></p>
+                        <p id="endTimePreview" class="muted"></p>
+                        <p id="durationHint" class="muted"></p>
+                    </div>
+
+                    <!-- Pojemność -->
+                    <div class="form-group">
+                        <label for="capacityInput">Pojemność</label>
+                        <input type="number"
+                               min="1"
+                               th:field="*{capacity}"
+                               id="capacityInput" />
+                        <p class="error"
+                           th:if="${#fields.hasErrors('capacity')}"
+                           th:errors="*{capacity}"></p>
+                    </div>
+
+                    <!-- Notatka – pełna szerokość -->
+                    <div class="form-group form-group--wide">
+                        <label for="noteInput">Notatka</label>
+                        <textarea rows="3"
+                                  th:field="*{note}"
+                                  id="noteInput"
+                                  placeholder="Dodatkowe informacje..."></textarea>
+                        <p class="error"
+                           th:if="${#fields.hasErrors('note')}"
+                           th:errors="*{note}"></p>
+                    </div>
+                </div>
+
+                <!-- Przyciski: zapis zmian lub anulowanie -->
+                <div class="actions">
+                    <button type="submit" class="btn">
+                        Zapisz zmiany
+                    </button>
+                    <a th:href="@{/activities}" class="btn btn-secondary">
+                        Anuluj
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Skrypt: jak w oryginale -->
+    <script>
+        (function(){
+            const roomSelect = document.getElementById('roomSelect');
+            const capacityInput = document.getElementById('capacityInput');
+            const capacityHint = document.getElementById('capacityHint');
+            const startInput = document.getElementById('startTimeInput');
+            const durationInput = document.getElementById('durationInput');
+            const endPreview = document.getElementById('endTimePreview');
+            const typeSelect = document.getElementById('classTypeSelect');
+            const durationHint = document.getElementById('durationHint');
+
+            function updateCapacity(){
+                if(!roomSelect || !capacityInput) return;
+                const opt = roomSelect.options[roomSelect.selectedIndex];
+                if(!opt || !opt.getAttribute('data-capacity')) {
+                    if (capacityHint) capacityHint.textContent = '';
+                    return;
+                }
+                const max = parseInt(opt.getAttribute('data-capacity'),10);
+                const current = capacityInput.value ? parseInt(capacityInput.value.toString(),10) : null;
+                if(current===null || current>max){ capacityInput.value = max; }
+                capacityInput.max = max;
+                if (capacityHint)
+                    capacityHint.textContent = 'Maksymalna pojemność sali: ' + max +
+                        (current && current < max ? ' (ustawiono mniej: ' + current + ')' : '');
+            }
+
+            function pad(n){return (n<10 ? '0' : '') + n;}
+
+            function updateEnd(){
+                if(!startInput || !durationInput) return;
+                const startVal = startInput.value;
+                const dur = parseInt(durationInput.value.toString(),10);
+                if(!startVal||isNaN(dur)||dur<=0){ endPreview.textContent=''; return; }
+                const [h,m] = startVal.split(':').map(Number);
+                const total = h*60 + m + dur;
+                const endH = Math.floor(total/60) % 24;
+                const endM = total % 60;
+                endPreview.textContent = 'Godzina zakończenia: ' + pad(endH) + ':' + pad(endM);
+            }
+
+            function maybeApplyDefaultDuration(){
+                if(!typeSelect || !durationInput) return;
+                const opt = typeSelect.options[typeSelect.selectedIndex];
+                if(!opt) return;
+                const def = parseInt(opt.getAttribute('data-default-duration'),10);
+                if(def > 0){
+                    durationInput.value = def; // bezwarunkowo nadpisujemy
+                    if (durationHint)
+                        durationHint.textContent = 'Domyślny czas z typu: ' + def + ' min (możesz zmienić)';
+                    updateEnd();
+                } else {
+                    if (durationHint)
+                        durationHint.textContent = '';
+                }
+            }
+
+            roomSelect   && roomSelect.addEventListener('change', updateCapacity);
+            durationInput && durationInput.addEventListener('input', updateEnd);
+            startInput   && startInput.addEventListener('change', updateEnd);
+            typeSelect   && typeSelect.addEventListener('change', maybeApplyDefaultDuration);
+
+            updateCapacity();
+            updateEnd();
+        })();
+    </script>
+</section>
+</div>
+</html>

@@ -4,6 +4,7 @@ import com.icio.sportakuz.repo.BookingStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.OffsetDateTime;
 
@@ -27,7 +28,7 @@ public class Booking {
     /** Wystąpienie zajęć, którego dotyczy rezerwacja. */
     @ManyToOne(optional=false)
     @JoinColumn(name="class_id", nullable=false)
-    private ClassOccurrence clazz;
+    private Activity activity;
 
     /** Nazwa / identyfikator użytkownika dokonującego rezerwacji. */
     @Column(name="user_name", nullable=false, length=100)
@@ -39,7 +40,8 @@ public class Booking {
     private BookingStatus status;
 
     /** Timestamp utworzenia (DB). */
-    @Column(name="created_at", nullable=false, insertable=false, updatable=false)
+    @CreationTimestamp
+    @Column(name="created_at", nullable=false, updatable=false)
     private OffsetDateTime createdAt;
 
     /** Timestamp anulowania (jeśli status CANCELLED). */

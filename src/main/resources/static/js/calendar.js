@@ -16,14 +16,18 @@
     let selectedClass = null;
     let userReservations = [];
 
-    // classes loaded from server side and attached to window.__classes by Thymeleaf
-    const classes = Array.isArray(window.__classes) ? window.__classes : [];
+    // classes loaded from server side and attached to window.__activities by Thymeleaf
+    const classes = window.__activities;
+    if(window.__activities == null){
+        console.log("wywaliło się");
+    }
 
     const dataHandler = {
         onDataChanged(data) { userReservations = data; }
     };
 
     async function initializeApp() {
+        console.log("asdasdasda");
         if (window.dataSdk) {
             try {
                 const initResult = await window.dataSdk.init(dataHandler);
@@ -100,6 +104,7 @@
     }
 
     function renderCalendar(){
+        console.log(classes);
         const calendarHeader = document.getElementById('calendar-header');
         const calendarBody = document.getElementById('calendar-body');
         if(!calendarHeader || !calendarBody) return;
@@ -118,6 +123,7 @@
             const dayClasses = classes
                 .filter(c => (c.date ? c.date === iso : c.day === day))
                 .sort((a,b)=>a.time.localeCompare(b.time));
+            console.log(dayClasses);
             dayClasses.forEach(classData => {
                 const classCard = document.createElement('div'); classCard.className = 'class-card';
                 const instructorLine = (classData.isSubstitution && classData.substitutedFor)

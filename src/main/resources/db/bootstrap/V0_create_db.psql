@@ -21,4 +21,3 @@ ALTER DATABASE sportakuz OWNER TO sportakuz;
 ALTER SCHEMA public OWNER TO sportakuz;
 GRANT ALL ON SCHEMA public TO sportakuz;
 
-\echo '== Done. You can now run the app and let Flyway apply V1 =='

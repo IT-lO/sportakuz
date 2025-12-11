@@ -1,6 +1,5 @@
 package com.icio.sportakuz.config;
 
-import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -37,20 +36,29 @@ public class PersistenceConfig {
 
     /** Buduje fabrykę EntityManager z adapterem Hibernate i podstawowymi właściwościami. */
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource ds, Flyway flyway) {
-        flyway.migrate();
-
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource ds) {
         var emf = new LocalContainerEntityManagerFactoryBean();
+        // if creating DB for the first time switch to true, after creation switch to false
+        var shouldOverwriteDatabase = false;
+
         emf.setDataSource(ds);
-        emf.setPackagesToScan("com.icio.sportakuz");
+        emf.setPackagesToScan("com.icio");
 
         var vendor = new HibernateJpaVendorAdapter();
         vendor.setShowSql(false);
-        vendor.setGenerateDdl(false); // schemat robi Flyway
+
+        vendor.setGenerateDdl(true);
+
         emf.setJpaVendorAdapter(vendor);
 
         var jpa = new HashMap<String, Object>();
-        jpa.put("hibernate.hbm2ddl.auto", "validate");
+        if(shouldOverwriteDatabase){
+            jpa.put("hibernate.hbm2ddl.auto", "create");
+        }
+        else{
+            jpa.put("hibernate.hbm2ddl.auto", "update");
+        }
+
         jpa.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         jpa.put("hibernate.jdbc.time_zone", "UTC");
         emf.setJpaPropertyMap(jpa);
