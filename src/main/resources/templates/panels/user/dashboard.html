@@ -11,7 +11,9 @@
         <div class="absolute inset-0 opacity-30 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/diagmonds.png')]"></div>
         <div class="px-6 py-12 sm:px-10 lg:px-14 relative">
 
-            <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Witaj, Użytkowniku!</h1>
+            <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
+                Witaj, <span th:text="${userName}">Użytkowniku</span>!
+            </h1>
 
             <p class="max-w-2xl text-blue-100 text-sm sm:text-base leading-relaxed">
                 Tutaj znajdziesz swoje nadchodzące rezerwacje, sprawdzisz status karnetu i zapiszesz się na nowe zajęcia.

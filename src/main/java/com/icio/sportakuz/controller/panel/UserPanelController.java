@@ -1,5 +1,6 @@
 package com.icio.sportakuz.controller.panel;
 
+import com.icio.sportakuz.entity.User;
 import com.icio.sportakuz.entity.UserRole;
 import com.icio.sportakuz.repo.ActivityRepository;
 import com.icio.sportakuz.repo.ActivityTypeRepository;
@@ -10,13 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.security.Principal;
 import java.time.OffsetDateTime;
 
-/**
- * Kontroler panelu użytkownika.
- * Zbiera statystyki użytkownika (zajęcia w których uczestniczy itp.)
- * oraz listy najbliższych widocznych zajęć (upcoming). Dane trafiają do szablonu panel/user.
- */
 @Controller
 public class UserPanelController {
 
@@ -35,9 +32,21 @@ public class UserPanelController {
         this.roomRepository = roomRepository;
     }
 
-    /** Panel Użytkownika – Udostępnia użytkownikowi możliwość podglądu jego rezerwacji */
     @GetMapping("/panel/user")
-    public String index(Model model) {
+    public String index(Model model, Principal principal) {
+        // 1. Pobieramy email zalogowanego użytkownika
+        String email = principal.getName();
+
+        // 2. Szukamy użytkownika w bazie, aby pobrać jego imię
+        User currentUser = userRepository.findByEmail(email).orElse(null);
+
+        // 3. Ustawiamy zmienną dla widoku (jeśli brak imienia, fallback do "Użytkowniku")
+        String displayName = (currentUser != null && currentUser.getFirstName() != null)
+                ? currentUser.getFirstName()
+                : "Użytkowniku";
+
+        model.addAttribute("userName", displayName);
+
         long classesTotal = activityRepository.count();
         long typesTotal = activityTypeRepository.count();
         long instructorsTotal = userRepository.countByRole(UserRole.ROLE_INSTRUCTOR);
@@ -52,6 +61,7 @@ public class UserPanelController {
         model.addAttribute("stats_types", typesTotal);
         model.addAttribute("stats_instructors", instructorsTotal);
         model.addAttribute("stats_rooms", roomsTotal);
-        return "panels/user/dashboard"; // /resources/templates/panels/user/dashboard.html
+
+        return "panels/user/dashboard";
     }
 }

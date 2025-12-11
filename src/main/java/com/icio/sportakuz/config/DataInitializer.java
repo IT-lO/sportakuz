@@ -51,5 +51,16 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
             userRepository.save(user);
             System.out.println(">>> DATA_INIT: Utworzono USERA");
         }
+        if (!userRepository.existsByEmail("user1@sportakuz.pl")) {
+            User user = new User();
+            user.setEmail("user1@sportakuz.pl");
+            user.setFirstName("Barabasz");
+            user.setLastName("Jugosławski");
+            user.setPassword(passwordEncoder.encode("user123"));
+            user.setRole(UserRole.ROLE_USER);
+            user.setActive(true);
+            userRepository.save(user);
+            System.out.println(">>> DATA_INIT: Utworzono USERA");
+        }
     }
 }
