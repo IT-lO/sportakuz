@@ -16,9 +16,9 @@
     let selectedClass = null;
     let userReservations = [];
 
-    // classes loaded from server side and attached to window.__classes by Thymeleaf
-    const classes = window.__classes;
-    if(window.__classes == null){
+    // classes loaded from server side and attached to window.__activities by Thymeleaf
+    const classes = window.__activities;
+    if(window.__activities == null){
         console.log("wywaliło się");
     }
 

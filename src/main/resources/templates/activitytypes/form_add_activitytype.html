@@ -17,30 +17,25 @@
 
         <form th:action="@{/activitytypes/new}" th:object="${activityTypeForm}" method="post" class="form-card">
 
-            <!-- Nazwa typu zajęć -->
             <div class="form-group">
                 <label for="name">Nazwa typu zajęć</label>
                 <input type="text"
                        id="name"
                        th:field="*{activityName}"
-                       aria-describedby="name-error">
-                <p th:if="${#fields.hasErrors('name')}"
-                   th:errors="*{activityName}"
-                   id="name-error"
-                   class="error"></p>
+                       class="form-input"> <p th:if="${#fields.hasErrors('activityName')}"
+                                              th:errors="*{activityName}"
+                                              class="error"></p>
             </div>
 
-            <!-- Domyślny czas trwania -->
             <div class="form-group">
                 <label for="defaultDurationMinutes">Domyślny czas trwania (opcjonalnie)</label>
                 <input type="number"
                        id="defaultDurationMinutes"
                        th:field="*{duration}"
-                       aria-describedby="defaultDurationMinutes-error">
+                       class="form-input">
                 <p class="muted">Np. „60” (w minutach).</p>
-                <p th:if="${#fields.hasErrors('defaultDurationMinutes')}"
+                <p th:if="${#fields.hasErrors('duration')}"
                    th:errors="*{duration}"
-                   id="defaultDurationMinutes-error"
                    class="error"></p>
             </div>
 

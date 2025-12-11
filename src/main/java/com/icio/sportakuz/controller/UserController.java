@@ -37,7 +37,7 @@ public class UserController {
         return "users/list_instructors";
     }
 
-    @GetMapping("/newInsstructor")
+    @GetMapping("/newInstructor")
     public String showCreateForm(Model model) {
         UserForm form = new UserForm();
         form.setActive(true);

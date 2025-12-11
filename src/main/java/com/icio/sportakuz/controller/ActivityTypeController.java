@@ -45,7 +45,7 @@ public class ActivityTypeController {
     }
 
     @PostMapping("/new")
-    public String processCreateForm(@Valid @ModelAttribute("classTypeForm") ActivityTypeForm form,
+    public String processCreateForm(@Valid @ModelAttribute("activityTypeForm") ActivityTypeForm form, // ZMIANA Z classTypeForm
                                     BindingResult bindingResult,
                                     Model model,
                                     RedirectAttributes redirectAttributes) {
@@ -89,13 +89,13 @@ public class ActivityTypeController {
         ActivityType classType = classTypeOpt.get();
 
         // Mapowanie Encja -> DTO (do wyświetlenia w formularzu)
-        ActivityTypeForm form = new ActivityTypeForm();
+        ActivityTypeForm form = new ActivityTypeForm() ;
         form.setActivityName(classType.getActivityName());
         form.setDescription(classType.getDescription());
         form.setDuration(classType.getDuration());
         form.setDifficulty(classType.getDifficulty());
 
-        model.addAttribute("classTypeForm", form);
+        model.addAttribute("activityTypeForm", form);
         model.addAttribute("activityTypeId", id);
         model.addAttribute("difficultyLevels", DifficultyLevel.values());
         model.addAttribute("pageTitle", "Edytuj typ zajęć: " + classType.getActivityName());
