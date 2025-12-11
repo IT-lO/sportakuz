@@ -96,7 +96,7 @@ public class ActivityTypeController {
         form.setDifficulty(classType.getDifficulty());
 
         model.addAttribute("classTypeForm", form);
-        model.addAttribute("classTypeId", id);
+        model.addAttribute("activityTypeId", id);
         model.addAttribute("difficultyLevels", DifficultyLevel.values());
         model.addAttribute("pageTitle", "Edytuj typ zajęć: " + classType.getActivityName());
         return "activitytypes/form_edit_activitytype";
@@ -127,7 +127,7 @@ public class ActivityTypeController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("difficultyLevels", DifficultyLevel.values());
             model.addAttribute("pageTitle", "Edytuj typ zajęć");
-            model.addAttribute("classTypeId", id);
+            model.addAttribute("activityTypeId", id);
             return "activitytypes/form_edit_activitytype";
         }
 

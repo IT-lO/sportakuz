@@ -37,7 +37,7 @@ public class UserController {
         return "users/list_instructors";
     }
 
-    @GetMapping("/new")
+    @GetMapping("/newInsstructor")
     public String showCreateForm(Model model) {
         UserForm form = new UserForm();
         form.setActive(true);
@@ -46,7 +46,7 @@ public class UserController {
         return "users/form_add_instructor";
     }
 
-    @PostMapping("/new")
+    @PostMapping("/newInstructor")
     public String processCreateForm(@Valid @ModelAttribute("instructorForm") UserForm form,
                                     BindingResult bindingResult,
                                     Model model,

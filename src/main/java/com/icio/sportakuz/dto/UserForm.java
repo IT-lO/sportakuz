@@ -13,7 +13,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserForm {
-
     @NotBlank(message = "Imię jest wymagane.")
     @Size(max = 100, message = "Imię nie może przekraczać 100 znaków.")
     private String firstName;

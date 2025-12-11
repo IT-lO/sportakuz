@@ -90,4 +90,11 @@ public class ActivitySeries {
     @CreationTimestamp
     @Column(name="created_at", nullable=false, updatable=false)
     private OffsetDateTime createdAt;
+
+    public OffsetDateTime getEndTime() {
+        if (this.startTime != null && this.durationMinutes != null) {
+            return this.startTime.plusMinutes(this.durationMinutes);
+        }
+        return null;
+    }
 }

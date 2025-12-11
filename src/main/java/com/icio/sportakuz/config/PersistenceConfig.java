@@ -39,7 +39,7 @@ public class PersistenceConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource ds) {
         var emf = new LocalContainerEntityManagerFactoryBean();
         // if creating DB for the first time switch to true, after creation switch to false
-        var shouldOverwriteDatabase = false;
+        var shouldOverwriteDatabase = true;
 
         emf.setDataSource(ds);
         emf.setPackagesToScan("com.icio");

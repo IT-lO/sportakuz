@@ -1,62 +1,89 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments.html :: base(${pageTitle}, ~{::section})}">
+<html lang="pl" xmlns:th="http://www.thymeleaf.org"
+      th:replace="fragments :: base(${pageTitle}, ~{::content})">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/forms.css}" />
 <section>
     <div class="max-w-3xl mx-auto">
 
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold tracking-tight text-gray-900" th:text="${pageTitle}">Dodaj nowy typ zajęć</h1>
-            <a th:href="@{/panel/admin}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">← Powrót do panelu</a>
+            <h1 class="text-3xl font-bold tracking-tight" th:text="${pageTitle}">
+                Dodaj nowy typ zajęć
+            </h1>
+            <a th:href="@{/panel/admin}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                ← Powrót do panelu
+            </a>
         </div>
 
-        <form th:action="@{/activitytypes/new}" th:object="${activityTypeForm}" method="post" class="space-y-6 bg-white border border-gray-200 p-8 rounded-xl shadow-sm">
+        <form th:action="@{/activitytypes/new}" th:object="${activityTypeForm}" method="post" class="form-card">
 
-            <div>
-                <label for="activityName" class="block text-sm font-medium text-gray-700 mb-1">Nazwa typu zajęć</label>
-                <input type="text" id="activityName" th:field="*{activityName}" class="w-full px-3 py-2 border rounded-md"
-                       th:classappend="${#fields.hasErrors('activityName')} ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'"
+            <!-- Nazwa typu zajęć -->
+            <div class="form-group">
+                <label for="name">Nazwa typu zajęć</label>
+                <input type="text"
+                       id="name"
+                       th:field="*{activityName}"
                        aria-describedby="name-error">
-                <p th:if="${#fields.hasErrors('activityName')}" th:errors="*{activityName}" id="name-error" class="mt-1 text-xs text-red-600"></p>
+                <p th:if="${#fields.hasErrors('name')}"
+                   th:errors="*{activityName}"
+                   id="name-error"
+                   class="error"></p>
             </div>
 
-            <div>
-                <label for="duration" class="block text-sm font-medium text-gray-700 mb-1">Domyślny czas trwania (minuty)</label>
-                <input type="number" id="duration" th:field="*{duration}" class="w-full px-3 py-2 border rounded-md"
-                       th:classappend="${#fields.hasErrors('duration')} ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'"
-                       aria-describedby="duration-error">
-                <p class="mt-1 text-xs text-gray-500">Np. "60"</p>
-                <p th:if="${#fields.hasErrors('duration')}" th:errors="*{duration}" id="duration-error" class="mt-1 text-xs text-red-600"></p>
+            <!-- Domyślny czas trwania -->
+            <div class="form-group">
+                <label for="defaultDurationMinutes">Domyślny czas trwania (opcjonalnie)</label>
+                <input type="number"
+                       id="defaultDurationMinutes"
+                       th:field="*{duration}"
+                       aria-describedby="defaultDurationMinutes-error">
+                <p class="muted">Np. „60” (w minutach).</p>
+                <p th:if="${#fields.hasErrors('defaultDurationMinutes')}"
+                   th:errors="*{duration}"
+                   id="defaultDurationMinutes-error"
+                   class="error"></p>
             </div>
 
-            <div>
-                <label for="difficulty" class="block text-sm font-medium text-gray-700 mb-1">Poziom trudności</label>
-                <select id="difficulty" th:field="*{difficulty}" class="w-full px-3 py-2 border rounded-md"
-                        th:classappend="${#fields.hasErrors('difficulty')} ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'"
+            <!-- Poziom trudności -->
+            <div class="form-group">
+                <label for="difficulty">Poziom trudności</label>
+                <select id="difficulty"
+                        th:field="*{difficulty}"
                         aria-describedby="difficulty-error">
                     <option value="">-- Wybierz poziom --</option>
-
                     <option th:each="level : ${difficultyLevels}"
                             th:value="${level}"
                             th:text="${level.displayName}">
                         Dla początkujących
                     </option>
                 </select>
-                <p class="mt-1 text-xs text-gray-500">Wybierz poziom trudności z listy.</p>
-                <p th:if="${#fields.hasErrors('difficulty')}" th:errors="*{difficulty}" id="difficulty-error" class="mt-1 text-xs text-red-600"></p>
+                <p class="muted">Wybierz poziom trudności z listy.</p>
+                <p th:if="${#fields.hasErrors('difficulty')}"
+                   th:errors="*{difficulty}"
+                   id="difficulty-error"
+                   class="error"></p>
             </div>
 
-            <div>
-                <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Opis (opcjonalnie)</label>
-                <textarea id="description" th:field="*{description}" rows="5" class="w-full px-3 py-2 border rounded-md"
-                          th:classappend="${#fields.hasErrors('description')} ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'"
+            <!-- Opis -->
+            <div class="form-group">
+                <label for="description">Opis (opcjonalnie)</label>
+                <textarea id="description"
+                          th:field="*{description}"
+                          rows="5"
                           aria-describedby="description-error"></textarea>
-                <p class="mt-1 text-xs text-gray-500">Rozszerzony opis typu zajęć, widoczny dla użytkowników.</p>
-                <p th:if="${#fields.hasErrors('description')}" th:errors="*{description}" id="description-error" class="mt-1 text-xs text-red-600"></p>
+                <p class="muted">Rozszerzony opis typu zajęć, widoczny dla użytkowników.</p>
+                <p th:if="${#fields.hasErrors('description')}"
+                   th:errors="*{description}"
+                   id="description-error"
+                   class="error"></p>
             </div>
 
-
-            <div class="pt-5 border-t border-gray-200 flex items-center justify-end gap-4">
-                <a th:href="@{/panel/admin}" class="px-5 py-2.5 rounded-md text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 transition">Anuluj</a>
-                <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-indigo-600 text-white font-semibold shadow hover:bg-indigo-500 transition">
+            <!-- Przyciski -->
+            <div class="actions" style="justify-content: flex-end; border-top: 1px solid var(--border); padding-top: .75rem; margin-top:.5rem;">
+                <a th:href="@{/panel/admin}" class="btn btn-secondary">
+                    Anuluj
+                </a>
+                <button type="submit" class="btn">
                     <span class="text-lg">💾</span> Zapisz typ zajęć
                 </button>
             </div>
@@ -64,4 +91,5 @@
         </form>
     </div>
 </section>
+</div>
 </html>

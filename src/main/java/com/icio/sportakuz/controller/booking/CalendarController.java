@@ -40,7 +40,7 @@ public class CalendarController {
         // Pobieramy tylko przyszłe nieanulowane zajęcia (widoczne w kalendarzu)
         List<Activity> occurrences = activityRepository.findNextVisible(OffsetDateTime.now(), org.springframework.data.domain.Pageable.unpaged());
         List<CalendarClassDto> dtoList = occurrences.stream().map(this::toDto).collect(Collectors.toList());
-        model.addAttribute("classes", dtoList);
+        model.addAttribute("activities", dtoList);
         return "bookings/calendar";
     }
 

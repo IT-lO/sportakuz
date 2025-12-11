@@ -1,0 +1,202 @@
+/* =========================
+   Tabela zajęć / listy
+   ========================= */
+
+.table-wrapper {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.table-responsive {
+    overflow-x:auto;
+}
+
+table {
+    border-collapse:collapse;
+    width:100%;
+    font-size:.9rem;
+}
+
+thead {
+    background:#eef3f8;
+}
+
+th,
+td {
+    padding:.55rem .7rem;
+    text-align:left;
+    border:1px solid var(--border);
+}
+
+tbody tr:nth-child(even) {
+    background:#fafcff;
+}
+
+tbody tr:hover {
+    background:#e9f3ff;
+    transition:.15s;
+}
+
+/* =========================
+   Statusy – ogólne
+   ========================= */
+
+.status {
+    display:inline-block;
+    padding:.2rem .55rem;
+    border-radius:var(--radius);
+    font-size:.7rem;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    background:#ddd;
+    font-weight:600;
+    border:1px solid #ccc;
+}
+.status.PLANNED {
+    background:var(--planned-bg);
+    border-color:#e1c971;
+}
+.status.CANCELLED {
+    background:var(--cancelled-bg);
+    border-color:#e88b86;
+}
+.status.DONE {
+    background:var(--done-bg);
+    border-color:#8bd598;
+}
+
+/* =========================
+   Narzędzia nad tabelą
+   ========================= */
+
+.table-tools {
+    display:flex;
+    gap:.75rem;
+    align-items:center;
+    margin:.6rem 0 1rem;
+    flex-wrap:wrap;
+}
+
+.table-tools .search-box {
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+}
+
+.table-tools input[type=search] {
+    padding:.45rem .6rem;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    min-width:220px;
+}
+
+.table-tools input[type=search]:focus {
+    outline:2px solid var(--accent);
+}
+
+/* =========================
+   TRYB CIEMNY – tabele / listy
+   ========================= */
+
+html.dark .table-wrapper {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+html.dark table {
+    background:#2a333b;
+}
+
+html.dark thead {
+    background:#34424c;
+}
+
+html.dark th,
+html.dark td {
+    border-color:#3a444d;
+}
+
+html.dark .status {
+    border-color:#3a444d;
+}
+
+/* Wiersze w dark mode – delikatne tło */
+html.dark tbody tr:nth-child(even) {
+    background: #232c34;
+}
+html.dark tbody tr:hover {
+    background: #34424c;
+}
+
+/* Badge instruktora / zastępstwa */
+html.dark [data-row-instr] button {
+    background: #4f596d !important;
+    color: #e5e7eb !important;
+    border: 1px solid #4b5563;
+}
+html.dark [data-row-instr] button.bg-orange-100 {
+    background: #e1b525 !important;
+    color: #fffbeb !important;
+    border-color: #b45309;
+}
+
+/* =========================
+   TRYB CIEMNY – statusy toggle
+   ========================= */
+
+/* wspólna ramka dla wszystkich */
+html.dark [data-status-toggle] {
+    border-radius: 9999px;
+    border: 1px solid #4b5563;
+}
+
+/* PLANNED */
+html.dark [data-status-toggle].bg-yellow-100 {
+    background: #e1b525;
+    color: #fffbeb;
+    border-color: #fbbf24;
+}
+
+/* CANCELLED */
+html.dark [data-status-toggle].bg-red-100 {
+    background: #7f1d1d;
+    color: #fecaca;
+    border-color: #f87171;
+}
+
+/* FINISHED */
+html.dark [data-status-toggle].bg-green-100 {
+    background: #14532d;
+    color: #bbf7d0;
+    border-color: #34d399;
+}
+
+/* OPEN */
+html.dark [data-status-toggle].bg-blue-100 {
+    background: #3a64da;
+    color: #dbeafe;
+    border-color: #60a5fa;
+}
+
+/* inne / neutralne */
+html.dark [data-status-toggle].bg-gray-100 {
+    background: #4b5563;
+    color: #e5e7eb;
+    border-color: #6b7280;
+}
+
+/* Historia – badge po prawej */
+html.dark .table-wrapper span.bg-red-100 {
+    background: #7f1d1d;
+    color: #fecaca;
+    border-color: #f87171;
+}
+html.dark .table-wrapper span.bg-green-100 {
+    background: #14532d;
+    color: #bbf7d0;
+    border-color: #34d399;
+}
