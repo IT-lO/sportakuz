@@ -5,6 +5,21 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pl" th:fragment="base(pageTitle,content)">
 <!-- Sekcja <head>: meta + tytuł dynamiczny + konfiguracja Tailwind + główny arkusz stylów -->
 <head>
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem('theme'); // np. 'dark' / 'light'
+                var systemPrefersDark = window.matchMedia &&
+                    window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                if (stored === 'dark' || (!stored && systemPrefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {
+                // w razie czego nic nie robimy
+            }
+        })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title th:text="${pageTitle}">SportakUZ</title>

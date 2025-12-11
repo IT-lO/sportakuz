@@ -1,6 +1,12 @@
 /* =========================
    Podstawowy layout
    ========================= */
+
+:root {
+  color-scheme: light dark;
+}
+
+
 :root {
   --bg:#f7f9fc;
   --accent:#0d6efd;
@@ -547,4 +553,112 @@ html.dark input[type="time"]::-webkit-calendar-picker-indicator {
    żeby kontrast między "w środku" a "między polami" był większy */
 .form-group label {
   margin-bottom: 0.25rem;   /* wcześniej było .35rem */
+}
+
+/* Flash błędu w obu trybach */
+.flash-error {
+  background: var(--danger-bg);
+  color: var(--danger);
+  padding: .6rem .9rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+  border: 1px solid #a11319;
+}
+
+/* Wiersze tabeli w trybie ciemnym – subtelne tło */
+html.dark tbody tr:nth-child(even) {
+  background: #232c34;
+}
+html.dark tbody tr:hover {
+  background: #34424c;
+}
+
+/* TRYB CIEMNY – tabela bez karty/ramki wokół */
+html.dark .table-wrapper {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  /* jeśli chcesz też bardziej „na płasko”: */
+  border-radius: 0;
+}
+
+.table-wrapper {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  /* jeśli chcesz też bardziej „na płasko”: */
+  border-radius: 0;
+}
+
+/* TRYB CIEMNY – badge instruktora */
+html.dark [data-row-instr] button {
+  background: #4f596d !important;   /* ciemny szary */
+  color: #e5e7eb !important;
+  border: 1px solid #4b5563;
+}
+
+/* Zastępstwa – lekko „pomarańczowe”, ale nadal ciemne */
+html.dark [data-row-instr] button.bg-orange-100 {
+  background: #e1b525 !important;
+  color: #fffbeb !important;
+  border-color: #b45309;
+}
+
+/* =========================
+   TRYB CIEMNY – statusy
+   ========================= */
+
+/* wspólna ramka dla wszystkich statusów */
+html.dark [data-status-toggle] {
+  border-radius: 9999px;
+  border: 1px solid #4b5563;
+}
+
+/* PLANNED – żółty, ale ciemny */
+html.dark [data-status-toggle].bg-yellow-100 {
+  background: #e1b525;      /* ciemny brąz/żółty */
+  color: #fffbeb;
+  border-color: #fbbf24;
+}
+
+/* CANCELLED – czerwony ciemny */
+html.dark [data-status-toggle].bg-red-100 {
+  background: #7f1d1d;
+  color: #fecaca;
+  border-color: #f87171;
+}
+
+/* FINISHED – zielony ciemny */
+html.dark [data-status-toggle].bg-green-100 {
+  background: #14532d;
+  color: #bbf7d0;
+  border-color: #34d399;
+}
+
+/* OPEN – niebieski ciemny */
+html.dark [data-status-toggle].bg-blue-100 {
+  background: #3a64da;
+  color: #dbeafe;
+  border-color: #60a5fa;
+}
+
+/* inne / neutralne */
+html.dark [data-status-toggle].bg-gray-100 {
+  background: #4b5563;
+  color: #e5e7eb;
+  border-color: #6b7280;
+}
+
+/* Historia – te małe badge'e po prawej */
+html.dark .table-wrapper span.bg-red-100 {
+  background: #7f1d1d;
+  color: #fecaca;
+  border-color: #f87171;
+}
+
+html.dark .table-wrapper span.bg-green-100 {
+  background: #14532d;
+  color: #bbf7d0;
+  border-color: #34d399;
 }
