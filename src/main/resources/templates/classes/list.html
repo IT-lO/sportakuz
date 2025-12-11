@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org"
-      th:replace="fragments.html :: base('Lista zajęć', ~{::section})">
+      th:replace="fragments :: base('Lista zajęć', ~{::content})">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/lists.css}" />
 <section>
     <div class="space-y-6">
         <!-- Nagłówek sekcji z przyciskiem dodania nowego wystąpienia -->
@@ -278,4 +280,5 @@
         }
     </style>
 </section>
+</div>
 </html>

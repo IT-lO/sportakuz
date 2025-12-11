@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org"
-      th:replace="fragments.html :: base('Serie zajęć', ~{::section})">
+      th:replace="fragments :: base('Serie zajęć', ~{::content})">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/lists.css}" />
 <section>
     <div class="space-y-8">
         <div class="flex items-center justify-between">
@@ -165,4 +167,5 @@
         </div>
     </div>
 </section>
+</div>
 </html>

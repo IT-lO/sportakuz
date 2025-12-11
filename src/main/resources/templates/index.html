@@ -3,8 +3,9 @@
      Prezentuje skróty nawigacyjne (HERO), statystyki, listę nadchodzących zajęć oraz CTA do dodania nowych.
      Wykorzystuje fragment bazowy 'base' z fragments.html przez th:replace. -->
 <html lang="pl" xmlns:th="http://www.thymeleaf.org"
-      th:replace="fragments.html :: base('SportakUZ – Panel', ~{::section})">
-
+      th:replace="fragments :: base('SportakUZ – Panel', ~{::content})">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/panels.css}" />
 <section class="space-y-12">
 
     <!-- HERO -->
@@ -132,4 +133,5 @@
     </div>
 
 </section>
+</div>
 </html>

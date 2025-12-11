@@ -1,0 +1,116 @@
+/* =========================
+   Formularz zajęć
+   ========================= */
+
+.form-card {
+    background:#fff;
+    padding:1.25rem 1.5rem;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    max-width:720px;
+}
+
+.form-grid {
+    display:grid;
+    gap:1rem;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+}
+
+.form-group {
+    display:flex;
+    flex-direction:column;
+}
+
+.form-group label {
+    font-size:.75rem;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    margin-bottom:0.25rem;   /* trochę mniejszy odstęp */
+    color:#555;
+}
+
+input,
+select,
+textarea {
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:.45rem .6rem;
+    font:inherit;
+    background:#fcfdff;
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+    border-color:var(--accent-border);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline:2px solid var(--accent);
+    outline-offset:2px;
+    box-shadow:0 0 0 3px rgba(13,110,253,.25);
+}
+
+textarea {
+    resize:vertical;
+}
+
+.actions {
+    display:flex;
+    gap:.75rem;
+    margin-top:1rem;
+}
+
+/* Formularz – pola szerokie w gridzie */
+.form-group--wide {
+    grid-column: 1 / -1;
+}
+
+/* Większy odstęp między kolejnymi polami
+   w formularzach jednokolumnowych */
+.form-card > .form-group:not(:last-child) {
+    margin-bottom: 0.75rem;
+}
+
+/* =========================
+   TRYB CIEMNY – formularze
+   ========================= */
+
+html.dark .form-card {
+    background:#2a333b;
+    border-color:#3a444d;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea {
+    background:#233038;
+    border-color:#3a444d;
+    color:#eef2f5;
+}
+
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+    outline:2px solid var(--accent);
+}
+
+html.dark .form-group label {
+    color: #e5e7eb;
+}
+
+/* Ikonki w inputach date/time – dark */
+html.dark input[type="date"],
+html.dark input[type="time"] {
+    color-scheme: dark;
+}
+
+html.dark input[type="date"]::-webkit-calendar-picker-indicator,
+html.dark input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(1.2);
+    opacity: 0.9;
+}

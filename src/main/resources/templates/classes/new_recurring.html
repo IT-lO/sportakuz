@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org"
-      th:replace="fragments.html :: base('Nowa seria', ~{::section})">
+      th:replace="fragments :: base('Nowa seria', ~{::content})">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/forms.css}" />
 <section>
     <div class="max-w-3xl mx-auto space-y-8">
         <!-- Karta formularza w naszym stylu -->
@@ -235,4 +237,5 @@
         })();
     </script>
 </section>
+</div>
 </html>

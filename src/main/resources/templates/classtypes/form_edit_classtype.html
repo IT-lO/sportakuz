@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org"
-      th:replace="fragments.html :: base(${pageTitle}, ~{::section})">
+      th:replace="fragments :: base(${pageTitle}, ~{::content})">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/forms.css}" />
 <section>
     <div class="max-w-3xl mx-auto">
 
@@ -92,4 +94,5 @@
         </form>
     </div>
 </section>
+</div>
 </html>

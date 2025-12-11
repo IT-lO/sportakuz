@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org"
-      th:replace="fragments.html :: base('SportakUZ – Mój Panel', ~{::section})">
+      th:replace="fragments :: base('SportakUZ – Mój Panel', ~{::content})">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/panels.css}" />
 
 <section class="space-y-12">
 
@@ -146,4 +148,5 @@
     </div>
 
 </section>
+</div>
 </html>

@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <!-- Szablon edycji istniejącego wystąpienia zajęć. -->
 <html lang="pl" xmlns:th="http://www.thymeleaf.org"
-      th:replace="fragments.html :: base('Edycja zajęć', ~{::section})">
+      th:replace="fragments :: base('Edycja zajęć', ~{::content})">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/forms.css}" />
 <section>
     <!-- Karta edycji -->
     <div class="max-w-3xl mx-auto space-y-8">
@@ -214,4 +216,5 @@
         })();
     </script>
 </section>
+</div>
 </html>
