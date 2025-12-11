@@ -1,0 +1,107 @@
+/* =========================
+   HOME – karty dashboardów (LIGHT)
+   ========================= */
+
+.home-card {
+    background:rgba(255,255,255,0.9);
+    border-radius:0.75rem;
+    border:1px solid #e5e7eb;
+    padding:1.25rem;
+    box-shadow:var(--shadow);
+    backdrop-filter:blur(8px);
+}
+
+/* =========================
+   HOME PAGE – hero + kafelki
+   ========================= */
+
+.home-hero {
+    /* tło w jasnym motywie domyślnie z body; można dodać coś swojego, jeśli chcesz */
+}
+
+/* HERO / CTA – przyciski (LIGHT) */
+.home-hero a {
+    background-color:#ffffff;
+    color:#1d4ed8;
+    border:1px solid #e5e7eb;
+    box-shadow:0 4px 12px rgba(15,23,42,0.12);
+}
+.home-hero a:hover {
+    background-color:#e0edff;
+    color:#1d4ed8;
+}
+
+/* =========================
+   TRYB CIEMNY – HOME / hero
+   ========================= */
+
+/* HERO – tło w dark mode */
+html.dark .home-hero {
+    background: linear-gradient(135deg, #111827, #1f2937, #312e81);
+}
+
+/* Kafelki home w dark */
+html.dark .home-card {
+    background:#2a333b;
+    border-color:#3a444d;
+}
+
+/* Teksty w kafelkach */
+html.dark .home-card .text-gray-800,
+html.dark .home-card .text-gray-700,
+html.dark .home-card .text-gray-600,
+html.dark .home-card .text-gray-500,
+html.dark .home-card p {
+    color:#e5e7eb !important;
+}
+
+/* Delikatniejsze opisy */
+html.dark .home-card p {
+    color:#cbd5f5 !important;
+}
+
+/* Badge z datą (08.12 17:15) */
+html.dark .home-card .bg-blue-50 {
+    background-color: rgba(37, 99, 235, 0.25) !important;
+    color: #e5edff !important;
+    border-radius: 9999px;
+}
+
+/* Badge OPEN (bg-gray-100) */
+html.dark .home-card .bg-gray-100 {
+    background-color: transparent !important;
+    color: #e5e7eb !important;
+    border: 1px solid #4b5563 !important;
+}
+
+/* Link "Zobacz wszystkie →" */
+html.dark a.text-blue-600.hover\:text-blue-700 {
+    color:#60a5fa !important;
+}
+html.dark a.text-blue-600.hover\:text-blue-700:hover {
+    color:#93c5fd !important;
+}
+
+/* Ikonki w statystykach (↗, ⧉, 👤, 🏟) */
+html.dark .home-card .text-blue-600,
+html.dark .home-card .text-indigo-600,
+html.dark .home-card .text-purple-600,
+html.dark .home-card .text-rose-600 {
+    color:#93c5fd !important;
+}
+
+/* Nagłówek "Nadchodzące zajęcia" */
+html.dark h2.text-xl.font-semibold.text-gray-900 {
+    color:#e5e7eb !important;
+}
+
+/* HERO / CTA – przyciski (DARK) */
+html.dark .home-hero a {
+    background-color:#4f46e5 !important;
+    color:#f9fafb !important;
+    border:1px solid #6366f1 !important;
+    box-shadow:none !important;
+}
+html.dark .home-hero a:hover {
+    background-color:#6366f1 !important;
+}

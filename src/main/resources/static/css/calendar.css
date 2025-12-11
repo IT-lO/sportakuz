@@ -41,3 +41,126 @@
 .loading { display: inline-block; width: 16px; height: 16px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #ffffff; animation: spin 1s linear infinite; margin-left: 8px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 768px) { .calendar-header, .calendar-body { display: block; } .week-navigation { flex-direction: column; gap: 15px; } .modal-content { padding: 20px; } }
+
+/* =========================
+   TRYB CIEMNY – kalendarz tygodniowy
+   ========================= */
+
+html.dark .container {
+    color: var(--text);
+}
+
+/* Nagłówek */
+html.dark .header h1 {
+    color: #bfdbfe;
+}
+html.dark .header p {
+    color: #9ca3af;
+}
+
+/* Nawigacja tygodnia */
+html.dark .week-display {
+    color: #e5e7eb;
+}
+html.dark .week-navigation {
+    color: #e5e7eb;
+}
+html.dark .nav-button {
+    background: var(--accent);
+    color: #f9fafb;
+}
+html.dark .nav-button:hover {
+    background: var(--accent-hover);
+}
+
+/* Kalendarz – tło i siatka */
+html.dark .calendar {
+    background: #111827;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+html.dark .calendar-header {
+    background: #111827;
+    border-bottom: 1px solid #374151;
+}
+html.dark .calendar-header-cell {
+    background: #1f2937;
+    color: #e5e7eb;
+}
+html.dark .calendar-body {
+    background: #111827;
+}
+html.dark .day-column {
+    background: #020617;
+}
+
+/* Karta zajęć */
+html.dark .class-card {
+    linear-gradient(to right, #3b82f6, #0a1930);
+    color: #f9fafb;
+}
+html.dark .class-card:hover {
+    box-shadow: 0 4px 12px rgba(15,23,42,0.7);
+}
+
+/* Modal i treść */
+html.dark .modal {
+    background: rgba(15,23,42,0.8);
+}
+html.dark .modal-content {
+    background: #020617;
+    box-shadow: 0 20px 30px -10px rgba(0,0,0,0.8);
+}
+html.dark .modal-header h2 {
+    color: #bfdbfe;
+}
+html.dark .detail-row {
+    border-bottom: 1px solid #374151;
+}
+html.dark .detail-label {
+    color: #9ca3af;
+}
+html.dark .detail-value {
+    color: #e5e7eb;
+}
+
+/* Formularz w modalu */
+html.dark .form-label {
+    color: #e5e7eb;
+}
+html.dark .form-input {
+    background: #020617;
+    border-color: #374151;
+    color: #e5e7eb;
+}
+html.dark .form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.6);
+}
+
+/* Przyciski w modalu */
+html.dark .btn-primary {
+    background: var(--accent);
+    color: #f9fafb;
+}
+html.dark .btn-primary:hover {
+    background: var(--accent-hover);
+}
+html.dark .btn-primary:disabled {
+    background: #4b5563;
+    color: #9ca3af;
+}
+html.dark .btn-secondary {
+    background: #111827;
+    color: #e5e7eb;
+    border: 1px solid #4b5563;
+}
+html.dark .btn-secondary:hover {
+    background: #020617;
+}
+
+/* Komunikaty */
+html.dark .success-message {
+    background: #047857;
+    color: #ecfdf5;
+}

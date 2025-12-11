@@ -1,0 +1,255 @@
+/* =========================
+   Podstawowy layout – ogólne
+   ========================= */
+
+:root {
+    color-scheme: light dark;
+}
+
+:root {
+    --bg:#f7f9fc;
+    --accent:#0d6efd;
+    --accent-hover:#0953b1;
+    --border:#d9e2ec;
+    --danger:#c81d25;
+    --success:#2d8659;
+    --text:#2f3e46;
+    --radius:6px;
+    --shadow:0 2px 4px rgba(0,0,0,.08);
+
+    --bg-alt:#e3edf7;
+    --accent-soft:#e0f0ff;
+    --accent-border:#0a5bd2;
+    --danger-bg:#ffe5e8;
+    --success-bg:#e4f8ef;
+    --planned-bg:#fff3cd;
+    --cancelled-bg:#ffe2e0;
+    --done-bg:#d1f7d9;
+
+    font-size:16px;
+}
+
+body {
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:linear-gradient(135deg,#f7f9fc 0%,#edf3fa 60%,#e8eef5 100%);
+    color:var(--text);
+}
+
+/* =========================
+   Przyciski – ogólne
+   ========================= */
+
+button,
+.btn {
+    border:none;
+    cursor:pointer;
+    font:inherit;
+    padding:.55rem 1rem;
+    border-radius:var(--radius);
+    background:var(--accent);
+    color:#fff;
+    font-weight:500;
+    box-shadow:var(--shadow);
+}
+button:hover,
+.btn:hover {
+    background:var(--accent-hover);
+}
+
+.btn-outline {
+    background:transparent;
+    color:var(--accent);
+    border:1px solid var(--accent);
+}
+.btn-outline:hover {
+    background:var(--accent);
+    color:#fff;
+}
+
+.btn-danger {
+    background:var(--danger);
+}
+.btn-danger:hover {
+    background:#a11319;
+}
+
+.btn-secondary {
+    background:#555;
+}
+.btn-secondary:hover {
+    background:#333;
+}
+
+/* =========================
+   Karty / utilsy ogólne
+   ========================= */
+
+.card {
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:1rem;
+    box-shadow:var(--shadow);
+}
+.card-title {
+    margin:0 0 .5rem;
+    font-weight:600;
+    font-size:1.05rem;
+}
+
+.muted {
+    color:#778;
+    font-size:.75rem;
+}
+.separator {
+    margin:1.2rem 0;
+    border-top:1px solid var(--border);
+    opacity:.6;
+}
+
+/* =========================
+   Flash / błędy – ogólne
+   ========================= */
+
+.flash-success {
+    background:var(--success);
+    color:#fff;
+    padding:.6rem .9rem;
+    border-radius:var(--radius);
+    margin-bottom:1rem;
+    box-shadow:var(--shadow);
+    border:1px solid #1e6c45;
+}
+.flash-error {
+    background: var(--danger-bg);
+    color: var(--danger);
+    padding: .6rem .9rem;
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    border: 1px solid #a11319;
+}
+.error {
+    color:var(--danger);
+    font-size:.75rem;
+    margin-top:.25rem;
+}
+
+/* =========================
+   Tooltip – ogólne
+   ========================= */
+
+.tooltip {
+    position:relative;
+    cursor:help;
+}
+.tooltip:hover::after {
+    content:attr(data-tip);
+    position:absolute;
+    left:50%;
+    top:100%;
+    transform:translateX(-50%);
+    background:#222;
+    color:#fff;
+    padding:.35rem .55rem;
+    font-size:.65rem;
+    border-radius:4px;
+    white-space:nowrap;
+    box-shadow:var(--shadow);
+}
+
+/* =========================
+   Animacja wejścia kart
+   ========================= */
+@keyframes fadeInUp {
+    from {opacity:0; transform:translateY(8px);}
+    to   {opacity:1; transform:translateY(0);}
+}
+.table-wrapper,
+.form-card {
+    animation:fadeInUp .35s ease-out;
+}
+
+/* =========================
+   Tryb ciemny – ogólne
+   ========================= */
+
+html.dark {
+    --bg:#1e2429;
+    --bg-alt:#252d34;
+    --text:#eef2f5;
+    --border:#3a444d;
+    --accent:#4d9dff;
+    --accent-hover:#2f7ed8;
+    --accent-soft:#203040;
+    --success:#2d8659;
+    --danger:#c81d25;
+}
+
+html.dark body {
+    background:linear-gradient(135deg,#1e2429,#202b33);
+}
+
+/* Karty w dark mode – ogólne */
+html.dark .card {
+    background:#2a333b;
+    border-color:#3a444d;
+}
+
+/* =========================
+   TRYB CIEMNY – header Tailwindowy
+   ========================= */
+
+html.dark header.bg-white\/90 {
+    background:rgba(15,23,42,0.95);
+    border-bottom:1px solid #374151;
+}
+html.dark header.bg-white\/90 span,
+html.dark header.bg-white\/90 a {
+    color:#e5e7eb !important;
+}
+html.dark header.bg-white\/90 .bg-blue-50 {
+    background-color:rgba(59,130,246,0.18) !important;
+    color:#bfdbfe !important;
+}
+html.dark header.bg-white\/90 .bg-blue-600 {
+    background-color:#2563eb !important;
+    color:#f9fafb !important;
+}
+html.dark header.bg-white\/90 .bg-blue-600:hover {
+    background-color:#1d4ed8 !important;
+}
+html.dark header.bg-white\/90 a:hover {
+    background-color:rgba(59,130,246,0.22) !important;
+    color:#ffffff !important;
+}
+html.dark header.bg-white\/90 button {
+    background:#1f2937 !important;
+    border-color:#374151 !important;
+    color:#e5e7eb !important;
+}
+html.dark header.bg-white\/90 button:hover {
+    background:#111827 !important;
+}
+
+/* =========================
+   TRYB CIEMNY – stopka
+   ========================= */
+html.dark footer.bg-white\/70 {
+    background: rgba(15, 23, 42, 0.95);
+    border-top: 1px solid #374151;
+}
+html.dark footer.bg-white\/70 .text-gray-500 {
+    color: #9ca3af !important;
+}
+
+/* =========================
+   Responsywność – ogólne
+   ========================= */
+@media (max-width: 720px) {
+    nav {flex-wrap:wrap;}
+    .table-wrapper {padding:.75rem .8rem;}
+    th,td {padding:.45rem .5rem; font-size:.8rem;}
+    .form-grid {grid-template-columns:1fr;}
+}
