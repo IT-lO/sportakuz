@@ -4,8 +4,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,32 +15,35 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     // Wstrzykujemy nasz serwis (ten z Kroku 1)
     private final CustomUserDetailsService customUserDetailsService;
+    private final AuthenticationSuccessHandler successHandler;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService,
+                          AuthenticationSuccessHandler successHandler) {
         this.customUserDetailsService = customUserDetailsService;
+        this.successHandler = successHandler;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Publiczne zasoby (CSS, JS, Obrazki) + Login + Rejestracja (jeśli będzie)
-                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/register").permitAll()
-                        // Panel Admina
+                        .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**", "/").permitAll()
                         .requestMatchers("/panel/admin/**").hasRole("ADMIN")
-                        // Reszta wymaga zalogowania
+                        .requestMatchers("/panel/user/**").authenticated() // User panel dostępny dla wszystkich zalogowanych
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login") // Twój endpoint w LoginController
-                        .loginProcessingUrl("/login") // Gdzie POSTuje formularz z HTMLa
-                        .defaultSuccessUrl("/panel/admin", true) // Gdzie przekierować po sukcesie
-                        .usernameParameter("username") // Tak masz w login.html: name="username"
-                        .passwordParameter("password") // Tak masz w login.html: name="password"
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .successHandler(successHandler) // <--- TUTAJ UŻYWAMY NASZEGO HANDLERA (zamiast defaultSuccessUrl)
+                        .usernameParameter("username")
+                        .passwordParameter("password")
                         .permitAll()
                 )
                 .logout(logout -> logout

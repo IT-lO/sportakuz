@@ -14,8 +14,15 @@ public class LoginController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
-            // TODO: Można to ulepszyć, aby kierowało do /panel/user jeśli user ma tylko rolę USER
-            return "redirect:/panel/admin";
+            // Sprawdzamy role, żeby wiedzieć gdzie odesłać delikwenta
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+            if (isAdmin) {
+                return "redirect:/panel/admin";
+            } else {
+                return "redirect:/panel/user";
+            }
         }
 
         return "login/login";
