@@ -30,6 +30,17 @@
              <form th:action="@{/activities}" method="get" class="search-box">
               <input type="search" name="pattern" th:value="${pattern}"
                   placeholder="Szukaj po typie lub instruktorze" />
+              <label for="sort">Sortuj po:</label>
+                <select name="sort" id="sort">
+                    <option value="" th:selected="${sort} == null or sort == ''">Domyślnie</option>
+                    <option value="type" th:selected="${sort} == 'type'">Typ</option>
+                    <option value="instructor" th:selected="${sort} == 'instructor'">Instruktor</option>
+                </select>
+              <label for="order">Kolejność:</label>
+                <select name="order" id="order">
+                    <option value="asc" th:selected="${order} == null or order == 'asc'">Rosnąco</option>
+                    <option value="desc" th:selected="${order} == 'desc'">Malejąco</option>
+                </select>
               <button type="submit"
                    class="px-3 py-2 rounded-md bg-indigo-600 text-white text-sm hover:bg-indigo-700">Szukaj</button>
               <a th:href="@{/activities}"

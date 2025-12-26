@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,10 @@ public class ClassOccurrenceController {
 
     /** GET /activities – lista wystąpień (do rozbudowy np. o filtrowanie/paginację). */
     @GetMapping
-    public String list(Model model, @RequestParam(value = "pattern", required = false) String pattern) {
+    public String list(Model model,
+                       @RequestParam(value = "pattern", required = false) String pattern,
+                       @RequestParam(value = "sort", required = false) String sort,
+                       @RequestParam(value = "order", required = false) String order) {
         String likePattern = (pattern == null || pattern.isBlank()) ? null : (pattern.trim().toLowerCase() + "%");
         var all = (likePattern == null) ? activityRepository.findAllByOrderByStartTimeAsc() : activityRepository.searchOrderByStartTimeAsc(likePattern);
         java.util.List<Activity> upcoming = new java.util.ArrayList<>();
@@ -70,6 +74,29 @@ public class ClassOccurrenceController {
         }
         // Historia – odwrotnie (najnowsze na górze) – sortujemy malejąco po starcie
         history.sort(java.util.Comparator.comparing(Activity::getStartTime).reversed());
+
+        // Sortowanie głównej listy (upcoming) wg typu lub instruktora
+        if (sort != null && !sort.isBlank()) {
+            Comparator<Activity> cmp = null;
+            String sortType = sort.toLowerCase();
+            if ("type".equals(sortType)) {
+                cmp = Comparator.comparing(activity -> {
+                    var type = activity.getType();
+                    return type != null && type.getActivityName() != null ? type.getActivityName().toLowerCase() : "";
+                });
+            } else if ("instructor".equals(sortType)) {
+                cmp = Comparator.comparing(activity -> {
+                    var instructor = activity.getInstructor();
+                    String last = (instructor != null && instructor.getLastName() != null) ? instructor.getLastName().toLowerCase() : "";
+                    String first = (instructor != null && instructor.getFirstName() != null) ? instructor.getFirstName().toLowerCase() : "";
+                    return last + " " + first;
+                });
+            }
+            if (cmp != null) {
+                boolean desc = order != null && order.equalsIgnoreCase("desc");
+                upcoming.sort(desc ? cmp.reversed() : cmp);
+            }
+        }
 
         // Mapa dostępnych instruktorów – tylko dla upcoming
         var allInstructors = userRepository.findAll();
@@ -99,6 +126,8 @@ public class ClassOccurrenceController {
         model.addAttribute("availableInstructors", availableMap);
         model.addAttribute("activeBookings", activeBookingsCount);
         model.addAttribute("pattern", pattern);
+        model.addAttribute("sort", sort);
+        model.addAttribute("order", order);
         return "activities/list";
     }
 

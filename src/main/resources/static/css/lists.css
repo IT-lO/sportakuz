@@ -98,6 +98,15 @@ tbody tr:hover {
     outline:2px solid #0D6EFDFF;
 }
 
+.table-tools select {
+    min-width: 80px;
+    padding:.45rem .6rem;
+    border:1px solid #D9E2ECFF;
+    background: #ffffff;
+    color: #2f3e46;
+    border-radius:var(--radius);
+}
+
 .table-tools .clear {
     padding: 0.5rem 0.75rem;
     border-radius: 0.375rem;
@@ -256,4 +265,13 @@ html.dark .table-tools .clear {
 
 html.dark .table-tools .clear:hover {
     background-color: #494848;
+}
+
+html.dark .table-tools select {
+    min-width: 80px;
+    padding:.45rem .6rem;
+    border:1px solid #3A444DFF;
+    background: #1e2429;
+    color: #eef2f5;
+    border-radius:var(--radius);
 }
