@@ -56,9 +56,9 @@ public class ClassOccurrenceController {
 
     /** GET /activities – lista wystąpień (do rozbudowy np. o filtrowanie/paginację). */
     @GetMapping
-    public String list(Model model) {
-        // Wszystkie wystąpienia posortowane po starcie
-        var all = activityRepository.findAllByOrderByStartTimeAsc();
+    public String list(Model model, @RequestParam(value = "pattern", required = false) String pattern) {
+        String likePattern = (pattern == null || pattern.isBlank()) ? null : (pattern.trim().toLowerCase() + "%");
+        var all = (likePattern == null) ? activityRepository.findAllByOrderByStartTimeAsc() : activityRepository.searchOrderByStartTimeAsc(likePattern);
         java.util.List<Activity> upcoming = new java.util.ArrayList<>();
         java.util.List<Activity> history = new java.util.ArrayList<>();
         for (var oc : all) {
@@ -98,6 +98,7 @@ public class ClassOccurrenceController {
         model.addAttribute("instructors", allInstructors);
         model.addAttribute("availableInstructors", availableMap);
         model.addAttribute("activeBookings", activeBookingsCount);
+        model.addAttribute("pattern", pattern);
         return "activities/list";
     }
 
