@@ -10,6 +10,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
 
 @Configuration
 @EnableWebMvc
@@ -38,6 +39,7 @@ public class AppConfig implements WebMvcConfigurer {
 		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
 		templateEngine.setTemplateResolver(templateResolver());
 		templateEngine.setEnableSpringELCompiler(true);
+		templateEngine.addDialect(new SpringSecurityDialect());
 		return templateEngine;
 	}
 

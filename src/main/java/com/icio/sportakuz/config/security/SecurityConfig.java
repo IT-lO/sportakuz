@@ -18,7 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    // Wstrzykujemy nasz serwis (ten z Kroku 1)
     private final CustomUserDetailsService customUserDetailsService;
     private final AuthenticationSuccessHandler successHandler;
 
@@ -35,13 +34,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**", "/").permitAll()
                         .requestMatchers("/panel/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/panel/user/**").authenticated() // User panel dostępny dla wszystkich zalogowanych
+                        .requestMatchers("/panel/instructor/**").hasAnyRole("INSTRUCTOR", "ADMIN")
+                        .requestMatchers("/panel/user/**").authenticated() // lub hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .successHandler(successHandler) // <--- TUTAJ UŻYWAMY NASZEGO HANDLERA (zamiast defaultSuccessUrl)
+                        .successHandler(successHandler)
                         .usernameParameter("username")
                         .passwordParameter("password")
                         .permitAll()
@@ -55,7 +55,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Ten Bean łączy Springa z Twoją bazą danych
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();

@@ -1,4 +1,4 @@
-package com.icio.sportakuz.controller;
+package com.icio.sportakuz.controller.security;
 
 import com.icio.sportakuz.dto.UserForm;
 import com.icio.sportakuz.entity.User;
@@ -23,7 +23,6 @@ public class UserController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder; // POTRZEBNE DO HASŁA
 
-    // Wstrzykujemy PasswordEncoder w konstruktorze
     public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;

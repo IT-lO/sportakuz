@@ -20,7 +20,6 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        // Ten kod wykona się automatycznie po starcie aplikacji na Tomcacie
         createAdminIfNotFound();
         createUserIfNotFound();
     }

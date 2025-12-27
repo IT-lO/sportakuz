@@ -2,7 +2,7 @@
 <!-- Bazowy plik fragmentów Thymeleaf.
      Fragment 'base(pageTitle,content)' wspólny układ: nagłówek, nawigacja, główna sekcja i stopka.
      Używa Tailwind CDN do stylizacji. -->
-<html xmlns:th="http://www.thymeleaf.org" lang="pl" th:fragment="base(pageTitle,content)">
+<html xmlns:th="http://www.thymeleaf.org" lang="pl" th:fragment="base(pageTitle,content)" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <!-- Sekcja <head>: meta + tytuł dynamiczny + konfiguracja Tailwind + główny arkusz stylów -->
 <head>
     <script>
@@ -41,23 +41,56 @@
 <!-- Header: logo + oznaczenie panelu + główna nawigacja -->
 <header class="bg-white/90 backdrop-blur border-b border-gray-200 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+
         <div class="flex items-center gap-3">
             <span class="text-xl font-bold text-gray-800">SportakUZ</span>
-            <span class="text-xs uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded">Panel</span>
+            <span sec:authorize="isAuthenticated()"
+                  class="text-xs uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                Panel
+            </span>
         </div>
-        <nav class="flex gap-2 text-sm items-center">
-            <a th:href="@{/}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Start</a>
-            <a th:href="@{/calendar}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Kalendarz</a>
-            <a th:href="@{/my/bookings}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Moje rezerwacje</a>
-            <a th:href="@{/activities}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Lista zajęć</a>
-            <a th:href="@{/activities/new}" class="px-3 py-2 rounded-md font-semibold bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition">+ Nowe</a>
 
-            <!-- Przycisk trybu ciemnego (jedyna nowość w headerze) -->
-            <button type="button"
-                    class="ml-3 px-3 py-2 rounded-md font-medium border border-gray-300 text-gray-700 bg-white/70 hover:bg-gray-100 transition"
-                    onclick="toggleTheme()">
-                <span id="theme-icon">🌙</span>
-            </button>
+        <nav class="flex items-center gap-4 text-sm">
+
+            <a th:href="@{/}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">
+                Start
+            </a>
+
+            <div sec:authorize="isAuthenticated()" class="flex items-center gap-4">
+
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{/panel/admin}"
+                   class="px-3 py-2 rounded-md font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition">
+                    Panel Admina
+                </a>
+
+                <a sec:authorize="hasRole('INSTRUCTOR')" th:href="@{/panel/instructor}"
+                   class="px-3 py-2 rounded-md font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 transition">
+                    Panel Instruktora
+                </a>
+
+                <a sec:authorize="hasRole('USER')" th:href="@{/panel/user}"
+                   class="px-3 py-2 rounded-md font-medium text-green-700 bg-green-50 hover:bg-green-100 transition">
+                    Mój Panel
+                </a>
+
+                <span class="hidden sm:block text-gray-500 font-semibold border-l pl-4 border-gray-300"
+                      sec:authentication="name">
+                    User
+                </span>
+
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="px-3 py-2 rounded-md font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition">
+                        Wyloguj
+                    </button>
+                </form>
+            </div>
+
+            <div sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" class="px-4 py-2 rounded-md font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow">
+                    Zaloguj się
+                </a>
+            </div>
+
         </nav>
     </div>
 </header>
