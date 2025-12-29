@@ -87,13 +87,36 @@ tbody tr:hover {
 
 .table-tools input[type=search] {
     padding:.45rem .6rem;
-    border:1px solid var(--border);
+    border:1px solid #D9E2ECFF;
+    background: #f7f9fc;
+    color: #2f3e46;
     border-radius:var(--radius);
-    min-width:220px;
+    min-width:320px;
 }
 
 .table-tools input[type=search]:focus {
-    outline:2px solid var(--accent);
+    outline:2px solid #0D6EFDFF;
+}
+
+.table-tools select {
+    min-width: 80px;
+    padding:.45rem .6rem;
+    border:1px solid #D9E2ECFF;
+    background: #ffffff;
+    color: #2f3e46;
+    border-radius:var(--radius);
+}
+
+.table-tools .clear {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    background-color: #f3f4f6;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.table-tools .clear:hover {
+    background-color: #e5e7eb;
 }
 
 /* =========================
@@ -199,4 +222,56 @@ html.dark .table-wrapper span.bg-green-100 {
     background: #14532d;
     color: #bbf7d0;
     border-color: #34d399;
+}
+
+/* =========================
+   Narzędzia nad tabelą
+   ========================= */
+
+html.dark .table-tools {
+    display:flex;
+    gap:.75rem;
+    align-items:center;
+    margin:.6rem 0 1rem;
+    flex-wrap:wrap;
+}
+
+html.dark .table-tools .search-box {
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+}
+
+html.dark .table-tools input[type=search] {
+    padding:.45rem .6rem;
+    border:1px solid #3A444DFF;
+    background: #1e2429;
+    color: #eef2f5;
+    border-radius:var(--radius);
+    min-width:320px;
+}
+
+html.dark .table-tools input[type=search]:focus {
+    outline:2px solid #4d9dff;
+}
+
+html.dark .table-tools .clear {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    background-color: #374151;
+    color: #f3f4f6;
+    font-size: 0.875rem;
+}
+
+html.dark .table-tools .clear:hover {
+    background-color: #494848;
+}
+
+html.dark .table-tools select {
+    min-width: 80px;
+    padding:.45rem .6rem;
+    border:1px solid #3A444DFF;
+    background: #1e2429;
+    color: #eef2f5;
+    border-radius:var(--radius);
 }

@@ -51,6 +51,17 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     /** Wszystkie wystąpienia posortowane rosnąco po czasie rozpoczęcia. */
     List<Activity> findAllByOrderByStartTimeAsc();
 
+        /** Wyszukiwanie po typie lub instruktorze; sortowane po starcie. */
+        @Query("""
+          select c from Activity c
+          where (:likePattern is null or :likePattern = ''
+            or lower(c.type.activityName) like :likePattern
+            or lower(c.instructor.firstName) like :likePattern
+            or lower(c.instructor.lastName) like :likePattern)
+          order by c.startTime asc
+          """)
+        List<Activity> searchOrderByStartTimeAsc(@Param("likePattern") String likePattern);
+
     /** Liczba kolidujących wystąpień w sali. */
     @Query("""
            select count(c) from Activity c
