@@ -59,6 +59,7 @@ public class BookingApiController {
 
         Booking booking = new Booking();
         booking.setActivity(occurrence);
+        // TODO: Once new user system finally gets set up change it so it would use email of current user. Remove validation from above & remove from frontend space for username
         booking.setUserName(req.userName().trim());
         booking.setStatus(BookingStatus.REQUESTED);
         bookingRepository.save(booking);

@@ -37,4 +37,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     /** Pobiera rezerwacje po ID. */
     List<Booking> findFirstById(long id);
+
+    /** Wszystkie aktywne rezerwacje dla danego wystąpienia zajęć. */
+    List<Booking> findAllByActivity_IdAndStatusIn(Long activityId, Collection<BookingStatus> statuses);
 }
