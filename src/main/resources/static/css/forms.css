@@ -114,3 +114,44 @@ html.dark input[type="time"]::-webkit-calendar-picker-indicator {
     filter: invert(1) brightness(1.2);
     opacity: 0.9;
 }
+
+/* =========================
+   Przyciski – Anuluj (normalny wygląd)
+   ========================= */
+
+/* jasny tryb */
+/* Anuluj */
+.actions .btn.btn-secondary,
+.actions a.btn.btn-secondary {
+    background: #dc2626;      /* red-600 */
+    border-color: #b91c1c;    /* red-700 */
+    color: #ffffff;
+}
+
+.actions .btn.btn-secondary:hover,
+.actions a.btn.btn-secondary:hover {
+    background: #b91c1c;      /* red-700 */
+    border-color: #991b1b;    /* red-800 */
+}
+
+/* DARK: Anuluj */
+html.dark .actions .btn.btn-secondary,
+html.dark .actions a.btn.btn-secondary {
+    background: #ef4444;      /* red-500 */
+    border-color: #f87171;    /* red-400 */
+    color: #ffffff;           /* jak w primary */
+}
+
+html.dark .actions .btn.btn-secondary:hover,
+html.dark .actions a.btn.btn-secondary:hover {
+    background: #dc2626; /* red-600 */
+    border-color: #fca5a5; /* red-300 */
+    color: #ffffff;
+}
+
+/* focus (oba tryby) */
+.btn.btn-secondary:focus,
+a.btn.btn-secondary:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}

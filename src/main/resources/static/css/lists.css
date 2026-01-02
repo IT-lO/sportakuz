@@ -275,3 +275,59 @@ html.dark .table-tools select {
     color: #eef2f5;
     border-radius:var(--radius);
 }
+
+/* =========================
+   TRYB CIEMNY – dropdowny (STATUS + INSTRUKTOR)
+   ========================= */
+
+html.dark [data-status-menu],
+html.dark [data-instr-menu] {
+    background: #1e2429;
+    border-color: #3a444d;
+    color: #eef2f5;
+}
+
+/* przyciski w menu */
+html.dark [data-status-menu] button,
+html.dark [data-instr-menu] button {
+    color: #eef2f5;
+}
+
+/* hover w menu */
+html.dark [data-status-menu] button:hover,
+html.dark [data-instr-menu] button:hover {
+    background: #2a333b;
+}
+
+/* zaznaczona opcja (u Ciebie jest font-semibold + text-indigo-700) */
+html.dark [data-status-menu] button.font-semibold,
+html.dark [data-instr-menu] button.font-semibold {
+    color: #9db7ff !important;
+}
+
+/* =========================
+   TRYB JASNY – dropdowny (STATUS + INSTRUKTOR)
+   ========================= */
+
+html:not(.dark) [data-status-menu],
+html:not(.dark) [data-instr-menu]{
+    background: #ffffff;
+    border-color: #e5e7eb; /* odpowiednik gray-200 */
+    color: #111827;        /* gray-900 */
+}
+
+html:not(.dark) [data-status-menu] button,
+html:not(.dark) [data-instr-menu] button{
+    color: #374151;        /* gray-700 */
+}
+
+html:not(.dark) [data-status-menu] button:hover,
+html:not(.dark) [data-instr-menu] button:hover{
+    background: #f3f4f6;   /* gray-100 */
+}
+
+/* zaznaczona opcja */
+html:not(.dark) [data-status-menu] button.font-semibold,
+html:not(.dark) [data-instr-menu] button.font-semibold{
+    color: #4338ca;        /* indigo-700-ish */
+}
