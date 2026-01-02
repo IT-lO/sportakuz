@@ -61,7 +61,9 @@ public class ClassOccurrenceController {
     public String list(Model model,
                        @RequestParam(value = "pattern", required = false) String pattern,
                        @RequestParam(value = "sort", required = false) String sort,
-                       @RequestParam(value = "order", required = false) String order) {
+                       @RequestParam(value = "order", required = false) String order,
+                       @RequestParam(value = "page", required = false, defaultValue = "0") int page) {
+        final int PAGE_SIZE = 15;
         String likePattern = (pattern == null || pattern.isBlank()) ? null : (pattern.trim().toLowerCase() + "%");
         var all = (likePattern == null) ? activityRepository.findAllByOrderByStartTimeAsc() : activityRepository.searchOrderByStartTimeAsc(likePattern);
         java.util.List<Activity> upcoming = new java.util.ArrayList<>();
@@ -99,12 +101,22 @@ public class ClassOccurrenceController {
             }
         }
 
+        // --- Proste stronicowanie listy "upcoming" (30 na stronę) ---
+        int totalUpcoming = upcoming.size();
+        int totalPages = (int) Math.ceil(totalUpcoming / (double) PAGE_SIZE);
+        if (page < 0) page = 0;
+        if (page >= totalPages && totalPages > 0) page = totalPages - 1;
+        int fromIndex = page * PAGE_SIZE;
+        int toIndex = Math.min(fromIndex + PAGE_SIZE, totalUpcoming);
+        java.util.List<Activity> upcomingPage = totalUpcoming == 0 ? java.util.Collections.emptyList() : upcoming.subList(fromIndex, toIndex);
+        // -----------------------------------------------------------
+
         // Mapa dostępnych instruktorów – tylko dla upcoming
         // Pobieramy tylko użytkowników z rolą INSTRUKTOR
         var allInstructors = userRepository.findByRole(UserRole.ROLE_INSTRUCTOR);
         Map<Long, List<User>> availableMap = new HashMap<>();
         Map<Long, Long> activeBookingsCount = new HashMap<>(); //  liczności rezerwacji
-        for (var oc : upcoming) {
+        for (var oc : upcomingPage) {
             java.util.List<User> avail = new java.util.ArrayList<>();
             for (var instr : allInstructors) {
                 if (!instr.isActive()) continue;
@@ -124,7 +136,7 @@ public class ClassOccurrenceController {
             availableMap.put(oc.getId(), avail);
             activeBookingsCount.put(oc.getId(), bookingRepository.countActiveByClassId(oc.getId())); // ile aktywnych rezerwacji
         }
-        model.addAttribute("activities", upcoming); // główna lista = przyszłe
+        model.addAttribute("activities", upcomingPage); // główna lista = przyszłe (stronicowana)
         model.addAttribute("historyActivities", history); // historia = anulowane / zakończone
         model.addAttribute("allStatuses", ClassStatus.values());
         model.addAttribute("instructors", allInstructors);
@@ -133,6 +145,8 @@ public class ClassOccurrenceController {
         model.addAttribute("pattern", pattern);
         model.addAttribute("sort", sort);
         model.addAttribute("order", order);
+        model.addAttribute("page", page);
+        model.addAttribute("totalPages", totalPages);
         return "activities/list";
     }
 

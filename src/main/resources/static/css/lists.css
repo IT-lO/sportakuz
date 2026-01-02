@@ -331,3 +331,58 @@ html:not(.dark) [data-status-menu] button.font-semibold,
 html:not(.dark) [data-instr-menu] button.font-semibold{
     color: #4338ca;        /* indigo-700-ish */
 }
+
+/* =========================
+   PASEK PAGINACJI
+   ========================= */
+
+.pagination-bar {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* linki – jasny tryb */
+.pagination-bar .page-link {
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    background: #ffffff;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.pagination-bar .page-link:hover {
+    background-color: rgba(13, 110, 253, 0.10); /* accent w light */
+    border-color: var(--accent);
+}
+
+/* info – jasny */
+.pagination-bar .page-info {
+    color: #64748b; /* slate-500 */
+}
+
+/* =========================
+   TRYB CIEMNY – PAGINACJA
+   ========================= */
+
+html.dark .pagination-bar .page-link {
+    background: #1e2429;      /* spójne z dark bg */
+    border-color: var(--border);
+    color: var(--accent);
+}
+
+html.dark .pagination-bar .page-link:hover {
+    background-color: rgba(77, 157, 255, 0.18); /* accent w dark */
+    border-color: var(--accent);
+    color: #eaf2ff;
+}
+
+html.dark .pagination-bar .page-info {
+    color: #9ca3af; /* gray-400 */
+}
+

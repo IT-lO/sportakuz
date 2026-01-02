@@ -191,6 +191,23 @@
                 </div>
             </div>
 
+            <!-- Paginacja dla listy głównej (przyszłe zajęcia) -->
+            <div class="pagination-bar" th:if="${totalPages != null and totalPages > 1}">
+                <a th:if="${page > 0}"
+                   th:href="@{/activities(page=${page - 1}, pattern=${pattern}, sort=${sort}, order=${order})}"
+                   class="page-link">
+                    ← Poprzednia
+                </a>
+                <span class="page-info">
+                    Strona [[${page + 1}]] z [[${totalPages}]]
+                </span>
+                <a th:if="${page + 1 < totalPages}"
+                   th:href="@{/activities(page=${page + 1}, pattern=${pattern}, sort=${sort}, order=${order})}"
+                   class="page-link">
+                    Następna →
+                </a>
+            </div>
+
             <!-- Historia -->
             <div class="mt-12 space-y-4">
                 <h2 class="text-xl font-semibold">Historia (anulowane / zakończone)</h2>
@@ -238,6 +255,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- Skrypt dropdownów / potwierdzeń -->
