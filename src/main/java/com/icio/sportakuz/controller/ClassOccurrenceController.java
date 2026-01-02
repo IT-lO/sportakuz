@@ -160,7 +160,10 @@ public class ClassOccurrenceController {
         return "activities/new";
     }
 
-    /** Wylicza OffsetDateTime startu na podstawie daty + lokalnego czasu. */
+    /**
+     * Wylicza OffsetDateTime startu na podstawie daty + lokalnego czasu.
+     * Używane do walidacji kolizji NA PODSTAWIE wartości z formularza.
+     */
     private OffsetDateTime computeStart(ClassOccurrenceForm form) {
         if (form.getDate() == null || form.getStartTime() == null) return null;
         var zone = ZoneId.of("Europe/Warsaw");
@@ -176,31 +179,39 @@ public class ClassOccurrenceController {
     /**
      * Waliduje kolizje sali/instruktora w podanym przedziale czasowym.
      * Jeśli editingId != null – ignoruje kolizję z własnym wystąpieniem podczas edycji.
+     * Zajęcia z kolizją NIE są tworzone/aktualizowane – użytkownik dostaje błąd w formularzu.
      */
     private void validateConflicts(ClassOccurrenceForm form, BindingResult binding, Long editingId) {
-        if (binding.hasErrors()) return; // wcześniejsze błędy
+        if (binding.hasErrors()) return; // wcześniejsze błędy (Bean Validation itp.)
+
+        // Używamy dokładnie tych samych danych co przy zapisie: date + startTime + durationMinutes
         var start = computeStart(form);
         var end = computeEnd(start, form.getDurationMinutes());
-        if (start == null || end == null) return; // brak danych czasowych
+        if (start == null || end == null) return; // brak kompletnych danych czasowych
 
-        // Sprawdzenie kolizji sali – NIE zależy od wybranego instruktora
+        // Sprawdzenie kolizji sali – niezależnie od wybranego instruktora
         if (form.getRoomId() != null) {
             long roomCnt = activityRepository.countOverlappingInRoom(form.getRoomId(), start, end);
             if (editingId != null && roomCnt > 0) {
                 roomCnt = activityRepository.findOverlappingInRoom(form.getRoomId(), start, end)
-                        .stream().filter(c -> !c.getId().equals(editingId)).count();
+                        .stream()
+                        .filter(c -> !c.getId().equals(editingId))
+                        .count();
             }
             if (roomCnt > 0) {
                 log.debug("[CONFLICT][ROOM] roomId={} start={} end={} count={}", form.getRoomId(), start, end, roomCnt);
                 binding.rejectValue("roomId", "conflict.room", "Sala zajęta w tym czasie");
             }
         }
+
         // Sprawdzenie kolizji instruktora – tylko jeśli wybrany instruktor
         if (form.getInstructorId() != null) {
             long instrCnt = activityRepository.countOverlappingForInstructor(form.getInstructorId(), start, end);
             if (editingId != null && instrCnt > 0) {
                 instrCnt = activityRepository.findOverlappingForInstructor(form.getInstructorId(), start, end)
-                        .stream().filter(c -> !c.getId().equals(editingId)).count();
+                        .stream()
+                        .filter(c -> !c.getId().equals(editingId))
+                        .count();
             }
             if (instrCnt > 0) {
                 log.debug("[CONFLICT][INSTR] instructorId={} start={} end={} count={}", form.getInstructorId(), start, end, instrCnt);
@@ -241,7 +252,7 @@ public class ClassOccurrenceController {
         if (room != null && form.getCapacity() != null && form.getCapacity() > room.getCapacity()) {
             form.setCapacity(room.getCapacity());
         }
-        // walidacja kolizji
+        // walidacja kolizji – jeśli jest konflikt, zajęcia NIE zostaną zapisane
         validateConflicts(form, binding, null);
         if (binding.hasErrors()) {
             addLookups(model);
@@ -255,7 +266,9 @@ public class ClassOccurrenceController {
 
         var zone = ZoneId.of("Europe/Warsaw");
         var start = LocalDateTime.of(form.getDate(), form.getStartTime()).atZone(zone).toOffsetDateTime();
+        var end = start.plusMinutes(form.getDurationMinutes());
         oc.setStartTime(start);
+        oc.setEndTime(end);
         oc.setDurationMinutes(form.getDurationMinutes());
 
         oc.setCapacity(form.getCapacity());
@@ -338,7 +351,7 @@ public class ClassOccurrenceController {
         if (room != null && form.getCapacity() != null && form.getCapacity() > room.getCapacity()) {
             form.setCapacity(room.getCapacity());
         }
-        // walidacja kolizji (ignorując bieżące id)
+        // walidacja kolizji (ignorując bieżące id) – przy konflikcie zajęcia NIE są aktualizowane
         validateConflicts(form, binding, id);
         if (binding.hasErrors()) {
             addLookups(model);
@@ -355,6 +368,7 @@ public class ClassOccurrenceController {
         OffsetDateTime end = start.plusMinutes(form.getDurationMinutes());
         oc.setStartTime(start);
         oc.setEndTime(end);
+        oc.setDurationMinutes(form.getDurationMinutes());
         oc.setCapacity(form.getCapacity());
         oc.setNote(form.getNote());
 

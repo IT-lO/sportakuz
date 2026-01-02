@@ -77,7 +77,9 @@
                             </td>
                             <!-- Godziny -->
                             <td class="px-4 py-3 whitespace-nowrap"
-                                th:text="${#temporals.format(c.startTime, 'HH:mm') + ' - ' + #temporals.format(c.endTime, 'HH:mm')}"></td>
+                                th:text="${#temporals.format(c.startTime.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Warsaw')), 'HH:mm')
+                                          + ' - ' +
+                                          #temporals.format(c.endTime.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Warsaw')), 'HH:mm')}"></td>
                             <!-- Typ -->
                             <td class="px-4 py-3" th:text="${c.type.activityName}"></td>
 
@@ -232,7 +234,9 @@
                                     <span th:if="${c.series != null}" th:title="${'Seria #' + c.series.id}">🔁</span>
                                 </td>
                                 <td class="px-3 py-2 whitespace-nowrap"
-                                    th:text="${#temporals.format(c.startTime, 'HH:mm') + ' - ' + #temporals.format(c.endTime, 'HH:mm')}"></td>
+                                    th:text="${#temporals.format(c.startTime.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Warsaw')), 'HH:mm')
+                                              + ' - ' +
+                                              #temporals.format(c.endTime.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Warsaw')), 'HH:mm')}"></td>
                                 <td class="px-3 py-2" th:text="${c.type.activityName}"></td>
                                 <td class="px-3 py-2"
                                     th:text="${c.instructor.firstName + ' ' + c.instructor.lastName}"></td>
