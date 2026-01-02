@@ -385,7 +385,8 @@ public class ClassOccurrenceController {
     /** Dodaje listy typów, instruktorów i sal do modelu dla formularzy. */
     private void addLookups(Model model) {
         model.addAttribute("types", activityTypeRepository.findAll());
-        model.addAttribute("instructors", userRepository.findAll());
+        // tylko użytkownicy z rolą INSTRUKTOR
+        model.addAttribute("instructors", userRepository.findByRole(UserRole.ROLE_INSTRUCTOR));
         model.addAttribute("rooms", roomRepository.findAll());
     }
 
