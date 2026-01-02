@@ -299,7 +299,7 @@ html.dark [data-instr-menu] button:hover {
     background: #2a333b;
 }
 
-/* zaznaczona opcja (u Ciebie jest font-semibold + text-indigo-700) */
+/* zaznaczona opcja */
 html.dark [data-status-menu] button.font-semibold,
 html.dark [data-instr-menu] button.font-semibold {
     color: #9db7ff !important;
@@ -312,24 +312,24 @@ html.dark [data-instr-menu] button.font-semibold {
 html:not(.dark) [data-status-menu],
 html:not(.dark) [data-instr-menu]{
     background: #ffffff;
-    border-color: #e5e7eb; /* odpowiednik gray-200 */
-    color: #111827;        /* gray-900 */
+    border-color: #e5e7eb;
+    color: #111827;
 }
 
 html:not(.dark) [data-status-menu] button,
 html:not(.dark) [data-instr-menu] button{
-    color: #374151;        /* gray-700 */
+    color: #374151;
 }
 
 html:not(.dark) [data-status-menu] button:hover,
 html:not(.dark) [data-instr-menu] button:hover{
-    background: #f3f4f6;   /* gray-100 */
+    background: #f3f4f6;
 }
 
 /* zaznaczona opcja */
 html:not(.dark) [data-status-menu] button.font-semibold,
 html:not(.dark) [data-instr-menu] button.font-semibold{
-    color: #4338ca;        /* indigo-700-ish */
+    color: #4338ca;
 }
 
 /* =========================
@@ -357,13 +357,13 @@ html:not(.dark) [data-instr-menu] button.font-semibold{
 }
 
 .pagination-bar .page-link:hover {
-    background-color: rgba(13, 110, 253, 0.10); /* accent w light */
+    background-color: rgba(13, 110, 253, 0.10);
     border-color: var(--accent);
 }
 
 /* info – jasny */
 .pagination-bar .page-info {
-    color: #64748b; /* slate-500 */
+    color: #64748b;
 }
 
 /* =========================
@@ -371,18 +371,18 @@ html:not(.dark) [data-instr-menu] button.font-semibold{
    ========================= */
 
 html.dark .pagination-bar .page-link {
-    background: #1e2429;      /* spójne z dark bg */
+    background: #1e2429;
     border-color: var(--border);
     color: var(--accent);
 }
 
 html.dark .pagination-bar .page-link:hover {
-    background-color: rgba(77, 157, 255, 0.18); /* accent w dark */
+    background-color: rgba(77, 157, 255, 0.18);
     border-color: var(--accent);
     color: #eaf2ff;
 }
 
 html.dark .pagination-bar .page-info {
-    color: #9ca3af; /* gray-400 */
+    color: #9ca3af;
 }
 

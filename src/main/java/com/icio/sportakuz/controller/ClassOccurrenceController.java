@@ -101,7 +101,7 @@ public class ClassOccurrenceController {
             }
         }
 
-        // --- Proste stronicowanie listy "upcoming" (30 na stronę) ---
+        // --- Proste stronicowanie listy "upcoming" ---
         int totalUpcoming = upcoming.size();
         int totalPages = (int) Math.ceil(totalUpcoming / (double) PAGE_SIZE);
         if (page < 0) page = 0;
