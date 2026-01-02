@@ -5,6 +5,7 @@ import com.icio.sportakuz.entity.ActivityType;
 import com.icio.sportakuz.entity.Activity;
 import com.icio.sportakuz.entity.Room;
 import com.icio.sportakuz.entity.User;
+import com.icio.sportakuz.entity.UserRole;
 import com.icio.sportakuz.repo.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -99,19 +100,23 @@ public class ClassOccurrenceController {
         }
 
         // Mapa dostępnych instruktorów – tylko dla upcoming
-        var allInstructors = userRepository.findAll();
+        // Pobieramy tylko użytkowników z rolą INSTRUKTOR
+        var allInstructors = userRepository.findByRole(UserRole.ROLE_INSTRUCTOR);
         Map<Long, List<User>> availableMap = new HashMap<>();
         Map<Long, Long> activeBookingsCount = new HashMap<>(); //  liczności rezerwacji
         for (var oc : upcoming) {
             java.util.List<User> avail = new java.util.ArrayList<>();
             for (var instr : allInstructors) {
                 if (!instr.isActive()) continue;
-                if (instr.getId().equals(oc.getInstructor().getId())) {
+                if (oc.getInstructor() != null && instr.getId().equals(oc.getInstructor().getId())) {
                     avail.add(instr); // obecny zawsze
                     continue;
                 }
-                var overlapping = activityRepository.findOverlappingForInstructor(instr.getId(), oc.getStartTime(), oc.getEndTime())
-                        .stream().filter(c -> c.getStatus() != ClassStatus.CANCELLED).toList();
+                var overlapping = activityRepository
+                        .findOverlappingForInstructor(instr.getId(), oc.getStartTime(), oc.getEndTime())
+                        .stream()
+                        .filter(c -> c.getStatus() != ClassStatus.CANCELLED)
+                        .toList();
                 if (overlapping.isEmpty()) {
                     avail.add(instr);
                 }
