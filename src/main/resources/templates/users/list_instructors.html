@@ -72,12 +72,12 @@
 
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex items-center justify-end gap-x-2">
-                                <a th:href="@{/instructors/edit/{id}(id=${instructor.id})}"
+                                <a th:href="@{/users/edit/{id}(id=${instructor.id})}"
                                    class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm">
                                     Edytuj
                                 </a>
 
-                                <form th:action="@{/instructors/delete/{id}(id=${instructor.id})}"
+                                <form th:action="@{/users/delete/{id}(id=${instructor.id})}"
                                       method="post"
                                       onsubmit="return confirm('Czy na pewno chcesz usunąć tego instruktora? Tej operacji nie można cofnąć.');">
                                     <button type="submit"
