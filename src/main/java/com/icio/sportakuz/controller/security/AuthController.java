@@ -27,7 +27,7 @@ public class AuthController {
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new UserRegister());
-        return "login/register"; // nazwa pliku HTML
+        return "login/register";
     }
 
     @PostMapping("/register")
@@ -40,7 +40,7 @@ public class AuthController {
             return "login/register";
         }
 
-        boolean isCaptchaValid = recaptchaService.verifyCaptcha(captchaResponse);
+        boolean isCaptchaValid = recaptchaService.verify(captchaResponse);
         if (!isCaptchaValid) {
             model.addAttribute("error", "Potwierdź, że nie jesteś robotem!");
             return "login/register";

@@ -12,19 +12,23 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private final RecaptchaFilter recaptchaFilter;
     private final CustomUserDetailsService customUserDetailsService;
     private final AuthenticationSuccessHandler successHandler;
 
     public SecurityConfig(CustomUserDetailsService customUserDetailsService,
-                          AuthenticationSuccessHandler successHandler) {
+                          AuthenticationSuccessHandler successHandler,
+                          RecaptchaFilter recaptchaFilter) {
         this.customUserDetailsService = customUserDetailsService;
         this.successHandler = successHandler;
+        this.recaptchaFilter = recaptchaFilter;
     }
 
     @Bean
@@ -35,7 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**", "/").permitAll()
                         .requestMatchers("/panel/admin/**").hasRole("ADMIN")
                         .requestMatchers("/panel/instructor/**").hasAnyRole("INSTRUCTOR", "ADMIN")
-                        .requestMatchers("/panel/user/**").authenticated() // lub hasRole("USER")
+                        .requestMatchers("/panel/user/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -51,6 +55,7 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );
+        http.addFilterBefore(recaptchaFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
