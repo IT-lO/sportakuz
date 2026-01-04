@@ -5,13 +5,16 @@ import com.icio.sportakuz.dto.UserRegister;
 import com.icio.sportakuz.entity.User;
 import com.icio.sportakuz.entity.UserRole;
 import com.icio.sportakuz.repo.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,9 +31,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") UserRegister userDto,
-                               @org.springframework.web.bind.annotation.RequestParam(name="g-recaptcha-response") String captchaResponse, // 1. Pobieramy token
+    public String registerUser(@Valid @ModelAttribute("user") UserRegister userDto,
+                               BindingResult bindingResult,
+                               @RequestParam(name="g-recaptcha-response") String captchaResponse,
                                Model model) {
+
+        if (bindingResult.hasErrors()) {
+            return "login/register";
+        }
 
         boolean isCaptchaValid = recaptchaService.verifyCaptcha(captchaResponse);
         if (!isCaptchaValid) {
