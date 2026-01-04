@@ -5,6 +5,7 @@
     <title>SportakUZ – Rejestracja</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body class="bg-gray-100">
 
@@ -58,7 +59,9 @@
                        placeholder="••••••••">
                 <p class="mt-1 text-xs text-gray-500">Minimum 4 znaki</p>
             </div>
-
+            <div class="flex justify-center mb-4">
+                <div class="g-recaptcha" data-sitekey="6LerzT8sAAAAAM8-EBj4_rQga4CB8ZFwuSLeGEqi"></div>
+            </div>
             <div>
                 <button type="submit"
                         class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 rounded-md bg-indigo-600 hover:bg-indigo-700 font-semibold shadow text-white transition ease-in-out duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

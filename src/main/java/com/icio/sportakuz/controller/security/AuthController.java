@@ -1,5 +1,6 @@
 package com.icio.sportakuz.controller.security;
 
+import com.icio.sportakuz.config.security.RecaptchaService;
 import com.icio.sportakuz.dto.UserRegister;
 import com.icio.sportakuz.entity.User;
 import com.icio.sportakuz.entity.UserRole;
@@ -18,6 +19,7 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RecaptchaService recaptchaService;
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -26,7 +28,16 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") UserRegister userDto, Model model) {
+    public String registerUser(@ModelAttribute("user") UserRegister userDto,
+                               @org.springframework.web.bind.annotation.RequestParam(name="g-recaptcha-response") String captchaResponse, // 1. Pobieramy token
+                               Model model) {
+
+        boolean isCaptchaValid = recaptchaService.verifyCaptcha(captchaResponse);
+        if (!isCaptchaValid) {
+            model.addAttribute("error", "Potwierdź, że nie jesteś robotem!");
+            return "login/register";
+        }
+
         if (userRepository.existsByEmail(userDto.getEmail())) {
             model.addAttribute("error", "Ten email jest już zajęty!");
             return "login/register";
