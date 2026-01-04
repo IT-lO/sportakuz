@@ -1,123 +1,170 @@
 <!DOCTYPE html>
-<!-- Bazowy plik fragmentów Thymeleaf.
-     Fragment 'base(pageTitle,content)' wspólny układ: nagłówek, nawigacja, główna sekcja i stopka.
-     Używa Tailwind CDN do stylizacji. -->
-<html xmlns:th="http://www.thymeleaf.org" lang="pl" th:fragment="base(pageTitle,content)" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<!-- Sekcja <head>: meta + tytuł dynamiczny + konfiguracja Tailwind + główny arkusz stylów -->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="pl"
+      th:fragment="base(pageTitle,content)">
+
 <head>
     <script>
         (function () {
             try {
-                var stored = localStorage.getItem('theme'); // np. 'dark' / 'light'
-                var systemPrefersDark = window.matchMedia &&
-                    window.matchMedia('(prefers-color-scheme: dark)').matches;
-
+                var stored = localStorage.getItem('theme');
+                var systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
                 if (stored === 'dark' || (!stored && systemPrefersDark)) {
                     document.documentElement.classList.add('dark');
                 }
-            } catch (e) {
-                // w razie czego nic nie robimy
-            }
+            } catch (e) {}
         })();
     </script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title th:text="${pageTitle}">SportakUZ</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        brand: '#0d6efd'
+                        brand: '#0d6efd',
+                        dark: {
+                            bg: '#0f172a',
+                            card: '#1e293b',
+                            text: '#f8fafc'
+                        }
                     }
                 }
             }
         }
     </script>
+
     <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <style>
+        html.dark body { background-color: #0f172a; color: #f8fafc; background-image: none; }
+        html.dark .home-hero { filter: brightness(0.9); }
+        html.dark header, html.dark footer { background-color: rgba(30, 41, 59, 0.9); border-color: #334155; }
+        html.dark .text-gray-700, html.dark .text-gray-800 { color: #e2e8f0; }
+        html.dark .text-gray-500, html.dark .text-gray-600 { color: #94a3b8; }
+        html.dark .bg-white\/90 { background-color: rgba(30, 41, 59, 0.9); border-color: #334155; }
+        html.dark .bg-white { background-color: #1e293b; border-color: #334155; }
+    </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
-<!-- Header: logo + oznaczenie panelu + główna nawigacja -->
-<header class="bg-white/90 backdrop-blur border-b border-gray-200 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col transition-colors duration-300">
+
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200 shadow-sm transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
 
         <div class="flex items-center gap-3">
-            <span class="text-xl font-bold text-gray-800">SportakUZ</span>
+            <a th:href="@{/}" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-80 transition">
+                SportakUZ
+            </a>
             <span sec:authorize="isAuthenticated()"
-                  class="text-xs uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                Panel
+                  class="hidden sm:inline-block text-[10px] uppercase tracking-wider font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
+                Online
             </span>
         </div>
 
-        <nav class="flex items-center gap-4 text-sm">
+        <nav class="flex items-center gap-2 sm:gap-4 text-sm">
 
-            <a th:href="@{/}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">
+            <a th:href="@{/}" class="hidden md:block px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100 dark:hover:bg-slate-700 transition">
                 Start
             </a>
 
-            <div sec:authorize="isAuthenticated()" class="flex items-center gap-4">
+            <th:block sec:authorize="hasAnyRole('USER', 'INSTRUCTOR')">
+                <a th:href="@{/calendar}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700 transition">
+                    Grafik
+                </a>
+                <a th:href="@{/my/bookings}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700 transition">
+                    Moje rezerwacje
+                </a>
+            </th:block>
+
+            <button type="button"
+                    onclick="toggleTheme()"
+                    class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition focus:outline-none"
+                    title="Przełącz motyw">
+                <span id="theme-icon" class="text-xl">🌙</span>
+            </button>
+
+            <div sec:authorize="isAuthenticated()" class="flex items-center gap-3 ml-2">
 
                 <a sec:authorize="hasRole('ADMIN')" th:href="@{/panel/admin}"
-                   class="px-3 py-2 rounded-md font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition">
-                    Panel Admina
+                   class="px-4 py-2 rounded-md font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-md transition transform hover:scale-105">
+                    Panel
                 </a>
 
                 <a sec:authorize="hasRole('INSTRUCTOR')" th:href="@{/panel/instructor}"
-                   class="px-3 py-2 rounded-md font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 transition">
-                    Panel Instruktora
+                   class="hidden sm:inline-block px-4 py-2 rounded-md font-semibold text-white bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 shadow-md transition transform hover:scale-105">
+                    Panel
                 </a>
 
                 <a sec:authorize="hasRole('USER')" th:href="@{/panel/user}"
-                   class="px-3 py-2 rounded-md font-medium text-green-700 bg-green-50 hover:bg-green-100 transition">
-                    Mój Panel
+                   class="hidden sm:inline-block px-4 py-2 rounded-md font-semibold text-white bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 shadow-md transition transform hover:scale-105">
+                    Panel
                 </a>
 
-                <span class="hidden sm:block text-gray-500 font-semibold border-l pl-4 border-gray-300"
-                      sec:authentication="name">
-                    User
-                </span>
+                <div class="hidden md:flex flex-col items-end leading-tight border-l pl-3 border-gray-300 dark:border-gray-600 ml-1">
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Witaj</span>
+                    <span class="font-bold text-gray-800 dark:text-gray-200 max-w-[100px] truncate" sec:authentication="name">User</span>
+                </div>
 
                 <form th:action="@{/logout}" method="post" class="m-0">
-                    <button type="submit" class="px-3 py-2 rounded-md font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition">
-                        Wyloguj
+                    <button type="submit" class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-full transition" title="Wyloguj się">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                        </svg>
                     </button>
                 </form>
             </div>
 
-            <div sec:authorize="isAnonymous()">
-                <a th:href="@{/login}" class="px-4 py-2 rounded-md font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow">
-                    Zaloguj się
+            <div sec:authorize="isAnonymous()" class="flex items-center gap-2">
+                <a th:href="@{/login}" class="px-4 py-2 rounded-md font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition">
+                    Logowanie
+                </a>
+                <a th:href="@{/login}" class="sm:hidden p-2 text-indigo-600 bg-indigo-50 rounded-md">
+                    🔑
+                </a>
+                <a th:href="@{/register}" class="px-4 py-2 rounded-md font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition">
+                    Dołącz
                 </a>
             </div>
 
         </nav>
     </div>
 </header>
-<!-- Main: miejsce wstawienia właściwej zawartości przy pomocy th:insert(${content}) -->
-<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" th:insert="${content}"></main>
-<!-- Footer: prosty podpis + rok; utrzymuje layout w dole dzięki flex-col (mt-auto) -->
-<footer class="border-t border-gray-200 bg-white/70 backdrop-blur mt-auto">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-500">&copy; 2025 SportakUZ</div>
+
+<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 transition-opacity duration-500" th:insert="${content}">
+</main>
+
+<footer class="border-t border-gray-200 bg-white/70 backdrop-blur mt-auto dark:border-gray-700 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 dark:text-gray-400">
+        <div>
+            &copy; 2025 SportakUZ. Wszystkie prawa zastrzeżone.
+        </div>
+        <div class="flex gap-4 mt-2 md:mt-0">
+            <a href="#" class="hover:text-blue-600 transition">Regulamin</a>
+            <a href="#" class="hover:text-blue-600 transition">Polityka Prywatności</a>
+            <a href="#" class="hover:text-blue-600 transition">Kontakt</a>
+        </div>
+    </div>
 </footer>
 
-<!-- Skrypt motywu (light/dark) – korzysta z html.dark w app.css -->
 <script>
     function applyTheme(theme) {
         const root = document.documentElement;
+        const icon = document.getElementById('theme-icon');
 
         if (theme === 'dark') {
             root.classList.add('dark');
+            if(icon) icon.textContent = '☀️';
         } else {
             root.classList.remove('dark');
+            if(icon) icon.textContent = '🌙';
         }
-
         localStorage.setItem('theme', theme);
-
-        const icon1 = document.getElementById('theme-icon');
-        const icon2 = document.getElementById('theme-icon-layout');
-        if (icon1) icon1.textContent = theme === 'dark' ? '☀️' : '🌙';
-        if (icon2) icon2.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 
     function toggleTheme() {
@@ -127,12 +174,11 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         const saved = localStorage.getItem('theme');
-
-        if (saved === 'dark' || saved === 'light') {
+        if (saved) {
             applyTheme(saved);
         } else {
-            // domyślnie jasny
-            applyTheme('light');
+            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(systemDark ? 'dark' : 'light');
         }
     });
 </script>
@@ -140,94 +186,3 @@
 <script>document.documentElement.classList.add('tailwind-loaded');</script>
 </body>
 </html>
-
-<!-- Dodatkowe alternatywne fragmenty:
-     'head(pageTitle)' – sam nagłówek dokumentu z meta / tytułem.
-     'layout(pageTitle,content)' – pełny układ (podobny do 'base'), opcja do użycia przez th:replace. -->
-<head th:fragment="head(pageTitle)">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title th:text="${pageTitle}">SportakUZ</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: '#0d6efd'
-                    }
-                }
-            }
-        }
-    </script>
-    <link rel="stylesheet" th:href="@{/css/app.css}" />
-</head>
-
-<body th:fragment="layout(pageTitle,content)" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
-<!-- Layout header (alternatywny) -->
-<header class="bg-white/90 backdrop-blur border-b border-gray-200 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <span class="text-xl font-bold text-gray-800">SportakUZ</span>
-            <span class="text-xs uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded">Panel</span>
-        </div>
-        <nav class="flex gap-2 text-sm items-center">
-            <a th:href="@{/}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Start</a>
-            <a th:href="@{/calendar}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Kalendarz</a>
-            <a th:href="@{/my/bookings}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Moje rezerwacje</a>
-            <a th:href="@{/activities}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">Lista zajęć</a>
-            <a th:href="@{/activities/new}" class="px-3 py-2 rounded-md font-semibold bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition">+ Nowe</a>
-
-            <!-- Przycisk trybu ciemnego w layoucie -->
-            <button type="button"
-                    class="ml-3 px-3 py-2 rounded-md font-medium border border-gray-300 text-gray-700 bg-white/70 hover:bg-gray-100 transition"
-                    onclick="toggleTheme()">
-                <span id="theme-icon-layout">🌙</span>
-            </button>
-        </nav>
-    </div>
-</header>
-<!-- Layout main slot -->
-<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" th:insert="${content}"></main>
-<!-- Layout footer -->
-<footer class="border-t border-gray-200 bg-white/70 backdrop-blur mt-auto">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-500">&copy; 2025 SportakUZ</div>
-</footer>
-
-<!-- Ten sam skrypt motywu, aby działało także przy użyciu fragmentu layout -->
-<script>
-    function applyTheme(theme) {
-        const root = document.documentElement;
-
-        if (theme === 'dark') {
-            root.classList.add('dark');
-        } else {
-            root.classList.remove('dark');
-        }
-
-        localStorage.setItem('theme', theme);
-
-        const icon1 = document.getElementById('theme-icon');
-        const icon2 = document.getElementById('theme-icon-layout');
-        if (icon1) icon1.textContent = theme === 'dark' ? '☀️' : '🌙';
-        if (icon2) icon2.textContent = theme === 'dark' ? '☀️' : '🌙';
-    }
-
-    function toggleTheme() {
-        const isDark = document.documentElement.classList.contains('dark');
-        applyTheme(isDark ? 'light' : 'dark');
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const saved = localStorage.getItem('theme');
-
-        if (saved === 'dark' || saved === 'light') {
-            applyTheme(saved);
-        } else {
-            applyTheme('light');
-        }
-    });
-</script>
-
-<script>document.documentElement.classList.add('tailwind-loaded');</script>
-</body>
