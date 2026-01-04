@@ -2,9 +2,8 @@
    Podstawowy layout – ogólne
    ========================= */
 
-:root {
-    color-scheme: light dark;
-}
+:root { color-scheme: light; }
+html.dark { color-scheme: dark; }
 
 :root {
     --bg:#f7f9fc;

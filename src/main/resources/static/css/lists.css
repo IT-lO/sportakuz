@@ -87,13 +87,36 @@ tbody tr:hover {
 
 .table-tools input[type=search] {
     padding:.45rem .6rem;
-    border:1px solid var(--border);
+    border:1px solid #D9E2ECFF;
+    background: #f7f9fc;
+    color: #2f3e46;
     border-radius:var(--radius);
-    min-width:220px;
+    min-width:320px;
 }
 
 .table-tools input[type=search]:focus {
-    outline:2px solid var(--accent);
+    outline:2px solid #0D6EFDFF;
+}
+
+.table-tools select {
+    min-width: 80px;
+    padding:.45rem .6rem;
+    border:1px solid #D9E2ECFF;
+    background: #ffffff;
+    color: #2f3e46;
+    border-radius:var(--radius);
+}
+
+.table-tools .clear {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    background-color: #f3f4f6;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.table-tools .clear:hover {
+    background-color: #e5e7eb;
 }
 
 /* =========================
@@ -200,3 +223,166 @@ html.dark .table-wrapper span.bg-green-100 {
     color: #bbf7d0;
     border-color: #34d399;
 }
+
+/* =========================
+   Narzędzia nad tabelą
+   ========================= */
+
+html.dark .table-tools {
+    display:flex;
+    gap:.75rem;
+    align-items:center;
+    margin:.6rem 0 1rem;
+    flex-wrap:wrap;
+}
+
+html.dark .table-tools .search-box {
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+}
+
+html.dark .table-tools input[type=search] {
+    padding:.45rem .6rem;
+    border:1px solid #3A444DFF;
+    background: #1e2429;
+    color: #eef2f5;
+    border-radius:var(--radius);
+    min-width:320px;
+}
+
+html.dark .table-tools input[type=search]:focus {
+    outline:2px solid #4d9dff;
+}
+
+html.dark .table-tools .clear {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    background-color: #374151;
+    color: #f3f4f6;
+    font-size: 0.875rem;
+}
+
+html.dark .table-tools .clear:hover {
+    background-color: #494848;
+}
+
+html.dark .table-tools select {
+    min-width: 80px;
+    padding:.45rem .6rem;
+    border:1px solid #3A444DFF;
+    background: #1e2429;
+    color: #eef2f5;
+    border-radius:var(--radius);
+}
+
+/* =========================
+   TRYB CIEMNY – dropdowny (STATUS + INSTRUKTOR)
+   ========================= */
+
+html.dark [data-status-menu],
+html.dark [data-instr-menu] {
+    background: #1e2429;
+    border-color: #3a444d;
+    color: #eef2f5;
+}
+
+/* przyciski w menu */
+html.dark [data-status-menu] button,
+html.dark [data-instr-menu] button {
+    color: #eef2f5;
+}
+
+/* hover w menu */
+html.dark [data-status-menu] button:hover,
+html.dark [data-instr-menu] button:hover {
+    background: #2a333b;
+}
+
+/* zaznaczona opcja */
+html.dark [data-status-menu] button.font-semibold,
+html.dark [data-instr-menu] button.font-semibold {
+    color: #9db7ff !important;
+}
+
+/* =========================
+   TRYB JASNY – dropdowny (STATUS + INSTRUKTOR)
+   ========================= */
+
+html:not(.dark) [data-status-menu],
+html:not(.dark) [data-instr-menu]{
+    background: #ffffff;
+    border-color: #e5e7eb;
+    color: #111827;
+}
+
+html:not(.dark) [data-status-menu] button,
+html:not(.dark) [data-instr-menu] button{
+    color: #374151;
+}
+
+html:not(.dark) [data-status-menu] button:hover,
+html:not(.dark) [data-instr-menu] button:hover{
+    background: #f3f4f6;
+}
+
+/* zaznaczona opcja */
+html:not(.dark) [data-status-menu] button.font-semibold,
+html:not(.dark) [data-instr-menu] button.font-semibold{
+    color: #4338ca;
+}
+
+/* =========================
+   PASEK PAGINACJI
+   ========================= */
+
+.pagination-bar {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* linki – jasny tryb */
+.pagination-bar .page-link {
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    background: #ffffff;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.pagination-bar .page-link:hover {
+    background-color: rgba(13, 110, 253, 0.10);
+    border-color: var(--accent);
+}
+
+/* info – jasny */
+.pagination-bar .page-info {
+    color: #64748b;
+}
+
+/* =========================
+   TRYB CIEMNY – PAGINACJA
+   ========================= */
+
+html.dark .pagination-bar .page-link {
+    background: #1e2429;
+    border-color: var(--border);
+    color: var(--accent);
+}
+
+html.dark .pagination-bar .page-link:hover {
+    background-color: rgba(77, 157, 255, 0.18);
+    border-color: var(--accent);
+    color: #eaf2ff;
+}
+
+html.dark .pagination-bar .page-info {
+    color: #9ca3af;
+}
+

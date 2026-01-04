@@ -5,6 +5,7 @@ import com.icio.sportakuz.entity.ActivityType;
 import com.icio.sportakuz.entity.Activity;
 import com.icio.sportakuz.entity.Room;
 import com.icio.sportakuz.entity.User;
+import com.icio.sportakuz.entity.UserRole;
 import com.icio.sportakuz.repo.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,9 +58,14 @@ public class ClassOccurrenceController {
 
     /** GET /activities – lista wystąpień (do rozbudowy np. o filtrowanie/paginację). */
     @GetMapping
-    public String list(Model model) {
-        // Wszystkie wystąpienia posortowane po starcie
-        var all = activityRepository.findAllByOrderByStartTimeAsc();
+    public String list(Model model,
+                       @RequestParam(value = "pattern", required = false) String pattern,
+                       @RequestParam(value = "sort", required = false) String sort,
+                       @RequestParam(value = "order", required = false) String order,
+                       @RequestParam(value = "page", required = false, defaultValue = "0") int page) {
+        final int PAGE_SIZE = 15;
+        String likePattern = (pattern == null || pattern.isBlank()) ? null : (pattern.trim().toLowerCase() + "%");
+        var all = (likePattern == null) ? activityRepository.findAllByOrderByStartTimeAsc() : activityRepository.searchOrderByStartTimeAsc(likePattern);
         java.util.List<Activity> upcoming = new java.util.ArrayList<>();
         java.util.List<Activity> history = new java.util.ArrayList<>();
         for (var oc : all) {
@@ -71,20 +78,57 @@ public class ClassOccurrenceController {
         // Historia – odwrotnie (najnowsze na górze) – sortujemy malejąco po starcie
         history.sort(java.util.Comparator.comparing(Activity::getStartTime).reversed());
 
+        // Sortowanie głównej listy (upcoming) wg typu lub instruktora
+        if (sort != null && !sort.isBlank()) {
+            Comparator<Activity> cmp = null;
+            String sortType = sort.toLowerCase();
+            if ("type".equals(sortType)) {
+                cmp = Comparator.comparing(activity -> {
+                    var type = activity.getType();
+                    return type != null && type.getActivityName() != null ? type.getActivityName().toLowerCase() : "";
+                });
+            } else if ("instructor".equals(sortType)) {
+                cmp = Comparator.comparing(activity -> {
+                    var instructor = activity.getInstructor();
+                    String last = (instructor != null && instructor.getLastName() != null) ? instructor.getLastName().toLowerCase() : "";
+                    String first = (instructor != null && instructor.getFirstName() != null) ? instructor.getFirstName().toLowerCase() : "";
+                    return last + " " + first;
+                });
+            }
+            if (cmp != null) {
+                boolean desc = order != null && order.equalsIgnoreCase("desc");
+                upcoming.sort(desc ? cmp.reversed() : cmp);
+            }
+        }
+
+        // --- Proste stronicowanie listy "upcoming" ---
+        int totalUpcoming = upcoming.size();
+        int totalPages = (int) Math.ceil(totalUpcoming / (double) PAGE_SIZE);
+        if (page < 0) page = 0;
+        if (page >= totalPages && totalPages > 0) page = totalPages - 1;
+        int fromIndex = page * PAGE_SIZE;
+        int toIndex = Math.min(fromIndex + PAGE_SIZE, totalUpcoming);
+        java.util.List<Activity> upcomingPage = totalUpcoming == 0 ? java.util.Collections.emptyList() : upcoming.subList(fromIndex, toIndex);
+        // -----------------------------------------------------------
+
         // Mapa dostępnych instruktorów – tylko dla upcoming
-        var allInstructors = userRepository.findAll();
+        // Pobieramy tylko użytkowników z rolą INSTRUKTOR
+        var allInstructors = userRepository.findByRole(UserRole.ROLE_INSTRUCTOR);
         Map<Long, List<User>> availableMap = new HashMap<>();
         Map<Long, Long> activeBookingsCount = new HashMap<>(); //  liczności rezerwacji
-        for (var oc : upcoming) {
+        for (var oc : upcomingPage) {
             java.util.List<User> avail = new java.util.ArrayList<>();
             for (var instr : allInstructors) {
                 if (!instr.isActive()) continue;
-                if (instr.getId().equals(oc.getInstructor().getId())) {
+                if (oc.getInstructor() != null && instr.getId().equals(oc.getInstructor().getId())) {
                     avail.add(instr); // obecny zawsze
                     continue;
                 }
-                var overlapping = activityRepository.findOverlappingForInstructor(instr.getId(), oc.getStartTime(), oc.getEndTime())
-                        .stream().filter(c -> c.getStatus() != ClassStatus.CANCELLED).toList();
+                var overlapping = activityRepository
+                        .findOverlappingForInstructor(instr.getId(), oc.getStartTime(), oc.getEndTime())
+                        .stream()
+                        .filter(c -> c.getStatus() != ClassStatus.CANCELLED)
+                        .toList();
                 if (overlapping.isEmpty()) {
                     avail.add(instr);
                 }
@@ -92,12 +136,17 @@ public class ClassOccurrenceController {
             availableMap.put(oc.getId(), avail);
             activeBookingsCount.put(oc.getId(), bookingRepository.countActiveByClassId(oc.getId())); // ile aktywnych rezerwacji
         }
-        model.addAttribute("activities", upcoming); // główna lista = przyszłe
+        model.addAttribute("activities", upcomingPage); // główna lista = przyszłe (stronicowana)
         model.addAttribute("historyActivities", history); // historia = anulowane / zakończone
         model.addAttribute("allStatuses", ClassStatus.values());
         model.addAttribute("instructors", allInstructors);
         model.addAttribute("availableInstructors", availableMap);
         model.addAttribute("activeBookings", activeBookingsCount);
+        model.addAttribute("pattern", pattern);
+        model.addAttribute("sort", sort);
+        model.addAttribute("order", order);
+        model.addAttribute("page", page);
+        model.addAttribute("totalPages", totalPages);
         return "activities/list";
     }
 
@@ -111,7 +160,10 @@ public class ClassOccurrenceController {
         return "activities/new";
     }
 
-    /** Wylicza OffsetDateTime startu na podstawie daty + lokalnego czasu. */
+    /**
+     * Wylicza OffsetDateTime startu na podstawie daty + lokalnego czasu.
+     * Używane do walidacji kolizji NA PODSTAWIE wartości z formularza.
+     */
     private OffsetDateTime computeStart(ClassOccurrenceForm form) {
         if (form.getDate() == null || form.getStartTime() == null) return null;
         var zone = ZoneId.of("Europe/Warsaw");
@@ -127,31 +179,39 @@ public class ClassOccurrenceController {
     /**
      * Waliduje kolizje sali/instruktora w podanym przedziale czasowym.
      * Jeśli editingId != null – ignoruje kolizję z własnym wystąpieniem podczas edycji.
+     * Zajęcia z kolizją NIE są tworzone/aktualizowane – użytkownik dostaje błąd w formularzu.
      */
     private void validateConflicts(ClassOccurrenceForm form, BindingResult binding, Long editingId) {
-        if (binding.hasErrors()) return; // wcześniejsze błędy
+        if (binding.hasErrors()) return; // wcześniejsze błędy (Bean Validation itp.)
+
+        // Używamy dokładnie tych samych danych co przy zapisie: date + startTime + durationMinutes
         var start = computeStart(form);
         var end = computeEnd(start, form.getDurationMinutes());
-        if (start == null || end == null) return; // brak danych czasowych
+        if (start == null || end == null) return; // brak kompletnych danych czasowych
 
-        // Sprawdzenie kolizji sali – NIE zależy od wybranego instruktora
+        // Sprawdzenie kolizji sali – niezależnie od wybranego instruktora
         if (form.getRoomId() != null) {
             long roomCnt = activityRepository.countOverlappingInRoom(form.getRoomId(), start, end);
             if (editingId != null && roomCnt > 0) {
                 roomCnt = activityRepository.findOverlappingInRoom(form.getRoomId(), start, end)
-                        .stream().filter(c -> !c.getId().equals(editingId)).count();
+                        .stream()
+                        .filter(c -> !c.getId().equals(editingId))
+                        .count();
             }
             if (roomCnt > 0) {
                 log.debug("[CONFLICT][ROOM] roomId={} start={} end={} count={}", form.getRoomId(), start, end, roomCnt);
                 binding.rejectValue("roomId", "conflict.room", "Sala zajęta w tym czasie");
             }
         }
+
         // Sprawdzenie kolizji instruktora – tylko jeśli wybrany instruktor
         if (form.getInstructorId() != null) {
             long instrCnt = activityRepository.countOverlappingForInstructor(form.getInstructorId(), start, end);
             if (editingId != null && instrCnt > 0) {
                 instrCnt = activityRepository.findOverlappingForInstructor(form.getInstructorId(), start, end)
-                        .stream().filter(c -> !c.getId().equals(editingId)).count();
+                        .stream()
+                        .filter(c -> !c.getId().equals(editingId))
+                        .count();
             }
             if (instrCnt > 0) {
                 log.debug("[CONFLICT][INSTR] instructorId={} start={} end={} count={}", form.getInstructorId(), start, end, instrCnt);
@@ -192,7 +252,7 @@ public class ClassOccurrenceController {
         if (room != null && form.getCapacity() != null && form.getCapacity() > room.getCapacity()) {
             form.setCapacity(room.getCapacity());
         }
-        // walidacja kolizji
+        // walidacja kolizji – jeśli jest konflikt, zajęcia NIE zostaną zapisane
         validateConflicts(form, binding, null);
         if (binding.hasErrors()) {
             addLookups(model);
@@ -206,7 +266,9 @@ public class ClassOccurrenceController {
 
         var zone = ZoneId.of("Europe/Warsaw");
         var start = LocalDateTime.of(form.getDate(), form.getStartTime()).atZone(zone).toOffsetDateTime();
+        var end = start.plusMinutes(form.getDurationMinutes());
         oc.setStartTime(start);
+        oc.setEndTime(end);
         oc.setDurationMinutes(form.getDurationMinutes());
 
         oc.setCapacity(form.getCapacity());
@@ -289,7 +351,7 @@ public class ClassOccurrenceController {
         if (room != null && form.getCapacity() != null && form.getCapacity() > room.getCapacity()) {
             form.setCapacity(room.getCapacity());
         }
-        // walidacja kolizji (ignorując bieżące id)
+        // walidacja kolizji (ignorując bieżące id) – przy konflikcie zajęcia NIE są aktualizowane
         validateConflicts(form, binding, id);
         if (binding.hasErrors()) {
             addLookups(model);
@@ -306,6 +368,7 @@ public class ClassOccurrenceController {
         OffsetDateTime end = start.plusMinutes(form.getDurationMinutes());
         oc.setStartTime(start);
         oc.setEndTime(end);
+        oc.setDurationMinutes(form.getDurationMinutes());
         oc.setCapacity(form.getCapacity());
         oc.setNote(form.getNote());
 
@@ -336,7 +399,8 @@ public class ClassOccurrenceController {
     /** Dodaje listy typów, instruktorów i sal do modelu dla formularzy. */
     private void addLookups(Model model) {
         model.addAttribute("types", activityTypeRepository.findAll());
-        model.addAttribute("instructors", userRepository.findAll());
+        // tylko użytkownicy z rolą INSTRUKTOR
+        model.addAttribute("instructors", userRepository.findByRole(UserRole.ROLE_INSTRUCTOR));
         model.addAttribute("rooms", roomRepository.findAll());
     }
 

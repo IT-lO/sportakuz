@@ -22,28 +22,28 @@
 
             <!-- Nazwa typu zajęć -->
             <div class="form-group">
-                <label for="name">Nazwa typu zajęć</label>
+                <label for="activityName">Nazwa typu zajęć</label>
                 <input type="text"
-                       id="name"
+                       id="activityName"
                        th:field="*{activityName}"
-                       aria-describedby="name-error">
-                <p th:if="${#fields.hasErrors('name')}"
+                       aria-describedby="activityName-error">
+                <p th:if="${#fields.hasErrors('activityName')}"
                    th:errors="*{activityName}"
-                   id="name-error"
+                   id="activityName-error"
                    class="error"></p>
             </div>
 
             <!-- Domyślny czas trwania -->
             <div class="form-group">
-                <label for="defaultDurationMinutes">Domyślny czas trwania (opcjonalnie)</label>
+                <label for="duration">Domyślny czas trwania (w minutach)</label>
                 <input type="number"
-                       id="defaultDurationMinutes"
+                       id="duration"
                        th:field="*{duration}"
-                       aria-describedby="defaultDurationMinutes-error">
-                <p class="muted">Np. „60” (w minutach).</p>
-                <p th:if="${#fields.hasErrors('defaultDurationMinutes')}"
+                       aria-describedby="duration-error">
+                <p class="muted">Np. „60” (w minutach). Wymagane – minimum 1 minuta.</p>
+                <p th:if="${#fields.hasErrors('duration')}"
                    th:errors="*{duration}"
-                   id="defaultDurationMinutes-error"
+                   id="duration-error"
                    class="error"></p>
             </div>
 
