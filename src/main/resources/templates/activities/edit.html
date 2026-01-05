@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- Szablon edycji istniejącego wystąpienia zajęć. -->
-<html lang="pl" xmlns:th="http://www.thymeleaf.org"
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="fragments :: base('Edycja zajęć', ~{::content})">
 <div th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/forms.css}" />

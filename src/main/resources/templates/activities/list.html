@@ -1,25 +1,35 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org"
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="fragments :: base('Lista zajęć', ~{::content})">
 <div th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/lists.css}" />
-    <section>
-        <div class="space-y-6">
-            <!-- Nagłówek sekcji z przyciskiem dodania nowego wystąpienia -->
-            <div class="flex items-center justify-between">
-                <h1 class="text-3xl font-bold">Lista zajęć</h1>
-                <div class="flex gap-3">
-                    <a th:href="@{/activity-series}"
-                       class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700 transition">
-                        Serie
-                    </a>
-                    <!-- Przejście do formularza tworzenia nowych zajęć -->
-                    <a th:href="@{/activities/new}"
-                       class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 transition">
-                        <span class="text-lg leading-none">＋</span> Nowe zajęcia
-                    </a>
-                </div>
+<section>
+    <div class="space-y-6">
+        <!-- Nagłówek sekcji z przyciskiem dodania nowego wystąpienia -->
+        <div class="flex items-center justify-between">
+            <h1 class="text-3xl font-bold">Lista zajęć</h1>
+            <div class="flex gap-3 items-center">
+                <a sec:authorize="hasRole('ROLE_ADMIN')"
+                   th:href="@{/panel/admin}"
+                   class="text-sm text-red-600 hover:text-red-700 font-medium">
+                    ← Powrót do panelu
+                </a>
+                <a sec:authorize="hasRole('ROLE_INSTRUCTOR')"
+                   th:href="@{/panel/instructor}"
+                   class="text-sm text-green-600 hover:text-green-700 font-medium">
+                    ← Powrót do panelu
+                </a>
+                <a th:href="@{/activity-series}"
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700 transition">
+                    Serie
+                </a>
+                <!-- Przejście do formularza tworzenia nowych zajęć -->
+                <a th:href="@{/activities/new}"
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 transition">
+                    <span class="text-lg leading-none">＋</span> Nowe zajęcia
+                </a>
             </div>
+        </div>
 
             <!-- Flash: sukces / błąd -->
             <div th:if="${success}" class="flash-success" th:text="${success}"></div>
