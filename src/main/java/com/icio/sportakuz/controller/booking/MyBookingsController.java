@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -30,11 +31,11 @@ public class MyBookingsController {
 
 	/** GET /my/bookings – główny widok zarezerwowanych zajęć. */
 	@GetMapping
-	public String calendarRoot(Model model) {
+	public String calendarRoot(Model model, Principal principal) {
 		model.addAttribute("pageTitle", "Moje rezerwacje");
 
 		// Placeholder until users get added
-		String userName = "zzz";
+		String userName = principal.getName();
 
 		List<Booking> bookings =  bookingRepository.findAllByUserName(userName);
 		List<MyBookingDto> dtoList = bookings.stream().map(this::toDto).collect(Collectors.toList());
