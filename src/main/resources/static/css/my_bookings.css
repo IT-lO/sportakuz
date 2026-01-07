@@ -132,3 +132,21 @@ html.dark .empty-state {
 html.dark .empty-icon {
     color: #4b5563;
 }
+
+.pdf-button {
+    background-color: #0056b3; /* Dopasuj kolor do swojego motywu */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.pdf-button:hover {
+    background-color: #004494;
+}

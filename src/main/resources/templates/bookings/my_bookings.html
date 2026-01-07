@@ -2,16 +2,26 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pl" th:replace="~{fragments :: base('Moje Rezerwacje', ~{::content})}">
 <div th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/my_bookings.css}" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <script th:inline="javascript">
         /*<![CDATA[*/
         window.__bookings = /*[[${bookings}]]*/ [];
         /*]]>*/
     </script>
+
     <div class="container">
-        <div class="header">
-            <h1 id="mainTitle" th:text="${pageTitle != null} ? ${pageTitle} : 'Moje rezerwacje'"></h1>
-            <p>Twoje aktywne rezerwacje</p>
+        <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 id="mainTitle" th:text="${pageTitle != null} ? ${pageTitle} : 'Moje rezerwacje'"></h1>
+                <p>Twoje aktywne rezerwacje</p>
+            </div>
+            <button id="downloadPdfBtn" class="pdf-button" onclick="generatePDF()">
+                📥 Pobierz PDF
+            </button>
         </div>
+
         <div class="reservations-list" id="reservationsList">
             <div th:if="${#lists.isEmpty(bookings)}" class="empty-state">
                 <div class="empty-icon">📅</div>
@@ -19,18 +29,21 @@
                 <p>Nie masz obecnie żadnych zarezerwowanych zajęć sportowych.</p>
             </div>
             <div th:each="b : ${bookings}" class="reservation-card" th:attr="data-booking-id=${b.id}">
-                <button class="cancel-button" type="button" th:attr="data-activity=${b.activityName}" onclick="BookingsPage.showCancelModal(this)">Anuluj rezerwację</button>
+                <button class="cancel-button no-print" type="button"
+                        th:attr="data-activity=${b.activityName}"
+                        onclick="BookingsPage.showCancelModal(this)">Anuluj rezerwację</button>
+
                 <div class="activity-name" th:text="${b.activityName}">Nazwa zajęć</div>
                 <div class="reservation-details">
-                      <div class="detail-item">
+                    <div class="detail-item">
                         <span class="detail-label">Instruktor:</span>
                         <span class="detail-value instructor-name"
-                            th:if="${b.isSubstitution}"
-                            th:utext="'&lt;s&gt;' + ${b.instructor} + '&lt;/s&gt;'">Instruktor</span>
+                              th:if="${b.isSubstitution}"
+                              th:utext="'&lt;s&gt;' + ${b.instructor} + '&lt;/s&gt;'">Instruktor</span>
                         <span class="detail-value instructor-name"
-                            th:unless="${b.isSubstitution}"
-                            th:text="${b.instructor}">Instruktor</span>
-                      </div>
+                              th:unless="${b.isSubstitution}"
+                              th:text="${b.instructor}">Instruktor</span>
+                    </div>
                     <div class="detail-item" th:if="${b.isSubstitution}" ><span class="detail-label">Zastępstwo:</span> <span class="detail-value instructor-name" th:text="${b.substitutedFor}">Instruktor</span></div>
                     <div class="detail-item"><span class="detail-label">Data:</span> <span class="detail-value" th:text="${b.date}">Data</span></div>
                     <div class="detail-item"><span class="detail-label">Godzina:</span> <span class="detail-value" th:text="${b.time}">Godzina</span></div>
@@ -40,6 +53,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal-overlay" id="cancelModal">
         <div class="modal-content">
             <div class="modal-title">Anulowanie rezerwacji</div>
@@ -50,6 +64,112 @@
             </div>
         </div>
     </div>
+
     <script th:src="@{/js/my_bookings.js}"></script>
+
+    <script>
+        function generatePDF() {
+            // Pobieramy element do wydruku
+            const element = document.getElementById('reservationsList');
+
+            // Konfiguracja PDF
+            const opt = {
+                margin:       [10, 10, 10, 10], // Marginesy: góra, lewo, dół, prawo
+                filename:     'moje_rezerwacje.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true }, // scale: 2 poprawia jakość tekstu
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Hack: Klonujemy element, aby usunąć przyciski "Anuluj" tylko z wydruku,
+            // nie zmieniając widoku na ekranie.
+            const elementClone = element.cloneNode(true);
+
+            // Usuń przyciski anulowania z klona
+            const buttons = elementClone.querySelectorAll('.cancel-button');
+            buttons.forEach(btn => btn.remove());
+
+            // (Opcjonalnie) Dodaj nagłówek do PDF wewnątrz klona
+            const header = document.createElement('h2');
+            header.innerText = 'Potwierdzenie Rezerwacji Sportakuz';
+            header.style.textAlign = 'center';
+            header.style.marginBottom = '20px';
+            header.style.fontFamily = 'Arial, sans-serif';
+            elementClone.insertBefore(header, elementClone.firstChild);
+
+            // Generuj PDF z klona
+            html2pdf().set(opt).from(elementClone).save();
+        }
+    </script>
+
+    <script>
+        function generatePDF() {
+            const element = document.getElementById('reservationsList');
+
+            const opt = {
+                margin:       [10, 10, 10, 10],
+                filename:     'moje_rezerwacje.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // 1. Klonujemy element
+            const elementClone = element.cloneNode(true);
+
+            // --- SEKCJA EDYCJI WYGLĄDU DLA PDF ---
+
+            // 2. Usuwamy przyciski (tak jak wcześniej)
+            const buttons = elementClone.querySelectorAll('.cancel-button');
+            buttons.forEach(btn => btn.remove());
+
+            // 3. Zmieniamy kolory kart (Zwiększamy kontrast)
+            const cards = elementClone.querySelectorAll('.reservation-card');
+            cards.forEach(card => {
+                // Ustawiamy białe tło i wyraźną ramkę (styl "dokumentowy")
+                card.style.backgroundColor = '#ffffff';
+                card.style.border = '1px solid #333333';
+                card.style.color = '#000000'; // Wymuś czarny tekst
+                card.style.boxShadow = 'none'; // Usuń cienie, w PDF wyglądają słabo
+                card.style.marginBottom = '10px'; // Odstęp między kartami
+                card.style.padding = '15px';
+            });
+
+            // 4. Poprawiamy czytelność etykiet (np. "Data:", "Instruktor:")
+            const labels = elementClone.querySelectorAll('.detail-label');
+            labels.forEach(label => {
+                label.style.color = '#333333'; // Ciemnoszary zamiast wyblakłego
+                label.style.fontWeight = 'bold';
+            });
+
+            // 5. Poprawiamy czytelność wartości (np. konkretna data, nazwisko)
+            const values = elementClone.querySelectorAll('.detail-value');
+            values.forEach(val => {
+                val.style.color = '#000000'; // Czysta czerń
+            });
+
+            // 6. Nagłówek i inne napisy
+            const titles = elementClone.querySelectorAll('.activity-name');
+            titles.forEach(title => {
+                title.style.color = '#000000';
+                title.style.borderBottom = '1px solid #ccc'; // Dodatkowa linia oddzielająca
+                title.style.paddingBottom = '5px';
+            });
+
+            // -------------------------------------
+
+            // Dodanie nagłówka PDF
+            const header = document.createElement('h2');
+            header.innerText = 'Potwierdzenie Rezerwacji - Lista';
+            header.style.textAlign = 'center';
+            header.style.color = '#000';
+            header.style.fontFamily = 'Arial, sans-serif';
+            header.style.marginBottom = '20px';
+            elementClone.insertBefore(header, elementClone.firstChild);
+
+            // Generowanie
+            html2pdf().set(opt).from(elementClone).save();
+        }
+    </script>
 </div>
 </html>
