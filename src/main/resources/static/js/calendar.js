@@ -174,15 +174,12 @@ ${substitutionLine}
                 substitutionRow.style.display='none';
             }
         }
-        const nameInput = document.getElementById('user-name'); if(nameInput) nameInput.value='';
         const successEl = document.getElementById('success-message'); if(successEl) successEl.style.display='none';
         const modal = document.getElementById('modal'); if(modal) modal.classList.add('active');
     }
 
     function handleBooking(){
-        const userName = (document.getElementById('user-name')||{}).value?.trim();
         const messageEl = document.getElementById('success-message');
-        if(!userName){ showMessage(messageEl,'Podaj imię i nazwisko','#ef4444'); return; }
         if(userReservations.length >= 999){ showMessage(messageEl,'Osiągnięto limit 999 rezerwacji. Usuń niektóre rezerwacje.','#ef4444'); return; }
         const confirmBtn = document.getElementById('confirm-booking');
         if(!confirmBtn) return;
@@ -193,7 +190,7 @@ ${substitutionLine}
         fetch('/SportakUZ_war_exploded/api/bookings/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ classId: selectedClass.id, userName })
+            body: JSON.stringify({ classId: selectedClass.id})
         }).then(r => r.json().then(body => ({ ok: r.ok, body })))
           .then(result => {
             confirmBtn.disabled = false; confirmBtn.textContent = originalText;
