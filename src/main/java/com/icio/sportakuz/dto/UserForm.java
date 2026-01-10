@@ -26,12 +26,8 @@ public class UserForm {
     @Size(max = 255, message = "Adres e-mail nie może przekraczać 255 znaków.")
     private String email;
 
-    // --- NOWE POLE ---
-    // Nie dajemy tu @NotBlank, aby umożliwić edycję użytkownika bez zmiany hasła.
-    // Walidacja "czy hasło jest wpisane przy tworzeniu" odbywa się w kontrolerze (processCreateForm).
     @Size(min = 4, max = 100, message = "Hasło powinno mieć od 4 do 100 znaków.")
     private String password;
-    // -----------------
 
     @Size(max = 40, message = "Numer telefonu nie może przekraczać 40 znaków.")
     private String phone;

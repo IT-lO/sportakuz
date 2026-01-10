@@ -28,7 +28,6 @@ public class ActivityTypeController {
 
     @GetMapping
     public String showActivityTypeList(Model model) {
-        // POPRAWKA: Sortowanie po polu encji "activityName", a nie "name"
         List<ActivityType> activityTypes = activityTypeRepository.findAll(Sort.by("activityName"));
         model.addAttribute("activitytypes", activityTypes);
         model.addAttribute("pageTitle", "Typy Zajęć");
@@ -45,7 +44,7 @@ public class ActivityTypeController {
     }
 
     @PostMapping("/new")
-    public String processCreateForm(@Valid @ModelAttribute("activityTypeForm") ActivityTypeForm form, // ZMIANA Z classTypeForm
+    public String processCreateForm(@Valid @ModelAttribute("activityTypeForm") ActivityTypeForm form,
                                     BindingResult bindingResult,
                                     Model model,
                                     RedirectAttributes redirectAttributes) {
@@ -60,8 +59,6 @@ public class ActivityTypeController {
             return "activitytypes/form_add_activitytype";
         }
 
-        // --- TU BYŁ BŁĄD ---
-        // Musimy przepisać dane z DTO (Form) na Encję (Entity), bo tylko Encję można zapisać w bazie.
         ActivityType newActivity = ActivityType.builder()
                 .activityName(form.getActivityName())
                 .description(form.getDescription())
@@ -70,13 +67,11 @@ public class ActivityTypeController {
                 .build();
 
         activityTypeRepository.save(newActivity);
-        // -------------------
 
         redirectAttributes.addFlashAttribute("globalSuccessMessage", "Nowy typ zajęć został pomyślnie dodany.");
         return "redirect:/activitytypes";
     }
 
-    // POPRAWKA: Zmiana Long id na Integer id (zgodnie z bazą danych)
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
         Optional<ActivityType> classTypeOpt = activityTypeRepository.findById(id);
@@ -88,7 +83,6 @@ public class ActivityTypeController {
 
         ActivityType classType = classTypeOpt.get();
 
-        // Mapowanie Encja -> DTO (do wyświetlenia w formularzu)
         ActivityTypeForm form = new ActivityTypeForm() ;
         form.setActivityName(classType.getActivityName());
         form.setDescription(classType.getDescription());
@@ -116,7 +110,6 @@ public class ActivityTypeController {
             return "redirect:/activitytypes";
         }
 
-        // POPRAWKA: findByActivityName zamiast findByName
         Optional<ActivityType> existingName = activityTypeRepository.findByActivityName(form.getActivityName());
 
         // Sprawdzamy, czy nazwa jest zajęta przez INNY rekord niż ten edytowany
@@ -144,7 +137,6 @@ public class ActivityTypeController {
         return "redirect:/activitytypes";
     }
 
-    // POPRAWKA: Zmiana Long id na Integer id
     @PostMapping("/delete/{id}")
     public String processDelete(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
 

@@ -12,7 +12,6 @@ import java.time.LocalTime;
 @Setter
 public class ActivitySeriesForm {
 
-    // ZMIANA: Integer -> Long (Kluczowe dla działania ActivityTypeRepository)
     @NotNull(message="Wybierz typ zajęć")
     private Integer activityTypeId;
 

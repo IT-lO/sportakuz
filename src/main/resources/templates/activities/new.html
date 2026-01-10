@@ -7,18 +7,14 @@
 <section>
     <!-- Kontener główny: karta formularza -->
     <div class="max-w-3xl mx-auto space-y-8">
-        <!-- używamy naszej .form-card zamiast tailwindowego bg-... -->
         <div class="form-card">
             <div class="flex items-center justify-between mb-6">
-                <!-- bez text-gray-900, kolor leci z var(--text) -->
                 <h1 class="text-2xl font-semibold">Dodaj nowe zajęcia</h1>
-                <!-- Link powrotu do listy zajęć (może zostać jak był) -->
                 <a th:href="@{/activities}"
                    class="text-sm text-blue-600 hover:text-blue-700 font-medium">← Lista</a>
             </div>
 
             <form th:action="@{/activities}" th:object="${form}" method="post">
-                <!-- nasza siatka formularza -->
                 <div class="form-grid">
                     <!-- Wybór typu zajęć -->
                     <div class="form-group">
@@ -119,7 +115,6 @@
                            th:errors="*{capacity}"></p>
                     </div>
 
-                    <!-- Notatka organizacyjna – na całą szerokość -->
                     <div class="form-group form-group--wide">
                         <label for="noteInput">Notatka</label>
                         <textarea rows="3"

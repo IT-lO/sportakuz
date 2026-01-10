@@ -103,7 +103,6 @@
                                             th:text="${(c.substitutedFor != null ? '[Z] ' : '') + c.instructor.firstName + ' ' + c.instructor.lastName}">
                                     </button>
 
-                                    <!-- ZMIANA: usunięte bg-white + border-gray-200 -->
                                     <div class="hidden absolute left-0 mt-1 w-48 rounded-md border shadow-lg z-50 py-1 text-xs"
                                          data-instr-menu>
                                         <form th:each="i : ${availableInstructors[c.id]}"
@@ -111,7 +110,6 @@
                                               method="post" class="block">
                                             <input type="hidden" name="instructorId" th:value="${i.id}"/>
 
-                                            <!-- ZMIANA: usunięte hover:bg-gray-100 -->
                                             <button type="submit"
                                                     class="w-full text-left px-3 py-1 flex items-center gap-1"
                                                     th:classappend="${i.id == c.instructor.id} ? ' font-semibold text-indigo-700' : ' text-gray-700'"
@@ -144,7 +142,6 @@
                                             th:text="${c.status.label}">
                                     </button>
 
-                                    <!-- ZMIANA: usunięte bg-white + border-gray-200 -->
                                     <div class="hidden absolute left-0 mt-1 w-36 rounded-md border shadow-lg z-20 py-1 text-xs"
                                          data-status-menu>
                                         <form th:each="s : ${allStatuses}"
@@ -152,7 +149,6 @@
                                               method="post" class="block">
                                             <input type="hidden" name="status" th:value="${s}"/>
 
-                                            <!-- ZMIANA: usunięte hover:bg-gray-100 -->
                                             <button type="submit"
                                                     class="w-full text-left px-3 py-1 flex items-center gap-1"
                                                     th:classappend="${s == c.status} ? ' font-semibold text-indigo-700' : ' text-gray-700'"

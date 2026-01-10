@@ -1,6 +1,6 @@
 package com.icio.sportakuz.entity;
 
-import com.icio.sportakuz.repo.ActivityTypeRepository; // Importy zależne od Twojej struktury
+import com.icio.sportakuz.repo.ActivityTypeRepository;
 import com.icio.sportakuz.repo.RecurrencePattern;
 import jakarta.persistence.*;
 import lombok.Getter;
