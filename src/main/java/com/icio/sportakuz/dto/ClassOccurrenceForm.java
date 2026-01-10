@@ -52,4 +52,7 @@ public class ClassOccurrenceForm {
     /** Opcjonalna notatka organizacyjna (limit znaków w walidacji). */
     @Size(max = 1000)
     private String note;
+
+    /** Id w rankingu top 10 */
+    private Integer topPickRanking;
 }

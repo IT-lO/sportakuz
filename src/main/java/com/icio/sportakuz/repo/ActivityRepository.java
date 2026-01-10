@@ -155,4 +155,34 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     List<Activity> findUpcomingForInstructor(@Param("email") String email,
                                              @Param("now") OffsetDateTime now,
                                              Pageable pageable);
+
+    /**
+     * Pobiera listę wyróżnionych zajęć (Top Picks).
+     * Warunki:
+     * 1. topPickRanking NIE jest nullem.
+     * 2. Zajęcia są w przyszłości.
+     * 3. Status nie jest CANCELLED.
+     * Sortowanie: Od 1 w górę.
+     */
+    @Query("""
+       select a from Activity a
+       where a.topPickRanking is not null
+         and a.status <> com.icio.sportakuz.repo.ClassStatus.CANCELLED
+         and a.startTime > :now
+       order by a.topPickRanking asc
+       """)
+    List<Activity> findTopPicks(@Param("now") OffsetDateTime now);
+
+    /**
+     * Znajduje zajęcia przypisane do konkretnej pozycji w rankingu.
+     * Szukamy tylko wśród nieanulowanych i odbywających się w przyszłości.
+     */
+    @Query("""
+       select a from Activity a
+       where a.topPickRanking = :ranking
+         and a.status <> com.icio.sportakuz.repo.ClassStatus.CANCELLED
+         and a.startTime > :now
+       """)
+    List<Activity> findByTopPickRanking(@Param("ranking") Integer ranking,
+                                        @Param("now") OffsetDateTime now);
 }
