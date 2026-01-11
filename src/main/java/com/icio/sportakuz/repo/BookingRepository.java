@@ -34,7 +34,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
       Long classId, String userName, Collection<BookingStatus> statuses);
 
     /** Pobiera wszystkie rezerwację użytkownika. */
-    List<Booking> findAllByUserName(String userName);
+    List<Booking> findAllByUserNameAndActivity_EndTimeAfter(String userName, OffsetDateTime endTime);
 
     /** Pobiera rezerwacje po ID. */
     List<Booking> findFirstById(long id);
