@@ -254,6 +254,9 @@ public class ClassOccurrenceController {
         }
         // walidacja kolizji – jeśli jest konflikt, zajęcia NIE zostaną zapisane
         validateConflicts(form, binding, null);
+
+        validateRanking(form, binding, null);
+
         if (binding.hasErrors()) {
             addLookups(model);
             return "activities/new";
@@ -274,6 +277,7 @@ public class ClassOccurrenceController {
         oc.setCapacity(form.getCapacity());
         oc.setStatus(ClassStatus.PLANNED); // na start
         oc.setNote(form.getNote());
+        oc.setTopPickRanking(form.getTopPickRanking());
 
         activityRepository.save(oc);
 
@@ -353,6 +357,9 @@ public class ClassOccurrenceController {
         }
         // walidacja kolizji (ignorując bieżące id) – przy konflikcie zajęcia NIE są aktualizowane
         validateConflicts(form, binding, id);
+
+        validateRanking(form, binding, id);
+
         if (binding.hasErrors()) {
             addLookups(model);
             model.addAttribute("editId", id);
@@ -362,6 +369,7 @@ public class ClassOccurrenceController {
         oc.setType(activityTypeRepository.findById(form.getActivityTypeId()).orElseThrow());
         oc.setInstructor(userRepository.findById(form.getInstructorId()).orElseThrow());
         oc.setRoom(roomRepository.findById(form.getRoomId()).orElseThrow());
+        oc.setTopPickRanking(form.getTopPickRanking());
 
         var zone = ZoneId.of("Europe/Warsaw");
         OffsetDateTime start = LocalDateTime.of(form.getDate(), form.getStartTime()).atZone(zone).toOffsetDateTime();
@@ -393,6 +401,7 @@ public class ClassOccurrenceController {
         f.setDurationMinutes((int) durationMinutes);
         f.setCapacity(oc.getCapacity());
         f.setNote(oc.getNote());
+        f.setTopPickRanking(oc.getTopPickRanking());
         return f;
     }
 
@@ -506,6 +515,24 @@ public class ClassOccurrenceController {
             return "[" + date + "] "  + type + " " + times +  " - " + instr + subst;
         } catch (Exception ex) {
             return "[nieznane]";
+        }
+    }
+
+    private void validateRanking(ClassOccurrenceForm form, BindingResult binding, Long editingId) {
+        if (form.getTopPickRanking() != null) {
+            List<Activity> duplicates = activityRepository.findByTopPickRanking(
+                    form.getTopPickRanking(),
+                    OffsetDateTime.now()
+            );
+
+            for (Activity existing : duplicates) {
+                if (editingId != null && existing.getId().equals(editingId)) {
+                    continue;
+                }
+                binding.rejectValue("topPickRanking", "error.duplicate",
+                        "Pozycja nr " + form.getTopPickRanking() + " jest już zajęta przez zajęcia: " + existing.getType().getActivityName());
+                return;
+            }
         }
     }
 }

@@ -2,8 +2,8 @@ package com.icio.sportakuz.controller;
 
 import com.icio.sportakuz.entity.*;
 import com.icio.sportakuz.repo.*;
-import com.icio.sportakuz.dto.ActivitySeriesForm; // Zakładam, że DTO też zmienisz nazwę, ale zostawiam wg importu
-import com.icio.sportakuz.repo.ClassStatus; // Lub ActivityStatus zależnie od enuma
+import com.icio.sportakuz.dto.ActivitySeriesForm;
+import com.icio.sportakuz.repo.ClassStatus;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class ActivitySeriesController {
     private static final Logger log = LoggerFactory.getLogger(ActivitySeriesController.class);
 
     private final ActivitySeriesRepository activitySeriesRepository;
-    private final ActivityRepository activityRepository; // Dawne ClassOccurrenceRepository
+    private final ActivityRepository activityRepository;
     private final ActivityTypeRepository activityTypeRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;

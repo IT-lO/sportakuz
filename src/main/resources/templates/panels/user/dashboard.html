@@ -41,16 +41,19 @@
                     <span>Rezerwacje</span>
                 </h2>
             </div>
-            <div class="text-3xl font-bold text-gray-800">0</div>
-            <p class="mt-1 text-xs text-gray-500">Twoje rezerwacje</p>
+            <div class="text-3xl font-bold text-gray-800"
+                 th:text="${stats_active_bookings}">0</div>
+            <p class="mt-1 text-xs text-gray-500">Twoje nadchodzące zajęcia</p>
         </div>
+
         <div class="home-card bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-medium tracking-wider text-gray-500 uppercase">Odbyte (30 dni)</span>
                 <span class="text-indigo-600">✓</span>
             </div>
-            <div class="text-3xl font-bold text-gray-800">0</div>
-            <p class="mt-1 text-xs text-gray-500">Zajęcia w tym miesiącu</p>
+            <div class="text-3xl font-bold text-gray-800"
+                 th:text="${stats_completed_30days}">0</div>
+            <p class="mt-1 text-xs text-gray-500">Zajęcia ukończone w tym miesiącu</p>
         </div>
     </div>
     <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
@@ -60,7 +63,7 @@
         <div th:each="c : ${upcoming}" class="home-card group relative bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition flex flex-col gap-3">
             <div class="flex items-start justify-between">
                 <h3 class="font-semibold text-gray-800" th:text="${c.type.activityName}">Typ</h3>
-                <span th:text="${#temporals.format(c.startTime, 'dd.MM HH:mm')}"
+                <span th:text="${#temporals.format(c.startTime.atZoneSameInstant(userZone), 'dd.MM HH:mm')}"
                       class="text-xs font-medium px-2 py-1 rounded bg-blue-50 text-blue-700"></span>
             </div>
             <p class="text-sm text-gray-600"

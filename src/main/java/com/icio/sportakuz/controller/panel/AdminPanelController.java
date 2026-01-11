@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import java.time.ZoneId;
 import java.time.OffsetDateTime;
 
 /**
@@ -46,6 +46,7 @@ public class AdminPanelController {
 
         OffsetDateTime now = OffsetDateTime.now();
         var upcoming = activityRepository.findNextVisible(now, Pageable.ofSize(4));
+        model.addAttribute("userZone", ZoneId.of("Europe/Warsaw"));
         model.addAttribute("now", now);
         model.addAttribute("upcoming", upcoming);
 

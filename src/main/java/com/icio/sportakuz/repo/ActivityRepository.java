@@ -124,4 +124,65 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select c from Activity c where c.id = :id")
     Activity findByIdForUpdate(@Param("id") Long id);
+
+    /**
+     * Zlicza zajęcia przeprowadzone przez instruktora w zadanym przedziale czasu.
+     * Warunki:
+     * 1. Instruktor ma podany email.
+     * 2. Status NIE jest CANCELLED.
+     * 3. Czas zakończenia mieści się w przedziale (np. ostatnie 30 dni).
+     */
+    @Query("""
+           select count(a) from Activity a
+           where a.instructor.email = :email
+             and a.status <> com.icio.sportakuz.repo.ClassStatus.CANCELLED
+             and a.endTime between :from and :to
+           """)
+    long countCompletedByInstructor(@Param("email") String email,
+                                    @Param("from") OffsetDateTime from,
+                                    @Param("to") OffsetDateTime to);
+
+    /**
+     * Pobiera nadchodzące zajęcia TYLKO dla danego instruktora (przydatne do widoku "Nadchodzące").
+     */
+    @Query("""
+           select a from Activity a
+           where a.instructor.email = :email
+             and a.status <> com.icio.sportakuz.repo.ClassStatus.CANCELLED
+             and a.endTime >= :now
+           order by a.startTime asc
+           """)
+    List<Activity> findUpcomingForInstructor(@Param("email") String email,
+                                             @Param("now") OffsetDateTime now,
+                                             Pageable pageable);
+
+    /**
+     * Pobiera listę wyróżnionych zajęć (Top Picks).
+     * Warunki:
+     * 1. topPickRanking NIE jest nullem.
+     * 2. Zajęcia są w przyszłości.
+     * 3. Status nie jest CANCELLED.
+     * Sortowanie: Od 1 w górę.
+     */
+    @Query("""
+       select a from Activity a
+       where a.topPickRanking is not null
+         and a.status <> com.icio.sportakuz.repo.ClassStatus.CANCELLED
+         and a.startTime > :now
+       order by a.topPickRanking asc
+       """)
+    List<Activity> findTopPicks(@Param("now") OffsetDateTime now);
+
+    /**
+     * Znajduje zajęcia przypisane do konkretnej pozycji w rankingu.
+     * Szukamy tylko wśród nieanulowanych i odbywających się w przyszłości.
+     */
+    @Query("""
+       select a from Activity a
+       where a.topPickRanking = :ranking
+         and a.status <> com.icio.sportakuz.repo.ClassStatus.CANCELLED
+         and a.startTime > :now
+       """)
+    List<Activity> findByTopPickRanking(@Param("ranking") Integer ranking,
+                                        @Param("now") OffsetDateTime now);
 }

@@ -1,4 +1,4 @@
-package com.icio.sportakuz.config.security; // lub .service, zależy jak masz strukturę
+package com.icio.sportakuz.config.security;
 
 import com.icio.sportakuz.entity.User;
 import com.icio.sportakuz.repo.UserRepository;
