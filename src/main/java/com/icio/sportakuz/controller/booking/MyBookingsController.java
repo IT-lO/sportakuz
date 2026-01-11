@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -37,7 +38,7 @@ public class MyBookingsController {
 		// Placeholder until users get added
 		String userName = principal.getName();
 
-		List<Booking> bookings =  bookingRepository.findAllByUserName(userName);
+		List<Booking> bookings =  bookingRepository.findAllByUserNameAndActivity_EndTimeAfter(userName, OffsetDateTime.now());
 		List<MyBookingDto> dtoList = bookings.stream().map(this::toDto).collect(Collectors.toList());
 		model.addAttribute("bookings", dtoList);
 		return "bookings/my_bookings";

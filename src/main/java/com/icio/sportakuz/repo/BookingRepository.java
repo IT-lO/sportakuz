@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
       Long classId, String userName, Collection<BookingStatus> statuses);
 
     /** Pobiera wszystkie rezerwację użytkownika. */
-    List<Booking> findAllByUserName(String userName);
+    List<Booking> findAllByUserNameAndActivity_EndTimeAfter(String userName, OffsetDateTime endTime);
 
     /** Pobiera rezerwacje po ID. */
     List<Booking> findFirstById(long id);
