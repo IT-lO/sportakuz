@@ -58,7 +58,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
             <version>6.1.3</version>
-        </dependency>w
+        </dependency>
 
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
@@ -133,13 +133,6 @@
             <artifactId>spring-security-web</artifactId>
             <version>6.2.4</version>
         </dependency>
-        <!-- TODO: Remove-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-            <version>3.2.0</version>
-        </dependency>
-
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
