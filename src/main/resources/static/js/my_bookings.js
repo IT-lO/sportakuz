@@ -1,8 +1,33 @@
 (function(){
+    const lang = window.__locale || 'pl';
+
+    const dictionary = {
+        pl: {
+            title: "Moje rezerwacje",
+            cancelBtn: "Anuluj rezerwację",
+            confirmMsg: "Czy na pewno chcesz anulować tę rezerwację?",
+            cancelError: "Nie udało się anulować.",
+            connError: "Błąd połączenia.",
+            emptyTitle: "Brak aktywnych rezerwacji",
+            emptyDesc: "Nie masz obecnie żadnych zarezerwowanych zajęć sportowych."
+        },
+        en: {
+            title: "My Bookings",
+            cancelBtn: "Cancel reservation",
+            confirmMsg: "Are you sure you want to cancel this reservation?",
+            cancelError: "Failed to cancel.",
+            connError: "Connection error.",
+            emptyTitle: "No active reservations",
+            emptyDesc: "You currently have no sports classes booked."
+        }
+    };
+
+    const t = dictionary[lang] || dictionary['pl'];
+
     const defaultConfig = {
-        main_title: "Moje rezerwacje",
-        cancel_button_text: "Anuluj rezerwację",
-        confirm_message: "Czy na pewno chcesz anulować tę rezerwację?",
+        main_title: t.title,
+        cancel_button_text: t.cancelBtn,
+        confirm_message: t.confirmMsg,
         background_color: "#ffffff",
         text_color: "#333333",
         primary_action_color: "#1e40af",
@@ -32,7 +57,7 @@
             if(!currentReservationCard){ this.closeCancelModal(); return; }
             const bookingId = currentReservationCard.getAttribute('data-booking-id');
             const modalMsg = document.getElementById('modalMessage');
-            // optimistic UI feedback
+
             currentReservationCard.style.opacity = '0.6';
             currentReservationCard.style.transform = 'scale(0.96)';
             fetch('/SportakUZ_war_exploded/api/bookings/cancel', {
@@ -40,26 +65,26 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ bookingId })
             }).then(r => r.json().then(body => ({ok:r.ok, body})))
-              .then(result => {
-                  if(result.ok){
-                      currentReservationCard.remove();
-                      this.checkEmptyState();
-                  } else {
-                      if(modalMsg){ modalMsg.textContent = (result.body && result.body.error) ? result.body.error : 'Nie udało się anulować.'; }
-                  }
-                  this.closeCancelModal();
-              }).catch(e => {
-                  console.error('Cancel error', e);
-                  if(modalMsg){ modalMsg.textContent = 'Błąd połączenia.'; }
-                  this.closeCancelModal();
-              });
+                .then(result => {
+                    if(result.ok){
+                        currentReservationCard.remove();
+                        this.checkEmptyState();
+                    } else {
+                        if(modalMsg){ modalMsg.textContent = (result.body && result.body.error) ? result.body.error : t.cancelError; }
+                    }
+                    this.closeCancelModal();
+                }).catch(e => {
+                console.error('Cancel error', e);
+                if(modalMsg){ modalMsg.textContent = t.connError; }
+                this.closeCancelModal();
+            });
         },
         checkEmptyState(){
             const list = document.getElementById('reservationsList');
             if(!list) return;
             const cards = list.querySelectorAll('.reservation-card');
             if(cards.length === 0){
-                list.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div><h3>Brak aktywnych rezerwacji</h3><p>Nie masz obecnie żadnych zarezerwowanych zajęć sportowych.</p></div>';
+                list.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><h3>${t.emptyTitle}</h3><p>${t.emptyDesc}</p></div>`;
             }
         }
     };
