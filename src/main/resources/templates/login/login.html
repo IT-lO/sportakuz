@@ -5,7 +5,7 @@
     <title>SportakUZ – Logowanie</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script th:src="@{'https://www.google.com/recaptcha/api.js?hl=' + ${#locale.language}}" async defer></script>
 </head>
 <body class="bg-gray-100">
 
@@ -26,6 +26,16 @@
                 <span class="text-xl" th:text="${#locale.language == 'pl' ? '🇬🇧' : '🇵🇱'}">🇬🇧</span>
             </a>
 
+        </div>
+
+        <div class="text-center">
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900">
+                <span th:text="#{login.welcome}">Witaj w</span>
+                <span class="text-indigo-600">SportakUZ</span>
+            </h1>
+            <p class="mt-2 text-sm text-gray-600" th:text="#{login.subtitle}">
+                Zaloguj się, aby zarządzać swoimi zajęciami
+            </p>
         </div>
 
         <!-- Alerty -->
