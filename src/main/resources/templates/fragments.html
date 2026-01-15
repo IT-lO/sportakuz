@@ -81,20 +81,24 @@
                     Moje rezerwacje
                 </a>
             </th:block>
+<!--            TODO: fix icon being off center or ignore entirely-->
+            <div class="flex items-center gap-2">
 
-            <button type="button"
-                    onclick="toggleTheme()"
-                    class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition focus:outline-none"
-                    title="Przełącz motyw">
-                <span id="theme-icon" class="text-xl">🌙</span>
-            </button>
-<!--            TODO: Fix buttons-->
-            <a th:href="@{''(lang=${#locale.language == 'pl' ? 'en' : 'pl'})}"
-               class="absolute top-4 right-4 z-50 flex items-center justify-center p-2 rounded-full border border-gray-300 bg-white shadow-sm hover:bg-gray-100 transition text-xl cursor-pointer no-underline"
-               title="Przełącz język / Switch language">
+                <button type="button"
+                        onclick="toggleTheme()"
+                        class="group flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition focus:outline-none dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700"
+                        title="Przełącz motyw">
+                    <span id="theme-icon" class="text-xl text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white transition">🌙</span>
+                </button>
 
-                <span th:text="${#locale.language == 'pl' ? '🇬🇧' : '🇵🇱'}">🇬🇧</span>
-            </a>
+                <a th:href="@{''(lang=${#locale.language == 'pl' ? 'en' : 'pl'})}"
+                   class="group flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition focus:outline-none no-underline dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700"
+                   title="Przełącz język / Switch language">
+
+                    <span class="text-xl" th:text="${#locale.language == 'pl' ? '🇬🇧' : '🇵🇱'}">🇬🇧</span>
+                </a>
+
+            </div>
 
             <div sec:authorize="isAuthenticated()" class="flex items-center gap-3 ml-2">
 
