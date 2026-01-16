@@ -16,19 +16,22 @@
             <div class="form-card">
                 <div class="flex items-center justify-between mb-6">
                     <h1 class="text-2xl font-semibold">
-                        Edytuj zajęcia #<span th:text="${editId}"></span>
+                        <span th:text="#{activity.edit_class.title}">Edytuj zajęcia</span> #<span th:text="${editId}"></span>
                     </h1>
-                    <a th:href="@{/activities}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                    <a th:href="@{/activities}"
+                       class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                       th:text="#{link.back_to_list}">
                         ← Lista
                     </a>
                 </div>
 
                 <form th:action="@{'/activities/' + ${editId}}" th:object="${form}" method="post">
                     <div class="form-grid">
+
                         <div class="form-group">
-                            <label for="activityTypeId">Typ</label>
+                            <label for="activityTypeId" th:text="#{label.activity_type}">Typ</label>
                             <select th:field="*{activityTypeId}" id="activityTypeId">
-                                <option value="">-- wybierz --</option>
+                                <option value="" th:text="#{label.select}">-- wybierz --</option>
                                 <option th:each="t : ${types}"
                                         th:value="${t.id}"
                                         th:text="${t.activityName}"
@@ -39,9 +42,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="instructorSelect">Instruktor</label>
+                            <label for="instructorSelect" th:text="#{calendar.label.instructor}">Instruktor</label>
                             <select th:field="*{instructorId}" id="instructorSelect">
-                                <option value="">-- wybierz --</option>
+                                <option value="" th:text="#{label.select}">-- wybierz --</option>
                                 <option th:each="i : ${instructors}"
                                         th:value="${i.id}"
                                         th:text="${i.firstName + ' ' + i.lastName}">
@@ -51,9 +54,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="roomSelect">Sala</label>
+                            <label for="roomSelect" th:text="#{calendar.label.room}">Sala</label>
                             <select th:field="*{roomId}" id="roomSelect">
-                                <option value="">-- wybierz --</option>
+                                <option value="" th:text="#{label.select}">-- wybierz --</option>
                                 <option th:each="r : ${rooms}"
                                         th:value="${r.id}"
                                         th:text="${r.name + ' (cap: ' + r.capacity + ')'}"
@@ -65,19 +68,19 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="dateInput">Data</label>
+                            <label for="dateInput" th:text="#{calendar.label.date}">Data</label>
                             <input type="date" th:field="*{date}" id="dateInput" />
                             <p class="error" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></p>
                         </div>
 
                         <div class="form-group">
-                            <label for="startTimeInput">Start</label>
+                            <label for="startTimeInput" th:text="#{label.start_time}">Start</label>
                             <input type="time" th:field="*{startTime}" id="startTimeInput" />
                             <p class="error" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}"></p>
                         </div>
 
                         <div class="form-group">
-                            <label for="durationInput">Czas trwania (min)</label>
+                            <label for="durationInput" th:text="#{activity.label.duration}">Czas trwania (min)</label>
                             <input type="number" min="5" step="5" th:field="*{durationMinutes}" id="durationInput" />
                             <p class="error" th:if="${#fields.hasErrors('durationMinutes')}" th:errors="*{durationMinutes}"></p>
                             <p id="endTimePreview" class="muted"></p>
@@ -85,13 +88,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="capacityInput">Pojemność</label>
+                            <label for="capacityInput" th:text="#{room.label.capacity}">Pojemność</label>
                             <input type="number" min="1" th:field="*{capacity}" id="capacityInput" />
                             <p class="error" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}"></p>
                         </div>
 
                         <div class="form-group">
-                            <label for="topPickRanking">Pozycja w Top 10 (opcjonalnie)</label>
+                            <label for="topPickRanking" th:text="#{activity.top10.label}">Pozycja w Top 10 (opcjonalnie)</label>
                             <input type="number"
                                    min="1" max="10"
                                    th:field="*{topPickRanking}"
@@ -104,23 +107,25 @@
                                th:errors="*{topPickRanking}">
                                 Błąd pozycji rankingu
                             </p>
-                            <p class="muted text-xs">Wpisz liczbę 1-10, aby wyróżnić zajęcia.</p>
+                            <p class="muted text-xs" th:text="#{activity.top10.help}">Wpisz liczbę 1-10, aby wyróżnić zajęcia.</p>
                         </div>
 
                         <div class="form-group form-group--wide">
-                            <label for="noteInput">Notatka</label>
-                            <textarea rows="3" th:field="*{note}" id="noteInput" placeholder="Dodatkowe informacje..."></textarea>
+                            <label for="noteInput" th:text="#{label.note}">Notatka</label>
+                            <textarea rows="3" th:field="*{note}" id="noteInput"
+                                      th:placeholder="#{placeholder.note}"></textarea>
                             <p class="error" th:if="${#fields.hasErrors('note')}" th:errors="*{note}"></p>
                         </div>
                     </div>
 
                     <div class="actions">
-                        <button type="submit" class="btn">Zapisz zmiany</button>
-                        <a th:href="@{/activities}" class="btn btn-secondary">Anuluj</a>
+                        <button type="submit" class="btn" th:text="#{btn.save_changes}">Zapisz zmiany</button>
+                        <a th:href="@{/activities}" class="btn btn-secondary" th:text="#{btn.cancel}">Anuluj</a>
                     </div>
                 </form>
             </div>
         </div>
+
 
         <script>
             (function(){
