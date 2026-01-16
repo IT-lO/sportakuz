@@ -3,89 +3,85 @@
       th:replace="fragments :: base(${pageTitle}, ~{::content})">
 <div th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/forms.css}" />
-<section>
-    <div class="max-w-3xl mx-auto">
+    <section>
+        <div class="max-w-3xl mx-auto">
 
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold tracking-tight"
-                th:text="${pageTitle}">
-                Edytuj salę
-            </h1>
-            <a th:href="@{/rooms}"
-               class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                ← Wróć do listy
-            </a>
-        </div>
-
-        <form th:action="@{/rooms/edit/{id}(id=${roomId})}"
-              th:object="${roomForm}"
-              method="post"
-              class="form-card">
-
-            <!-- Nazwa sali -->
-            <div class="form-group">
-                <label for="name">Nazwa sali</label>
-                <input type="text"
-                       id="name"
-                       th:field="*{name}"
-                       aria-describedby="name-error">
-                <p th:if="${#fields.hasErrors('name')}"
-                   th:errors="*{name}"
-                   id="name-error"
-                   class="error"></p>
-            </div>
-
-            <!-- Lokalizacja -->
-            <div class="form-group">
-                <label for="location">Lokalizacja (opcjonalnie)</label>
-                <input type="text"
-                       id="location"
-                       th:field="*{location}"
-                       aria-describedby="location-error">
-                <p class="muted">Np. „Budynek B, 1 piętro”.</p>
-                <p th:if="${#fields.hasErrors('location')}"
-                   th:errors="*{location}"
-                   id="location-error"
-                   class="error"></p>
-            </div>
-
-            <!-- Pojemność -->
-            <div class="form-group">
-                <label for="capacity">Pojemność</label>
-                <input type="number"
-                       id="capacity"
-                       th:field="*{capacity}"
-                       aria-describedby="capacity-error">
-                <p th:if="${#fields.hasErrors('capacity')}"
-                   th:errors="*{capacity}"
-                   id="capacity-error"
-                   class="error"></p>
-            </div>
-
-            <!-- Aktywna -->
-            <div class="form-group">
-                <label for="active">Sala jest aktywna</label>
-                <input type="checkbox"
-                       id="active"
-                       th:field="*{active}">
-                <p class="muted">
-                    Odznaczenie tego pola ukryje salę przy tworzeniu nowych zajęć.
-                </p>
-            </div>
-
-            <!-- Przyciski -->
-            <div class="actions"
-                 style="justify-content: flex-end; border-top: 1px solid var(--border); padding-top: .75rem; margin-top:.5rem;">
-                <a th:href="@{/rooms}" class="btn btn-secondary">
-                    Anuluj
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-3xl font-bold tracking-tight"
+                    th:text="#{room.edit.title}">
+                    Edytuj salę
+                </h1>
+                <a th:href="@{/rooms}"
+                   class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                   th:text="#{link.back_to_list}">
+                    ← Wróć do listy
                 </a>
-                <button type="submit" class="btn">
-                    <span class="text-lg">💾</span> Zapisz zmiany
-                </button>
             </div>
 
-        </form>
-    </div>
-</section>
+            <form th:action="@{/rooms/edit/{id}(id=${roomId})}"
+                  th:object="${roomForm}"
+                  method="post"
+                  class="form-card">
+
+                <div class="form-group">
+                    <label for="name" th:text="#{room.label.name}">Nazwa sali</label>
+                    <input type="text"
+                           id="name"
+                           th:field="*{name}"
+                           aria-describedby="name-error">
+                    <p th:if="${#fields.hasErrors('name')}"
+                       th:errors="*{name}"
+                       id="name-error"
+                       class="error"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="location" th:text="#{room.label.location}">Lokalizacja (opcjonalnie)</label>
+                    <input type="text"
+                           id="location"
+                           th:field="*{location}"
+                           aria-describedby="location-error">
+                    <p class="muted" th:text="#{room.help.location}">Np. „Budynek B, 1 piętro”.</p>
+                    <p th:if="${#fields.hasErrors('location')}"
+                       th:errors="*{location}"
+                       id="location-error"
+                       class="error"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="capacity" th:text="#{room.label.capacity}">Pojemność</label>
+                    <input type="number"
+                           id="capacity"
+                           th:field="*{capacity}"
+                           aria-describedby="capacity-error">
+                    <p th:if="${#fields.hasErrors('capacity')}"
+                       th:errors="*{capacity}"
+                       id="capacity-error"
+                       class="error"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="active" th:text="#{room.label.active}">Sala jest aktywna</label>
+                    <input type="checkbox"
+                           id="active"
+                           th:field="*{active}">
+                    <p class="muted" th:text="#{room.help.active}">
+                        Odznaczenie tego pola ukryje salę przy tworzeniu nowych zajęć.
+                    </p>
+                </div>
+
+                <div class="actions"
+                     style="justify-content: flex-end; border-top: 1px solid var(--border); padding-top: .75rem; margin-top:.5rem;">
+                    <a th:href="@{/rooms}" class="btn btn-secondary" th:text="#{btn.cancel}">
+                        Anuluj
+                    </a>
+                    <button type="submit" class="btn">
+                        <span class="text-lg">💾</span> <span th:text="#{btn.save_changes}">Zapisz zmiany</span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </section>
 </div>
 </html>
