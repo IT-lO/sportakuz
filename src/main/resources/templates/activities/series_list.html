@@ -3,175 +3,169 @@
       th:replace="fragments :: base('Serie zajęć', ~{::content})">
 <div th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/lists.css}" />
-    <section>
-        <div class="space-y-8">
+<section>
+    <div class="space-y-8">
+        <div class="flex items-center justify-between">
+            <h1 class="text-3xl font-bold">Serie zajęć</h1>
+            <div class="flex gap-3">
+                <a th:href="@{/activities}"
+                   class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700">
+                    Lista wystąpień
+                </a>
+                <a th:href="@{/activity-series/new}"
+                   class="px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700">
+                    <span class="text-lg leading-none">＋</span> Nowa seria
+                </a>
+            </div>
+        </div>
+
+        <!-- Flash: sukces / błąd -->
+        <div th:if="${success}" class="flash-success" th:text="${success}"></div>
+        <div th:if="${error}" class="flash-error" th:text="${error}"></div>
+
+        <!-- Aktywne serie -->
+        <div class="space-y-4">
             <div class="flex items-center justify-between">
-                <h1 class="text-3xl font-bold" th:text="#{series.list.title}">Serie zajęć</h1>
-                <div class="flex gap-3">
-                    <a th:href="@{/activities}"
-                       class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700"
-                       th:text="#{btn.list_instances}">
-                        Lista wystąpień
-                    </a>
-                    <a th:href="@{/activity-series/new}"
-                       class="px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700">
-                        <span class="text-lg leading-none">＋</span> <span th:text="#{series.btn.add_short}">Nowa seria</span>
-                    </a>
-                </div>
+                <h2 class="text-xl font-semibold">Aktywne serie</h2>
             </div>
-
-            <div th:if="${success}" class="flash-success" th:text="${success}"></div>
-            <div th:if="${error}" class="flash-error" th:text="${error}"></div>
-
-            <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-semibold" th:text="#{series.active.title}">Aktywne serie</h2>
-                </div>
-                <div class="table-wrapper">
-                    <div class="table-responsive">
-                        <table class="min-w-full text-sm">
-                            <thead>
-                            <tr>
-                                <th class="px-4 py-3 text-left font-semibold">ID</th>
-                                <th class="px-4 py-3 text-left font-semibold" th:text="#{label.activity_type}">Typ</th>
-                                <th class="px-4 py-3 text-left font-semibold" th:text="#{calendar.label.instructor}">Instruktor</th>
-                                <th class="px-4 py-3 text-left font-semibold" th:text="#{calendar.label.room}">Sala</th>
-                                <th class="px-4 py-3 text-left font-semibold" th:text="#{label.start}">Start</th>
-                                <th class="px-4 py-3 text-left font-semibold" th:text="#{label.end}">Koniec</th>
-                                <th class="px-4 py-3 text-left font-semibold" th:text="#{series.label.until_short}">Do</th>
-                                <th class="px-4 py-3 text-left font-semibold" th:text="#{series.label.pattern}">Wzorzec</th>
-                                <th class="px-4 py-3 text-left font-semibold" th:text="#{label.active}">Aktywna</th>
-                                <th class="px-4 py-3 text-left font-semibold" th:text="#{label.actions}">Akcje</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="s : ${activeSeries}">
-                                <td class="px-4 py-3" th:text="${s.id}"></td>
-                                <td class="px-4 py-3" th:text="${s.type.activityName}"></td>
-                                <td class="px-4 py-3"
-                                    th:text="${s.instructor.firstName + ' ' + s.instructor.lastName}"></td>
-                                <td class="px-4 py-3" th:text="${s.room.name}"></td>
-                                <td class="px-4 py-3"
-                                    th:text="${#temporals.format(s.startTime,'yyyy-MM-dd HH:mm')}"></td>
-                                <td class="px-4 py-3"
-                                    th:text="${#temporals.format(s.getEndTime(),'HH:mm')}"></td>
-                                <td class="px-4 py-3"
-                                    th:text="${#temporals.format(s.recurrenceUntil,'yyyy-MM-dd')}"></td>
-
-                                <td class="px-4 py-3" th:text="#{'series.pattern.' + ${s.recurrencePattern}}"></td>
-
-                                <td class="px-4 py-3">
-                                    <form th:action="@{'/activity-series/' + ${s.id} + '/active'}" method="post">
-                                        <input type="hidden" name="active" th:value="${!s.active}"/>
+            <div class="table-wrapper">
+                <div class="table-responsive">
+                    <table class="min-w-full text-sm">
+                        <thead>
+                        <tr>
+                            <th class="px-4 py-3 text-left font-semibold">ID</th>
+                            <th class="px-4 py-3 text-left font-semibold">Typ</th>
+                            <th class="px-4 py-3 text-left font-semibold">Instruktor</th>
+                            <th class="px-4 py-3 text-left font-semibold">Sala</th>
+                            <th class="px-4 py-3 text-left font-semibold">Start</th>
+                            <th class="px-4 py-3 text-left font-semibold">Koniec</th>
+                            <th class="px-4 py-3 text-left font-semibold">Do</th>
+                            <th class="px-4 py-3 text-left font-semibold">Wzorzec</th>
+                            <th class="px-4 py-3 text-left font-semibold">Aktywna</th>
+                            <th class="px-4 py-3 text-left font-semibold">Akcje</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="s : ${activeSeries}">
+                            <td class="px-4 py-3" th:text="${s.id}"></td>
+                            <td class="px-4 py-3" th:text="${s.type.activityName}"></td>
+                            <td class="px-4 py-3"
+                                th:text="${s.instructor.firstName + ' ' + s.instructor.lastName}"></td>
+                            <td class="px-4 py-3" th:text="${s.room.name}"></td>
+                            <td class="px-4 py-3"
+                                th:text="${#temporals.format(s.startTime,'yyyy-MM-dd HH:mm')}"></td>
+                            <td class="px-4 py-3"
+                                th:text="${#temporals.format(s.getEndTime(),'HH:mm')}"></td>
+                            <td class="px-4 py-3"
+                                th:text="${#temporals.format(s.recurrenceUntil,'yyyy-MM-dd')}"></td>
+                            <td class="px-4 py-3" th:text="${s.recurrencePattern.label}"></td>
+                            <td class="px-4 py-3">
+                                <form th:action="@{'/activity-series/' + ${s.id} + '/active'}" method="post">
+                                    <input type="hidden" name="active" th:value="${!s.active}"/>
+                                    <button type="submit"
+                                            class="px-2 py-1 rounded-md text-xs font-semibold bg-green-100 text-green-700"
+                                            th:text="${s.active ? 'TAK' : 'NIE'}">
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="flex gap-2">
+                                    <a th:href="@{'/activity-series/' + ${s.id} + '/edit'}"
+                                       class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700">
+                                        Edytuj
+                                    </a>
+                                    <form th:action="@{'/activity-series/' + ${s.id} + '/generate'}"
+                                          method="post" class="inline">
                                         <button type="submit"
-                                                class="px-2 py-1 rounded-md text-xs font-semibold bg-green-100 text-green-700"
-                                                th:text="${s.active ? #{label.yes} : #{label.no}}">
+                                                class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-blue-600 text-white hover:bg-blue-700">
+                                            Generuj
                                         </button>
                                     </form>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex gap-2">
-                                        <a th:href="@{'/activity-series/' + ${s.id} + '/edit'}"
-                                           class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700"
-                                           th:text="#{btn.edit}">
-                                            Edytuj
-                                        </a>
-                                        <form th:action="@{'/activity-series/' + ${s.id} + '/generate'}"
-                                              method="post" class="inline">
-                                            <button type="submit"
-                                                    class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-blue-600 text-white hover:bg-blue-700"
-                                                    th:text="#{btn.generate}">
-                                                Generuj
-                                            </button>
-                                        </form>
-                                        <form th:action="@{'/activity-series/' + ${s.id} + '/delete'}"
-                                              method="post" class="inline"
-                                              th:attr="onsubmit='return confirm(\'' + #{series.confirm.delete} + '\');'">
-                                            <button type="submit"
-                                                    class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700"
-                                                    th:text="#{btn.delete}">
-                                                Usuń
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(activeSeries)}">
-                                <td colspan="10" class="px-4 py-10 text-center muted" th:text="#{series.active.empty}">
-                                    Brak aktywnych serii.
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-semibold" th:text="#{series.inactive.title}">Historia (nieaktywne serie)</h2>
-                </div>
-                <div class="table-wrapper">
-                    <div class="table-responsive">
-                        <table class="min-w-full text-xs">
-                            <thead>
-                            <tr>
-                                <th class="px-3 py-2 text-left font-semibold">ID</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{label.activity_type}">Typ</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{calendar.label.instructor}">Instruktor</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{calendar.label.room}">Sala</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{label.start}">Start</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{series.label.until_short}">Do</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{series.label.pattern}">Wzorzec</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{label.active}">Aktywna</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{label.actions}">Akcje</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="s : ${inactiveSeries}">
-                                <td class="px-3 py-2" th:text="${s.id}"></td>
-                                <td class="px-3 py-2" th:text="${s.type.activityName}"></td>
-                                <td class="px-3 py-2"
-                                    th:text="${s.instructor.firstName + ' ' + s.instructor.lastName}"></td>
-                                <td class="px-3 py-2" th:text="${s.room.name}"></td>
-                                <td class="px-3 py-2"
-                                    th:text="${#temporals.format(s.startTime,'yyyy-MM-dd HH:mm')}"></td>
-                                <td class="px-3 py-2"
-                                    th:text="${#temporals.format(s.recurrenceUntil,'yyyy-MM-dd')}"></td>
-
-                                <td class="px-3 py-2" th:text="#{'series.pattern.' + ${s.recurrencePattern}}"></td>
-
-                                <td class="px-3 py-2">
-                                    <form th:action="@{'/activity-series/' + ${s.id} + '/active'}"
-                                          method="post">
-                                        <input type="hidden" name="active" value="true"/>
+                                    <form th:action="@{'/activity-series/' + ${s.id} + '/delete'}"
+                                          method="post" class="inline"
+                                          onsubmit="return confirm('Usunąć serię?')">
                                         <button type="submit"
-                                                class="px-2 py-1 rounded-md text-xs font-semibold bg-gray-200 text-gray-600"
-                                                th:text="${s.active ? #{label.yes} : #{label.no}}">
+                                                class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700">
+                                            Usuń
                                         </button>
                                     </form>
-                                </td>
-                                <td class="px-3 py-2">
-                                    <div class="flex gap-2">
-                                        <a th:href="@{'/activity-series/' + ${s.id} + '/edit'}"
-                                           class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700"
-                                           th:text="#{btn.preview}">
-                                            Podgląd
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(inactiveSeries)}">
-                                <td colspan="9" class="px-3 py-8 text-center muted" th:text="#{series.inactive.empty}">
-                                    Brak nieaktywnych serii.
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(activeSeries)}">
+                            <td colspan="10" class="px-4 py-10 text-center muted">
+                                Brak aktywnych serii.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </section>
+
+        <!-- Historia (nieaktywne serie) -->
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-semibold">Historia (nieaktywne serie)</h2>
+            </div>
+            <div class="table-wrapper">
+                <div class="table-responsive">
+                    <table class="min-w-full text-xs">
+                        <thead>
+                        <tr>
+                            <th class="px-3 py-2 text-left font-semibold">ID</th>
+                            <th class="px-3 py-2 text-left font-semibold">Typ</th>
+                            <th class="px-3 py-2 text-left font-semibold">Instruktor</th>
+                            <th class="px-3 py-2 text-left font-semibold">Sala</th>
+                            <th class="px-3 py-2 text-left font-semibold">Start</th>
+                            <th class="px-3 py-2 text-left font-semibold">Do</th>
+                            <th class="px-3 py-2 text-left font-semibold">Wzorzec</th>
+                            <th class="px-3 py-2 text-left font-semibold">Aktywna</th>
+                            <th class="px-3 py-2 text-left font-semibold">Akcje</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="s : ${inactiveSeries}">
+                            <td class="px-3 py-2" th:text="${s.id}"></td>
+                            <td class="px-3 py-2" th:text="${s.type.activityName}"></td>
+                            <td class="px-3 py-2"
+                                th:text="${s.instructor.firstName + ' ' + s.instructor.lastName}"></td>
+                            <td class="px-3 py-2" th:text="${s.room.name}"></td>
+                            <td class="px-3 py-2"
+                                th:text="${#temporals.format(s.startTime,'yyyy-MM-dd HH:mm')}"></td>
+                            <td class="px-3 py-2"
+                                th:text="${#temporals.format(s.recurrenceUntil,'yyyy-MM-dd')}"></td>
+                            <td class="px-3 py-2" th:text="${s.recurrencePattern.label}"></td>
+                            <td class="px-3 py-2">
+                                <form th:action="@{'/activity-series/' + ${s.id} + '/active'}"
+                                      method="post">
+                                    <input type="hidden" name="active" value="true"/>
+                                    <button type="submit"
+                                            class="px-2 py-1 rounded-md text-xs font-semibold bg-gray-200 text-gray-600"
+                                            th:text="${s.active ? 'TAK' : 'NIE'}">
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="px-3 py-2">
+                                <div class="flex gap-2">
+                                    <a th:href="@{'/activity-series/' + ${s.id} + '/edit'}"
+                                       class="px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700">
+                                        Podgląd
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(inactiveSeries)}">
+                            <td colspan="9" class="px-3 py-8 text-center muted">
+                                Brak nieaktywnych serii.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 </div>
 </html>

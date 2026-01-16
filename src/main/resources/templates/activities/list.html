@@ -4,101 +4,103 @@
 <div th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/lists.css}" />
 <section>
-    <section>
-        <div class="space-y-6">
-            <div class="flex items-center justify-between">
-                <h1 class="text-3xl font-bold" th:text="#{activities.list.title}">Lista zajęć</h1>
-                <div class="flex gap-3 items-center">
-                    <a sec:authorize="hasRole('ROLE_ADMIN')"
-                       th:href="@{/panel/admin}"
-                       class="text-sm text-red-600 hover:text-red-700 font-medium"
-                       th:text="#{link.back_to_panel}">
-                        ← Powrót do panelu
-                    </a>
-                    <a sec:authorize="hasRole('ROLE_INSTRUCTOR')"
-                       th:href="@{/panel/instructor}"
-                       class="text-sm text-green-600 hover:text-green-700 font-medium"
-                       th:text="#{link.back_to_panel}">
-                        ← Powrót do panelu
-                    </a>
-
-                    <a th:href="@{/activity-series}"
-                       class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700 transition"
-                       th:text="#{activities.btn.series}">
-                        Serie
-                    </a>
-                    <a th:href="@{/activities/new}"
-                       class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 transition">
-                        <span class="text-lg leading-none">＋</span> <span th:text="#{activities.btn.add}">Nowe zajęcia</span>
-                    </a>
-                </div>
+    <div class="space-y-6">
+        <!-- Nagłówek sekcji z przyciskiem dodania nowego wystąpienia -->
+        <div class="flex items-center justify-between">
+            <h1 class="text-3xl font-bold">Lista zajęć</h1>
+            <div class="flex gap-3 items-center">
+                <a sec:authorize="hasRole('ROLE_ADMIN')"
+                   th:href="@{/panel/admin}"
+                   class="text-sm text-red-600 hover:text-red-700 font-medium">
+                    ← Powrót do panelu
+                </a>
+                <a sec:authorize="hasRole('ROLE_INSTRUCTOR')"
+                   th:href="@{/panel/instructor}"
+                   class="text-sm text-green-600 hover:text-green-700 font-medium">
+                    ← Powrót do panelu
+                </a>
+                <a th:href="@{/activity-series}"
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium shadow-sm hover:bg-indigo-700 transition">
+                    Serie
+                </a>
+                <!-- Przejście do formularza tworzenia nowych zajęć -->
+                <a th:href="@{/activities/new}"
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 transition">
+                    <span class="text-lg leading-none">＋</span> Nowe zajęcia
+                </a>
             </div>
+        </div>
 
+            <!-- Flash: sukces / błąd -->
             <div th:if="${success}" class="flash-success" th:text="${success}"></div>
             <div th:if="${error}" class="flash-error" th:text="${error}"></div>
 
+            <!-- Wyszukiwarka (server-side) -->
             <div class="table-tools">
                 <form th:action="@{/activities}" method="get" class="search-box">
                     <input type="search" name="pattern" th:value="${pattern}"
-                           th:placeholder="#{search.placeholder}" />
-
-                    <label for="sort" th:text="#{sort.label}">Sortuj po:</label>
+                           placeholder="Szukaj po typie lub instruktorze" />
+                    <label for="sort">Sortuj po:</label>
                     <select name="sort" id="sort">
-                        <option value="" th:selected="${sort} == null or sort == ''" th:text="#{sort.default}">Domyślnie</option>
-                        <option value="type" th:selected="${sort} == 'type'" th:text="#{label.activity_type}">Typ</option>
-                        <option value="instructor" th:selected="${sort} == 'instructor'" th:text="#{calendar.label.instructor}">Instruktor</option>
+                        <option value="" th:selected="${sort} == null or sort == ''">Domyślnie</option>
+                        <option value="type" th:selected="${sort} == 'type'">Typ</option>
+                        <option value="instructor" th:selected="${sort} == 'instructor'">Instruktor</option>
                     </select>
-
-                    <label for="order" th:text="#{order.label}">Kolejność:</label>
+                    <label for="order">Kolejność:</label>
                     <select name="order" id="order">
-                        <option value="asc" th:selected="${order} == null or order == 'asc'" th:text="#{order.asc}">Rosnąco</option>
-                        <option value="desc" th:selected="${order} == 'desc'" th:text="#{order.desc}">Malejąco</option>
+                        <option value="asc" th:selected="${order} == null or order == 'asc'">Rosnąco</option>
+                        <option value="desc" th:selected="${order} == 'desc'">Malejąco</option>
                     </select>
-
                     <button type="submit"
-                            class="px-3 py-2 rounded-md bg-indigo-600 text-white text-sm hover:bg-indigo-700"
-                            th:text="#{btn.search}">Szukaj</button>
+                            class="px-3 py-2 rounded-md bg-indigo-600 text-white text-sm hover:bg-indigo-700">Szukaj</button>
                     <a th:href="@{/activities}"
-                       class="clear" th:text="#{btn.clear}">Wyczyść</a>
+                       class="clear">Wyczyść</a>
                 </form>
             </div>
 
+            <!-- Karta tabeli -->
             <div class="table-wrapper">
                 <div class="table-responsive">
                     <table class="min-w-full text-sm">
+                        <!-- Nagłówek tabeli -->
                         <thead>
                         <tr>
-                            <th class="px-4 py-3 text-left font-semibold" th:text="#{calendar.label.date}">Data</th>
-                            <th class="px-4 py-3 text-left font-semibold" th:text="#{label.hours}">Godziny</th>
-                            <th class="px-4 py-3 text-left font-semibold" th:text="#{label.activity_type}">Typ</th>
-                            <th class="px-4 py-3 text-left font-semibold" th:text="#{calendar.label.instructor}">Instruktor</th>
-                            <th class="px-4 py-3 text-left font-semibold" th:text="#{calendar.label.room}">Sala</th>
-                            <th class="px-4 py-3 text-left font-semibold" th:text="#{room.label.capacity}">Pojemność</th>
-                            <th class="px-4 py-3 text-left font-semibold" th:text="#{label.bookings}">Rezerwacje</th>
-                            <th class="px-4 py-3 text-center font-semibold" th:text="#{label.ranking}">Ranking</th>
-                            <th class="px-4 py-3 text-left font-semibold" th:text="#{room.label.status}">Status</th>
-                            <th class="px-4 py-3 text-left font-semibold" th:text="#{label.actions}">Akcje</th>
+                            <th class="px-4 py-3 text-left font-semibold">Data</th>
+                            <th class="px-4 py-3 text-left font-semibold">Godziny</th>
+                            <th class="px-4 py-3 text-left font-semibold">Typ</th>
+                            <th class="px-4 py-3 text-left font-semibold">Instruktor</th>
+                            <th class="px-4 py-3 text-left font-semibold">Sala</th>
+                            <th class="px-4 py-3 text-left font-semibold">Pojemność</th>
+                            <th class="px-4 py-3 text-left font-semibold">Rezerwacje</th>
+                            <th class="px-4 py-3 text-center font-semibold">Ranking</th>
+                            <th class="px-4 py-3 text-left font-semibold">Status</th>
+                            <th class="px-4 py-3 text-left font-semibold">Akcje</th>
                         </tr>
                         </thead>
 
+                        <!-- Body -->
                         <tbody>
                         <tr th:each="c : ${activities}">
+                            <!-- Data -->
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <span th:text="${#temporals.format(c.startTime, 'yyyy-MM-dd')}"></span>
                                 <span th:if="${c.series != null}" th:title="${'Seria #' + c.series.id}">🔁</span>
                             </td>
+                            <!-- Godziny -->
                             <td class="px-4 py-3 whitespace-nowrap"
                                 th:text="${#temporals.format(c.startTime.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Warsaw')), 'HH:mm')
-                                      + ' - ' +
-                                      #temporals.format(c.endTime.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Warsaw')), 'HH:mm')}"></td>
+                                          + ' - ' +
+                                          #temporals.format(c.endTime.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Warsaw')), 'HH:mm')}"></td>
+                            <!-- Typ -->
                             <td class="px-4 py-3" th:text="${c.type.activityName}"></td>
 
+                            <!-- Instruktor z dropdownem -->
                             <td class="px-4 py-3">
                                 <div class="relative inline-block" th:attr="data-row-instr=${c.id}">
                                     <button type="button" data-instr-toggle th:attr="data-id=${c.id}"
                                             class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500"
                                             th:classappend="${c.substitutedFor != null} ? ' bg-orange-100 text-orange-900' : ' bg-gray-100 text-gray-900'"
-                                            th:title="${c.substitutedFor != null ? (#messages.msg('tooltip.sub.for') + ' ' + c.substitutedFor.firstName + ' ' + c.substitutedFor.lastName) : ''}"
+                                            th:title="${c.substitutedFor != null ? 'Zastępstwo za: ' + c.substitutedFor.firstName + ' ' + c.substitutedFor.lastName : ''}"
                                             th:text="${(c.substitutedFor != null ? '[Z] ' : '') + c.instructor.firstName + ' ' + c.instructor.lastName}">
                                     </button>
 
@@ -119,29 +121,34 @@
                                 </div>
                             </td>
 
+                            <!-- Sala -->
                             <td class="px-4 py-3" th:text="${c.room.name}"></td>
+                            <!-- Pojemność -->
                             <td class="px-4 py-3" th:text="${c.capacity}"></td>
+                            <!-- Rezerwacje -->
                             <td class="px-4 py-3"
                                 th:text="${activeBookings != null ? (activeBookings[c.id] != null ? activeBookings[c.id] : 0) : 0}">
                             </td>
+                            <!-- top 10 -->
                             <td class="px-4 py-3 text-center">
-                            <span th:if="${c.topPickRanking != null}"
-                                  class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-yellow-100 text-yellow-700 font-bold text-xs border border-yellow-200 shadow-sm"
-                                  th:title="${#messages.msg('tooltip.top10') + ' ' + c.topPickRanking}">
-                               <span th:text="${c.topPickRanking}"></span>
-                            </span>
+                                <span th:if="${c.topPickRanking != null}"
+                                      class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-yellow-100 text-yellow-700 font-bold text-xs border border-yellow-200 shadow-sm"
+                                      th:title="'Pozycja w Top 10: ' + ${c.topPickRanking}">
+                                   <span th:text="${c.topPickRanking}"></span>
+                                </span>
                                 <span th:unless="${c.topPickRanking != null}" class="text-gray-300">-</span>
                             </td>
+                            <!-- Status -->
                             <td class="px-4 py-3">
                                 <div class="relative inline-block" th:attr="data-row=${c.id}">
                                     <button type="button" data-status-toggle
                                             class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500"
                                             th:classappend="${c.status.name() == 'PLANNED' ? ' bg-yellow-100 text-yellow-800'
-                                                      : (c.status.name() == 'CANCELLED' ? ' bg-red-100 text-red-700'
-                                                      : (c.status.name() == 'FINISHED' ? ' bg-green-100 text-green-700'
-                                                      : (c.status.name() == 'OPEN' ? ' bg-blue-100 text-blue-700'
-                                                      : ' bg-gray-100 text-gray-700')))}"
-                                            th:text="#{'status.' + ${c.status}}">
+                                                          : (c.status.name() == 'CANCELLED' ? ' bg-red-100 text-red-700'
+                                                          : (c.status.name() == 'FINISHED' ? ' bg-green-100 text-green-700'
+                                                          : (c.status.name() == 'OPEN' ? ' bg-blue-100 text-blue-700'
+                                                          : ' bg-gray-100 text-gray-700')))}"
+                                            th:text="${c.status.label}">
                                     </button>
 
                                     <div class="hidden absolute left-0 mt-1 w-36 rounded-md border shadow-lg z-20 py-1 text-xs"
@@ -154,44 +161,45 @@
                                             <button type="submit"
                                                     class="w-full text-left px-3 py-1 flex items-center gap-1"
                                                     th:classappend="${s == c.status} ? ' font-semibold text-indigo-700' : ' text-gray-700'"
-                                                    th:text="#{'status.' + ${s}}">
+                                                    th:text="${s.label}">
                                             </button>
                                         </form>
                                     </div>
                                 </div>
                             </td>
 
+                            <!-- Akcje -->
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-2">
                                     <a th:href="@{'/activities/' + ${c.id} + '/edit'}"
-                                       class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
-                                       th:text="#{btn.edit}">
+                                       class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm">
                                         Edytuj
                                     </a>
                                     <form th:action="@{'/activities/' + ${c.id} + '/delete'}"
                                           method="post"
                                           th:object="${c}"
                                           class="inline"
-                                          th:attr="onsubmit='return confirm(\'' + #{tooltip.delete.confirm} + ' ' + this.getAttribute(\'data-desc\') + '?\');',
-                                               data-desc=${#temporals.format(c.startTime,'yyyy-MM-dd') + ' ' + #temporals.format(c.startTime,'HH:mm') + '-' + #temporals.format(c.endTime,'HH:mm') + ' ' + c.room.name}">
+                                          onsubmit="return confirm('Usunąć zajęcia: ' + this.getAttribute('data-desc') + '?')"
+                                          th:attr="data-desc=${#temporals.format(c.startTime,'yyyy-MM-dd') + ' ' + #temporals.format(c.startTime,'HH:mm') + '-' + #temporals.format(c.endTime,'HH:mm') + ' ' + c.room.name}">
                                         <button type="submit"
                                                 th:disabled="${activeBookings != null ? (activeBookings[c.id] != null ? activeBookings[c.id] : 0) : 0} > 0"
                                                 class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium shadow-sm"
                                                 th:classappend="${(activeBookings != null ? (activeBookings[c.id] != null ? activeBookings[c.id] : 0) : 0) > 0}
-                                                        ? ' bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                        : ' bg-red-600 text-white hover:bg-red-700'"
+                                                            ? ' bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                            : ' bg-red-600 text-white hover:bg-red-700'"
                                                 th:title="${(activeBookings != null ? (activeBookings[c.id] != null ? activeBookings[c.id] : 0) : 0) > 0
-                                                    ? #messages.msg('tooltip.delete.blocked')
-                                                    : #messages.msg('btn.delete')}">
-                                            <span th:text="#{btn.delete}">Usuń</span>
+                                                        ? 'Nie można usunąć: aktywne rezerwacje'
+                                                        : 'Usuń zajęcia'}">
+                                            Usuń
                                         </button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
 
+                        <!-- Wiersz „brak danych” -->
                         <tr th:if="${#lists.isEmpty(activities)}">
-                            <td colspan="9" class="px-4 py-10 text-center muted" th:text="#{activities.list.empty}">
+                            <td colspan="9" class="px-4 py-10 text-center muted">
                                 Brak zajęć do wyświetlenia.
                             </td>
                         </tr>
@@ -200,36 +208,38 @@
                 </div>
             </div>
 
+            <!-- Paginacja dla listy głównej (przyszłe zajęcia) -->
             <div class="pagination-bar" th:if="${totalPages != null and totalPages > 1}">
                 <a th:if="${page > 0}"
                    th:href="@{/activities(page=${page - 1}, pattern=${pattern}, sort=${sort}, order=${order})}"
-                   class="page-link" th:text="#{pagination.prev}">
+                   class="page-link">
                     ← Poprzednia
                 </a>
-                <span class="page-info" th:text="#{pagination.info(${page + 1}, ${totalPages})}">
-                Strona X z Y
-            </span>
+                <span class="page-info">
+                    Strona [[${page + 1}]] z [[${totalPages}]]
+                </span>
                 <a th:if="${page + 1 < totalPages}"
                    th:href="@{/activities(page=${page + 1}, pattern=${pattern}, sort=${sort}, order=${order})}"
-                   class="page-link" th:text="#{pagination.next}">
+                   class="page-link">
                     Następna →
                 </a>
             </div>
 
+            <!-- Historia -->
             <div class="mt-12 space-y-4">
-                <h2 class="text-xl font-semibold" th:text="#{history.title}">Historia (anulowane / zakończone)</h2>
+                <h2 class="text-xl font-semibold">Historia (anulowane / zakończone)</h2>
                 <div class="table-wrapper">
                     <div class="table-responsive">
                         <table class="min-w-full text-xs">
                             <thead>
                             <tr>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{calendar.label.date}">Data</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{label.hours}">Godziny</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{label.activity_type}">Typ</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{calendar.label.instructor}">Instruktor</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{calendar.label.room}">Sala</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{room.label.capacity}">Poj.</th>
-                                <th class="px-3 py-2 text-left font-semibold" th:text="#{room.label.status}">Status</th>
+                                <th class="px-3 py-2 text-left font-semibold">Data</th>
+                                <th class="px-3 py-2 text-left font-semibold">Godziny</th>
+                                <th class="px-3 py-2 text-left font-semibold">Typ</th>
+                                <th class="px-3 py-2 text-left font-semibold">Instruktor</th>
+                                <th class="px-3 py-2 text-left font-semibold">Sala</th>
+                                <th class="px-3 py-2 text-left font-semibold">Poj.</th>
+                                <th class="px-3 py-2 text-left font-semibold">Status</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -240,30 +250,31 @@
                                 </td>
                                 <td class="px-3 py-2 whitespace-nowrap"
                                     th:text="${#temporals.format(c.startTime.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Warsaw')), 'HH:mm')
-                                          + ' - ' +
-                                          #temporals.format(c.endTime.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Warsaw')), 'HH:mm')}"></td>
+                                              + ' - ' +
+                                              #temporals.format(c.endTime.atZoneSameInstant(T(java.time.ZoneId).of('Europe/Warsaw')), 'HH:mm')}"></td>
                                 <td class="px-3 py-2" th:text="${c.type.activityName}"></td>
                                 <td class="px-3 py-2"
                                     th:text="${c.instructor.firstName + ' ' + c.instructor.lastName}"></td>
                                 <td class="px-3 py-2" th:text="${c.room.name}"></td>
                                 <td class="px-3 py-2" th:text="${c.capacity}"></td>
                                 <td class="px-3 py-2">
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold"
-                                  th:classappend="${c.status.name() == 'CANCELLED'
-                                                   ? ' bg-red-100 text-red-700'
-                                                   : ' bg-green-100 text-green-700'}"
-                                  th:text="#{'status.' + ${c.status}}">
-                            </span>
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                                      th:classappend="${c.status.name() == 'CANCELLED'
+                                                       ? ' bg-red-100 text-red-700'
+                                                       : ' bg-green-100 text-green-700'}"
+                                      th:text="${c.status.label}">
+                                </span>
                                 </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(historyActivities)}">
-                                <td colspan="7" class="px-3 py-8 text-center muted" th:text="#{history.empty}">Brak pozycji w historii.</td>
+                                <td colspan="7" class="px-3 py-8 text-center muted">Brak pozycji w historii.</td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- Skrypt dropdownów / potwierdzeń -->
@@ -337,6 +348,5 @@
             }
         </style>
     </section>
-</div>
 </div>
 </html>
