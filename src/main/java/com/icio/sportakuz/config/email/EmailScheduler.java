@@ -12,7 +12,7 @@ public class EmailScheduler {
 		this.emailService = emailService;
 	}
 
-	@Scheduled(cron = "30 43 13 * * ?", zone = "Europe/Warsaw")
+	@Scheduled(cron = "0 0 8 * * ?", zone = "Europe/Warsaw")
 	public void sendReminderEmail() {
 		emailService.sendReminderEmails();
 	}
