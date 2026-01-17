@@ -68,4 +68,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     long countCompletedBookings(@Param("userName") String userName,
                                 @Param("fromDate") OffsetDateTime fromDate,
                                 @Param("toDate") OffsetDateTime toDate);
+
+    /** Wszystkie aktywne rezerwacje dla danego wystąpienia zajęć. */
+    List<Booking> findAllByActivity_IdAndStatusIn(Long activityId, Collection<BookingStatus> statuses);
 }
