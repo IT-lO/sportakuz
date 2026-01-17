@@ -3,106 +3,119 @@
       th:replace="fragments :: base(${pageTitle}, ~{::content})">
 <div th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/lists.css}" />
-<section>
-    <div class="max-w-6xl mx-auto">
+    <section>
+        <div class="max-w-6xl mx-auto">
 
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold tracking-tight" th:text="${pageTitle}">Instruktorzy</h1>
-            <div class="flex items-center gap-4">
-                <a th:href="@{/panel/admin}"
-                   class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                    ← Powrót do panelu
-                </a>
-                <a th:href="@{/users/newInstructor}"
-                   class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-semibold shadow hover:bg-indigo-500 transition">
-                    <span class="text-lg">➕</span> Dodaj nowego instruktora
-                </a>
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-3xl font-bold tracking-tight"
+                    th:text="#{admin.stats.instructors}">
+                    Instruktorzy
+                </h1>
+
+                <div class="flex items-center gap-4">
+                    <a th:href="@{/panel/admin}"
+                       class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                       th:text="#{link.back_to_panel}">
+                        ← Powrót do panelu
+                    </a>
+
+                    <a th:href="@{/users/newInstructor}"
+                       class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-semibold shadow hover:bg-indigo-500 transition">
+                        <span class="text-lg">➕</span> <span th:text="#{instructor.form.title}">Dodaj nowego instruktora</span>
+                    </a>
+                </div>
             </div>
-        </div>
 
-        <div class="table-wrapper">
-            <div class="table-responsive">
-                <table class="min-w-full text-sm">
-                    <thead>
-                    <tr>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                            Imię i nazwisko
-                        </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                            Kontakt
-                        </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                            Status
-                        </th>
-                        <th scope="col" class="relative px-6 py-3">
-                            <span class="sr-only">Edytuj</span>
-                        </th>
-                    </tr>
-                    </thead>
+            <div class="table-wrapper">
+                <div class="table-responsive">
+                    <table class="min-w-full text-sm">
+                        <thead>
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                                th:text="#{label.fullname}">
+                                Imię i nazwisko
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                                th:text="#{footer.contact}">
+                                Kontakt
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                                th:text="#{room.label.status}">
+                                Status
+                            </th>
+                            <th scope="col" class="relative px-6 py-3">
+                                <span class="sr-only" th:text="#{btn.edit}">Edytuj</span>
+                            </th>
+                        </tr>
+                        </thead>
 
-                    <tbody>
-                    <tr th:each="instructor : ${instructors}">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium"
-                                 th:text="${instructor.firstName + ' ' + instructor.lastName}">
-                            </div>
-                        </td>
+                        <tbody>
+                        <tr th:each="instructor : ${instructors}">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium"
+                                     th:text="${instructor.firstName + ' ' + instructor.lastName}">
+                                </div>
+                            </td>
 
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm" th:text="${instructor.email}"></div>
-                            <div class="text-sm muted"
-                                 th:text="${instructor.phone}"
-                                 th:if="${instructor.phone != null and not instructor.phone.isBlank()}">
-                            </div>
-                        </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm" th:text="${instructor.email}"></div>
+                                <div class="text-sm muted"
+                                     th:text="${instructor.phone}"
+                                     th:if="${instructor.phone != null and not instructor.phone.isBlank()}">
+                                </div>
+                            </td>
 
-                        <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-6 py-4 whitespace-nowrap">
                             <span th:if="${instructor.active}"
-                                  class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                  class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
+                                  th:text="#{status.active.male}">
                                 Aktywny
                             </span>
-                            <span th:unless="${instructor.active}"
-                                  class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-700">
+                                <span th:unless="${instructor.active}"
+                                      class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-700"
+                                      th:text="#{status.inactive.male}">
                                 Nieaktywny
                             </span>
-                        </td>
+                            </td>
 
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div class="flex items-center justify-end gap-x-2">
-                                <a th:href="@{/users/edit/{id}(id=${instructor.id})}"
-                                   class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm">
-                                    Edytuj
-                                </a>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex items-center justify-end gap-x-2">
+                                    <a th:href="@{/users/edit/{id}(id=${instructor.id})}"
+                                       class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
+                                       th:text="#{btn.edit}">
+                                        Edytuj
+                                    </a>
 
-                                <form th:action="@{/users/delete/{id}(id=${instructor.id})}"
-                                      method="post"
-                                      onsubmit="return confirm('Czy na pewno chcesz usunąć tego instruktora? Tej operacji nie można cofnąć.');">
-                                    <button type="submit"
-                                            class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700 shadow-sm">
-                                        Usuń
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
+                                    <form th:action="@{/users/delete/{id}(id=${instructor.id})}"
+                                          method="post"
+                                          th:attr="onsubmit='return confirm(\'' + #{instructors.confirm.delete} + '\');'">
+                                        <button type="submit"
+                                                class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-red-600 text-white hover:bg-red-700 shadow-sm"
+                                                th:text="#{btn.delete}">
+                                            Usuń
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
 
-                    </tr>
+                        </tr>
 
-                    <tr th:if="${#lists.isEmpty(instructors)}">
-                        <td colspan="4" class="px-6 py-12 text-center">
-                            <p class="text-sm muted">
-                                Nie dodano jeszcze żadnych instruktorów.
-                            </p>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                        <tr th:if="${#lists.isEmpty(instructors)}">
+                            <td colspan="4" class="px-6 py-12 text-center">
+                                <p class="text-sm muted" th:text="#{instructors.list.empty}">
+                                    Nie dodano jeszcze żadnych instruktorów.
+                                </p>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
 
-    </div>
-</section>
+        </div>
+    </section>
 </div>
 </html>

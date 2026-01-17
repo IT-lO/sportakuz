@@ -133,13 +133,6 @@
             <artifactId>spring-security-web</artifactId>
             <version>6.2.4</version>
         </dependency>
-        <!-- TODO: Remove-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-            <version>3.2.0</version>
-        </dependency>
-
         <!-- Spring mail support -->
         <dependency>
             <groupId>org.springframework</groupId>

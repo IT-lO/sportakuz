@@ -19,6 +19,10 @@ public class UserRegister {
 
     @NotEmpty(message = "Email jest wymagany")
     @Email(message = "Nieprawidłowy format email")
+    @Pattern(
+            regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+            message = "Podaj poprawny adres email (np. jan@przyklad.pl)"
+    )
     private String email;
 
     @NotEmpty(message = "Hasło jest wymagane")

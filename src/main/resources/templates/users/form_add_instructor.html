@@ -3,124 +3,129 @@
       th:replace="fragments :: base(${pageTitle}, ~{::content})">
 <div th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/forms.css}" />
-    <section>
-        <div class="max-w-3xl mx-auto">
+    <div th:fragment="content">
+        <link rel="stylesheet" th:href="@{/css/forms.css}" />
+        <section>
+            <div class="max-w-3xl mx-auto">
 
-            <div class="flex items-center justify-between mb-6">
-                <h1 class="text-3xl font-bold tracking-tight"
-                    th:text="${pageTitle}">
-                    Dodaj nowego instruktora
-                </h1>
-                <a th:href="@{/panel/admin}"
-                   class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                    ← Powrót do panelu
-                </a>
-            </div>
+                <div class="flex items-center justify-between mb-6">
+                    <h1 class="text-3xl font-bold tracking-tight"
+                        th:text="#{instructor.form.title}">
+                        Dodaj nowego instruktora
+                    </h1>
 
-            <form th:action="@{/users/newInstructor}"
-                  th:object="${instructorForm}"
-                  method="post"
-                  class="form-card">
-
-                <div class="form-group">
-                    <label for="firstName">Imię</label>
-                    <input type="text"
-                           id="firstName"
-                           th:field="*{firstName}"
-                           aria-describedby="firstName-error">
-                    <p th:if="${#fields.hasErrors('firstName')}"
-                       th:errors="*{firstName}"
-                       id="firstName-error"
-                       class="error"></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="lastName">Nazwisko</label>
-                    <input type="text"
-                           id="lastName"
-                           th:field="*{lastName}"
-                           aria-describedby="lastName-error">
-                    <p th:if="${#fields.hasErrors('lastName')}"
-                       th:errors="*{lastName}"
-                       id="lastName-error"
-                       class="error"></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Adres e-mail</label>
-                    <input type="email"
-                           id="email"
-                           th:field="*{email}"
-                           aria-describedby="email-error">
-                    <p th:if="${#fields.hasErrors('email')}"
-                       th:errors="*{email}"
-                       id="email-error"
-                       class="error"></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Hasło</label>
-                    <input type="password"
-                           id="password"
-                           th:field="*{password}"
-                           aria-describedby="password-error">
-                    <p class="muted">
-                        Wymagane. Minimum 4 znaki.
-                    </p>
-                    <p th:if="${#fields.hasErrors('password')}"
-                       th:errors="*{password}"
-                       id="password-error"
-                       class="error"></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="phone">Telefon (opcjonalnie)</label>
-                    <input type="text"
-                           id="phone"
-                           th:field="*{phone}"
-                           aria-describedby="phone-error">
-                    <p th:if="${#fields.hasErrors('phone')}"
-                       th:errors="*{phone}"
-                       id="phone-error"
-                       class="error"></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="bio">Bio / Opis (opcjonalnie)</label>
-                    <textarea id="bio"
-                              th:field="*{bio}"
-                              rows="4"
-                              aria-describedby="bio-error"></textarea>
-                    <p class="muted">
-                        Krótki opis doświadczenia, kwalifikacji itp.
-                    </p>
-                    <p th:if="${#fields.hasErrors('bio')}"
-                       th:errors="*{bio}"
-                       id="bio-error"
-                       class="error"></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="active">Instruktor jest aktywny</label>
-                    <input type="checkbox"
-                           id="active"
-                           th:field="*{active}">
-                    <p class="muted">
-                        Odznaczenie tego pola ukryje instruktora przy tworzeniu nowych zajęć.
-                    </p>
-                </div>
-
-                <div class="actions" style="justify-content: flex-end; border-top: 1px solid var(--border); padding-top: .75rem; margin-top:.5rem;">
-                    <a th:href="@{/panel/admin}" class="btn btn-secondary">
-                        Anuluj
+                    <a th:href="@{/panel/admin}"
+                       class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                       th:text="#{link.back_to_panel}">
+                        ← Powrót do panelu
                     </a>
-                    <button type="submit" class="btn">
-                        <span class="text-lg">💾</span> Zapisz instruktora
-                    </button>
                 </div>
 
-            </form>
-        </div>
-    </section>
+                <form th:action="@{/users/newInstructor}"
+                      th:object="${instructorForm}"
+                      method="post"
+                      class="form-card">
+
+                    <div class="form-group">
+                        <label for="firstName" th:text="#{register.firstName}">Imię</label>
+                        <input type="text"
+                               id="firstName"
+                               th:field="*{firstName}"
+                               aria-describedby="firstName-error">
+                        <p th:if="${#fields.hasErrors('firstName')}"
+                           th:errors="*{firstName}"
+                           id="firstName-error"
+                           class="error"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName" th:text="#{register.lastName}">Nazwisko</label>
+                        <input type="text"
+                               id="lastName"
+                               th:field="*{lastName}"
+                               aria-describedby="lastName-error">
+                        <p th:if="${#fields.hasErrors('lastName')}"
+                           th:errors="*{lastName}"
+                           id="lastName-error"
+                           class="error"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" th:text="#{general.email}">Adres e-mail</label>
+                        <input type="email"
+                               id="email"
+                               th:field="*{email}"
+                               aria-describedby="email-error">
+                        <p th:if="${#fields.hasErrors('email')}"
+                           th:errors="*{email}"
+                           id="email-error"
+                           class="error"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" th:text="#{general.password}">Hasło</label>
+                        <input type="password"
+                               id="password"
+                               th:field="*{password}"
+                               aria-describedby="password-error">
+                        <p class="muted" th:text="#{help.password.requirements}">
+                            Wymagane. Minimum 4 znaki.
+                        </p>
+                        <p th:if="${#fields.hasErrors('password')}"
+                           th:errors="*{password}"
+                           id="password-error"
+                           class="error"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone" th:text="#{label.phone}">Telefon (opcjonalnie)</label>
+                        <input type="text"
+                               id="phone"
+                               th:field="*{phone}"
+                               aria-describedby="phone-error">
+                        <p th:if="${#fields.hasErrors('phone')}"
+                           th:errors="*{phone}"
+                           id="phone-error"
+                           class="error"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bio" th:text="#{instructor.label.bio}">Bio / Opis (opcjonalnie)</label>
+                        <textarea id="bio"
+                                  th:field="*{bio}"
+                                  rows="4"
+                                  aria-describedby="bio-error"></textarea>
+                        <p class="muted" th:text="#{instructor.help.bio}">
+                            Krótki opis doświadczenia, kwalifikacji itp.
+                        </p>
+                        <p th:if="${#fields.hasErrors('bio')}"
+                           th:errors="*{bio}"
+                           id="bio-error"
+                           class="error"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="active" th:text="#{instructor.label.active}">Instruktor jest aktywny</label>
+                        <input type="checkbox"
+                               id="active"
+                               th:field="*{active}">
+                        <p class="muted" th:text="#{instructor.help.active}">
+                            Odznaczenie tego pola ukryje instruktora przy tworzeniu nowych zajęć.
+                        </p>
+                    </div>
+
+                    <div class="actions" style="justify-content: flex-end; border-top: 1px solid var(--border); padding-top: .75rem; margin-top:.5rem;">
+                        <a th:href="@{/panel/admin}" class="btn btn-secondary" th:text="#{btn.cancel}">
+                            Anuluj
+                        </a>
+                        <button type="submit" class="btn">
+                            <span class="text-lg">💾</span> <span th:text="#{instructor.btn.save}">Zapisz instruktora</span>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </section>
+    </div>
 </div>
 </html>

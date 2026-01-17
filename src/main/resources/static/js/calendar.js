@@ -1,4 +1,27 @@
 (function(){
+    const lang = window.__locale || 'pl';
+
+    const dictionary = {
+        pl: {
+            bookBtn: "Zarezerwuj",
+            spots: "Miejsca:",
+            limit: "Osiągnięto limit 999 rezerwacji. Usuń niektóre rezerwacje.",
+            success: "Rezerwacja została potwierdzona!",
+            error: "Wystąpił błąd. Spróbuj ponownie.",
+            connError: "Wystąpił błąd połączenia."
+        },
+        en: {
+            bookBtn: "Book now",
+            spots: "Spots:",
+            limit: "Reservation limit (999) reached. Please cancel some bookings.",
+            success: "Reservation confirmed!",
+            error: "An error occurred. Please try again.",
+            connError: "Connection error."
+        }
+    };
+
+    const t = dictionary[lang] || dictionary['pl'];
+
     const defaultConfig = {
         background_color: "#ffffff",
         surface_color: "#f3f4f6",
@@ -8,18 +31,20 @@
         font_family: "Segoe UI",
         font_size: 16,
         page_title: "Kalendarz Zajęć Sportowych",
-        booking_button_text: "Zarezerwuj"
+        booking_button_text: t.bookBtn
     };
 
     let currentWeekStart = new Date();
-    currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1);
+    const day = currentWeekStart.getDay();
+    const diff = currentWeekStart.getDate() - day + (day === 0 ? -6 : 1);
+    currentWeekStart.setDate(diff);
+
     let selectedClass = null;
     let userReservations = [];
 
-    // classes loaded from server side and attached to window.__activities by Thymeleaf
     const classes = window.__activities;
     if(window.__activities == null){
-        console.log("wywaliło się");
+        console.log("Brak danych activities");
     }
 
     const dataHandler = {
@@ -27,7 +52,6 @@
     };
 
     async function initializeApp() {
-        console.log("asdasdasda");
         if (window.dataSdk) {
             try {
                 const initResult = await window.dataSdk.init(dataHandler);
@@ -75,11 +99,14 @@
         document.body.style.color = config.text_color || defaultConfig.text_color;
         document.body.style.fontSize = `${baseSize}px`;
         const title = document.getElementById('page-title');
-        if(title){
+        if(title && window.elementSdk){
             title.textContent = config.page_title || defaultConfig.page_title;
+        }
+        if(title){
             title.style.color = config.primary_action_color || defaultConfig.primary_action_color;
             title.style.fontSize = `${baseSize * 2.25}px`;
         }
+
         const subtitle = document.querySelector('.header p');
         if(subtitle){
             subtitle.style.color = config.text_color || defaultConfig.text_color;
@@ -99,31 +126,39 @@
         document.querySelectorAll('.form-input').forEach(i => i.style.fontSize = `${baseSize * 0.875}px`);
         document.querySelectorAll('.btn-primary').forEach(b => { b.style.background = config.primary_action_color || defaultConfig.primary_action_color; b.style.fontSize = `${baseSize}px`; });
         document.querySelectorAll('.btn-secondary').forEach(b => { b.style.background = config.surface_color || defaultConfig.surface_color; b.style.color = config.text_color || defaultConfig.text_color; b.style.fontSize = `${baseSize}px`; });
+
         const confirmBtn = document.getElementById('confirm-booking');
-        if(confirmBtn){ confirmBtn.textContent = config.booking_button_text || defaultConfig.booking_button_text; }
+        if(confirmBtn && window.elementSdk){
+            confirmBtn.textContent = config.booking_button_text || defaultConfig.booking_button_text;
+        }
     }
 
     function renderCalendar(){
-        console.log(classes);
         const calendarHeader = document.getElementById('calendar-header');
         const calendarBody = document.getElementById('calendar-body');
         if(!calendarHeader || !calendarBody) return;
         calendarHeader.innerHTML = '';
         calendarBody.innerHTML = '';
-        const dayNames = ['Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota','Niedziela'];
+
         for(let day=0; day<7; day++){
-            const date = new Date(currentWeekStart); date.setDate(date.getDate() + day);
+            const date = new Date(currentWeekStart);
+            date.setDate(date.getDate() + day);
             const iso = date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
+
+            let dayName = date.toLocaleDateString(lang, { weekday: 'long' });
+            dayName = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+
             const dayHeader = document.createElement('div');
             dayHeader.className = 'calendar-header-cell';
-            dayHeader.textContent = `${dayNames[day]} ${date.getDate()}.${date.getMonth()+1}`;
+            dayHeader.textContent = `${dayName} ${date.getDate()}.${date.getMonth()+1}`;
             calendarHeader.appendChild(dayHeader);
+
             const dayColumn = document.createElement('div'); dayColumn.className = 'day-column';
-            // Filtrowanie: jeśli obiekt posiada pełną datę (c.date) używamy jej, inaczej fallback do indeksu dnia.
+
             const dayClasses = classes
                 .filter(c => (c.date ? c.date === iso : c.day === day))
                 .sort((a,b)=>a.time.localeCompare(b.time));
-            console.log(dayClasses);
+
             dayClasses.forEach(classData => {
                 const classCard = document.createElement('div'); classCard.className = 'class-card';
                 const instructorLine = (classData.isSubstitution && classData.substitutedFor)
@@ -132,11 +167,13 @@
                 const substitutionLine = (classData.isSubstitution && classData.substitutedFor)
                     ? `<div class="class-info">🔄 ${classData.substitutedFor}</div>`
                     : '';
+
                 classCard.innerHTML = `<div class="class-name">${classData.name}</div>
 <div class="class-info">🕐 ${classData.time} (${classData.duration} min)</div>
 ${instructorLine}
 ${substitutionLine}
-<div class="class-info">📍 Miejsca: ${classData.spots}</div>`;
+<div class="class-info">📍 ${t.spots} ${classData.spots}</div>`;
+
                 classCard.addEventListener('click', () => openModal(classData, day));
                 dayColumn.appendChild(classCard);
             });
@@ -180,36 +217,41 @@ ${substitutionLine}
 
     function handleBooking(){
         const messageEl = document.getElementById('success-message');
-        if(userReservations.length >= 999){ showMessage(messageEl,'Osiągnięto limit 999 rezerwacji. Usuń niektóre rezerwacje.','#ef4444'); return; }
+        if(userReservations.length >= 999){ showMessage(messageEl, t.limit ,'#ef4444'); return; }
+
         const confirmBtn = document.getElementById('confirm-booking');
         if(!confirmBtn) return;
         const originalText = confirmBtn.textContent;
         confirmBtn.disabled = true; confirmBtn.innerHTML = `${originalText}<span class="loading"></span>`;
         const date = new Date(currentWeekStart); date.setDate(date.getDate() + selectedClass.day);
-        // Send booking to backend
+
         fetch('/SportakUZ_war_exploded/api/bookings/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ classId: selectedClass.id})
         }).then(r => r.json().then(body => ({ ok: r.ok, body })))
-          .then(result => {
-            confirmBtn.disabled = false; confirmBtn.textContent = originalText;
-            if(result.ok){
-                showMessage(messageEl,'Rezerwacja została potwierdzona!','#10b981');
-                const nameInput = document.getElementById('user-name'); if(nameInput) nameInput.value='';
-                if(result.body && result.body.spots){
-                    // Update spots for the correct class in the global classes array
-                    const idx = classes.findIndex(c => c.id === selectedClass.id);
-                    if(idx !== -1){
-                        classes[idx].spots = result.body.spots;
+            .then(result => {
+                confirmBtn.disabled = false; confirmBtn.textContent = originalText;
+                if(result.ok){
+                    showMessage(messageEl, t.success ,'#10b981');
+                    const nameInput = document.getElementById('user-name'); if(nameInput) nameInput.value='';
+                    if(result.body && result.body.spots){
+                        const idx = classes.findIndex(c => c.id === selectedClass.id);
+                        if(idx !== -1){
+                            classes[idx].spots = result.body.spots;
+                        }
+                        renderCalendar();
                     }
-                    renderCalendar();
+                } else {
+                    const msg = (result.body && result.body.error) ? result.body.error : t.error;
+                    showMessage(messageEl,msg,'#ef4444');
                 }
-            } else {
-                const msg = (result.body && result.body.error) ? result.body.error : 'Wystąpił błąd. Spróbuj ponownie.';
-                showMessage(messageEl,msg,'#ef4444');
-            }
-        }).catch(e => { console.error('Reservation error', e); confirmBtn.disabled=false; confirmBtn.textContent = originalText; showMessage(messageEl,'Wystąpił błąd połączenia.','#ef4444'); });
+            }).catch(e => {
+            console.error('Reservation error', e);
+            confirmBtn.disabled=false;
+            confirmBtn.textContent = originalText;
+            showMessage(messageEl, t.connError ,'#ef4444');
+        });
     }
 
     function showMessage(el, text, bg){ if(!el) return; el.textContent = text; el.style.background = bg; el.style.display='block'; }

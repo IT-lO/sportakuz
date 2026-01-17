@@ -9,29 +9,33 @@
         <div class="home-hero relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg">
             <div class="absolute inset-0 opacity-30 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/diagmonds.png')]"></div>
             <div class="px-6 py-12 sm:px-10 lg:px-14 relative">
-                <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">System Rezerwacji Zajęć</h1>
-                <p class="max-w-2xl text-blue-100 text-sm sm:text-base leading-relaxed">
+                <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4"
+                    th:text="#{instructor.hero.title}">System Rezerwacji Zajęć</h1>
+
+                <p class="max-w-2xl text-blue-100 text-sm sm:text-base leading-relaxed"
+                   th:text="#{instructor.hero.desc}">
                     Zarządzaj harmonogramem zajęć, monitoruj obłożenie sal i dodawaj nowe aktywności dla użytkowników klubu.
                     Wszystko w jednym przejrzystym panelu.
                 </p>
+
                 <div class="mt-6 flex flex-wrap gap-4">
                     <a th:href="@{/activities}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
-                        <span class="text-lg">📅</span> Przeglądaj zajęcia
+                        <span class="text-lg">📅</span> <span th:text="#{instructor.btn.browse}">Przeglądaj zajęcia</span>
                     </a>
                     <a th:href="@{/activities/new}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-indigo-500 hover:bg-indigo-400 font-semibold shadow text-white transition">
-                        <span class="text-lg">➕</span> Dodaj zajęcia
+                        <span class="text-lg">➕</span> <span th:text="#{instructor.btn.add_activity}">Dodaj zajęcia</span>
                     </a>
                     <a th:href="@{/rooms/new}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-indigo-500 hover:bg-indigo-400 font-semibold shadow text-white transition">
-                        <span class="text-lg">🏟️</span> Dodaj salę
+                        <span class="text-lg">🏟️</span> <span th:text="#{instructor.btn.add_room}">Dodaj salę</span>
                     </a>
                     <a th:href="@{/rooms}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
-                        <span class="text-lg">🚪</span> Lista sal
+                        <span class="text-lg">🚪</span> <span th:text="#{instructor.btn.list_rooms}">Lista sal</span>
                     </a>
                     <a th:href="@{/activitytypes/new}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-indigo-500 hover:bg-indigo-400 font-semibold shadow text-white transition">
-                        <span class="text-lg">⧉</span> Dodaj typ zajęć
+                        <span class="text-lg">⧉</span> <span th:text="#{instructor.btn.add_type}">Dodaj typ zajęć</span>
                     </a>
                     <a th:href="@{/activitytypes}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
-                        <span class="text-lg">📚</span> Lista typów zajęć
+                        <span class="text-lg">📚</span> <span th:text="#{instructor.btn.list_types}">Lista typów zajęć</span>
                     </a>
                 </div>
             </div>
@@ -40,25 +44,27 @@
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <div class="home-card bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-medium tracking-wider text-gray-500 uppercase">Do poprowadzenia</span>
+                <span class="text-xs font-medium tracking-wider text-gray-500 uppercase"
+                      th:text="#{instructor.stats.to_conduct}">Do poprowadzenia</span>
                     <span class="text-blue-600">📅</span>
                 </div>
                 <div class="text-3xl font-bold text-gray-800" th:text="${stats_active_bookings}">0</div>
-                <p class="mt-1 text-xs text-gray-500">Nadchodzące zajęcia</p>
+                <p class="mt-1 text-xs text-gray-500" th:text="#{instructor.stats.upcoming_desc}">Nadchodzące zajęcia</p>
             </div>
 
             <div class="home-card bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-medium tracking-wider text-gray-500 uppercase">Odbyte (30 dni)</span>
+                <span class="text-xs font-medium tracking-wider text-gray-500 uppercase"
+                      th:text="#{panel.stats.completed}">Odbyte (30 dni)</span>
                     <span class="text-indigo-600">✓</span>
                 </div>
                 <div class="text-3xl font-bold text-gray-800" th:text="${stats_completed_30days}">0</div>
-                <p class="mt-1 text-xs text-gray-500">Zajęcia w tym miesiącu</p>
+                <p class="mt-1 text-xs text-gray-500" th:text="#{instructor.stats.month_desc}">Zajęcia w tym miesiącu</p>
             </div>
         </div>
 
         <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
-            <span>🔜</span>Nadchodzące zajęcia
+            <span>🔜</span> <span th:text="#{panel.upcoming.title}">Nadchodzące zajęcia</span>
         </h2>
 
         <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3" th:if="${not #lists.isEmpty(upcoming)}">
@@ -72,25 +78,26 @@
                    th:text="${c.instructor.firstName + ' ' + c.instructor.lastName}">Instruktor</p>
                 <div class="flex items-center justify-between text-xs text-gray-500">
                     <span th:text="${c.room.name}" class="font-medium text-gray-700"></span>
-                    <span th:text="${c.capacity + ' miejsc'}"></span>
+                    <span th:text="${c.capacity} + ' ' + #{panel.label.seats}"></span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span th:text="${c.status}"
-                          th:class="${'inline-flex w-fit items-center px-2.5 py-1 rounded-full text-xs font-semibold ' +
-                                    (c.status.name()=='PLANNED' ? 'bg-yellow-100 text-yellow-800' :
-                                     (c.status.name()=='CANCELLED' ? 'bg-red-100 text-red-700' :
-                                      (c.status.name()=='DONE' ? 'bg-green-100 text-green-700' :
-                                       'bg-gray-100 text-gray-700')))}"></span>
+                <span th:text="#{'status.' + ${c.status}}"
+                      th:class="${'inline-flex w-fit items-center px-2.5 py-1 rounded-full text-xs font-semibold ' +
+                                (c.status.name()=='PLANNED' ? 'bg-yellow-100 text-yellow-800' :
+                                 (c.status.name()=='CANCELLED' ? 'bg-red-100 text-red-700' :
+                                  (c.status.name()=='DONE' ? 'bg-green-100 text-green-700' :
+                                   'bg-gray-100 text-gray-700')))}"></span>
                     <span th:if="${c.startTime <= now and c.endTime > now}"
                           class="inline-flex items-center px-2 py-1 rounded-full bg-green-600 text-white text-[10px] font-bold tracking-wide animate-pulse">
-                        LIVE
-                    </span>
+                    LIVE
+                </span>
                 </div>
             </div>
         </div>
 
         <div th:if="${#lists.isEmpty(upcoming)}"
-             class="p-8 rounded-lg border border-dashed border-gray-300 bg-indigo/60 text-center text-white-500 text-sm">
+             class="p-8 rounded-lg border border-dashed border-gray-300 bg-white/60 text-center text-gray-500 text-sm"
+             th:text="#{panel.upcoming.empty}">
             Brak nadchodzących zajęć.
         </div>
 
