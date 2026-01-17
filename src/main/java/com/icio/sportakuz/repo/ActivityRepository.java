@@ -51,6 +51,11 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     /** Wszystkie wystąpienia posortowane rosnąco po czasie rozpoczęcia. */
     List<Activity> findAllByOrderByStartTimeAsc();
 
+    /**
+     * Wszystkie wystąpienia mieszczące się w przedziale czasu [from, to).
+     */
+    List<Activity> findByStartTimeBetween(OffsetDateTime from, OffsetDateTime to);
+
         /** Wyszukiwanie po typie lub instruktorze; sortowane po starcie. */
         @Query("""
           select c from Activity c
