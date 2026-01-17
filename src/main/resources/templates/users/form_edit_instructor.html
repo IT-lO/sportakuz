@@ -11,13 +11,13 @@
                 th:text="${pageTitle}">
                 Edytuj instruktora
             </h1>
-            <a th:href="@{/instructors}"
+            <a th:href="@{/users}"
                class="text-sm text-blue-600 hover:text-blue-700 font-medium">
                 ← Wróć do listy
             </a>
         </div>
 
-        <form th:action="@{/instructors/edit/{id}(id=${instructorId})}"
+        <form th:action="@{/users/edit/{id}(id=${instructorId})}"
               th:object="${instructorForm}"
               method="post"
               class="form-card">
@@ -103,7 +103,7 @@
 
             <!-- Przyciski -->
             <div class="actions" style="justify-content: flex-end; border-top: 1px solid var(--border); padding-top: .75rem; margin-top:.5rem;">
-                <a th:href="@{/instructors}" class="btn btn-secondary">
+                <a th:href="@{/users}" class="btn btn-secondary">
                     Anuluj
                 </a>
                 <button type="submit" class="btn">

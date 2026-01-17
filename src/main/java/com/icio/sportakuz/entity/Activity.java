@@ -64,6 +64,9 @@ public class Activity {
     @Column(columnDefinition="text")
     private String note;
 
+    @Column(name = "top_pick_ranking")
+    private Integer topPickRanking;
+
     @CreationTimestamp
     @Column(name="created_at", nullable=false, updatable=false)
     private OffsetDateTime createdAt;

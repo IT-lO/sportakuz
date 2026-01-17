@@ -53,7 +53,7 @@ public class CalendarController {
         int duration = (int) java.time.Duration.between(startZoned.toOffsetDateTime(), endZoned.toOffsetDateTime()).toMinutes();
         long reserved = bookingRepository.countActiveByClassId(c.getId());
         String spots = reserved + "/" + c.getCapacity();
-        String level = c.getType() != null ? c.getType().getDifficulty().toString() : null;
+        String level = c.getType().getDifficulty() != null ? c.getType().getDifficulty().getDisplayName() : "Nie podano";
         String substitutedFor = c.getSubstitutedFor() != null
                 ? (c.getSubstitutedFor().getFirstName() + " " + c.getSubstitutedFor().getLastName())
                 : null;

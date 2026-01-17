@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -35,8 +36,8 @@ public class BookingApiController {
      */
     @Transactional
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody CreateBookingRequest req) {
-        if (req.classId() == null || req.userName() == null || req.userName().isBlank()) {
+    public ResponseEntity<?> create(@RequestBody CreateBookingRequest req, Principal principal) {
+        if (req.classId() == null || principal.getName() == null || principal.getName().isBlank()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Brak wymaganych danych"));
         }
         Activity occurrence = occurrenceRepository.findByIdForUpdate(req.classId());
@@ -52,15 +53,14 @@ public class BookingApiController {
         }
         // Sprawdź duplikat aktywnej rezerwacji użytkownika
         boolean already = bookingRepository.existsByActivity_IdAndUserNameAndStatusIn(
-                occurrence.getId(), req.userName(), List.of(BookingStatus.REQUESTED, BookingStatus.CONFIRMED, BookingStatus.PAID));
+                occurrence.getId(), principal.getName(), List.of(BookingStatus.REQUESTED, BookingStatus.CONFIRMED, BookingStatus.PAID));
         if (already) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("Masz już aktywną rezerwację"));
         }
 
         Booking booking = new Booking();
         booking.setActivity(occurrence);
-        // TODO: Once new user system finally gets set up change it so it would use email of current user. Remove validation from above & remove from frontend space for username
-        booking.setUserName(req.userName().trim());
+        booking.setUserName(principal.getName());
         booking.setStatus(BookingStatus.REQUESTED);
         bookingRepository.save(booking);
 
@@ -90,8 +90,8 @@ public class BookingApiController {
      * Usuwa rezerwację na podstawie ID klasy oraz nazwy użytkownika.
      */
     @PostMapping("/delete")
-    public ResponseEntity<?> delete(@RequestBody DeleteBookingRequest req) {
-        if (req.classId() == null || req.userName() == null || req.userName().isBlank()) {
+    public ResponseEntity<?> delete(@RequestBody DeleteBookingRequest req, Principal principal) {
+        if (req.classId() == null || principal.getName() == null || principal.getName().isBlank()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Brak wymaganych danych"));
         }
         Activity occurrence = occurrenceRepository.findById(req.classId()).orElse(null);
@@ -101,7 +101,7 @@ public class BookingApiController {
 
         // Pobierz rezerwację użytkownika do usunięcia
         Booking booking = bookingRepository.findFirstByActivity_IdAndUserNameAndStatusIn(
-                occurrence.getId(), req.userName(), List.of(BookingStatus.REQUESTED, BookingStatus.CONFIRMED, BookingStatus.PAID));
+                occurrence.getId(), principal.getName(), List.of(BookingStatus.REQUESTED, BookingStatus.CONFIRMED, BookingStatus.PAID));
         if (booking == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Nie znaleziono rezerwacji do usunięcia"));
         }

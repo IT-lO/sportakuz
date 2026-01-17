@@ -19,13 +19,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
-        // Pobieramy role zalogowanego użytkownika
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         String contextPath = request.getContextPath();
+
         if (roles.contains("ROLE_ADMIN")) {
             response.sendRedirect(contextPath + "/panel/admin");
         } else if (roles.contains("ROLE_INSTRUCTOR")) {
-            response.sendRedirect(contextPath + "/panel/user");
+            response.sendRedirect(contextPath + "/panel/instructor");
         } else {
             response.sendRedirect(contextPath + "/panel/user");
         }

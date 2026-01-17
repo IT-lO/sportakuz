@@ -1,4 +1,4 @@
-package com.icio.sportakuz.config.security; // lub .service, zależy jak masz strukturę
+package com.icio.sportakuz.config.security;
 
 import com.icio.sportakuz.entity.User;
 import com.icio.sportakuz.repo.UserRepository;
@@ -18,17 +18,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // 1. Szukamy w bazie po emailu (bo w login.html użytkownik wpisuje email/login)
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Nie znaleziono użytkownika: " + email));
 
-        // 2. Konwertujemy Twojego Usera na Usera Springowego
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
-                user.getPassword(), // To musi być hash!
-                user.isActive(), // Czy konto aktywne
-                true, true, true, // Konta nie wygasłe/zablokowane (można rozbudować)
-                Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())) // Np. ROLE_ADMIN
+                user.getPassword(),
+                user.isActive(),
+                true, true, true,
+                Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()))
         );
     }
 }

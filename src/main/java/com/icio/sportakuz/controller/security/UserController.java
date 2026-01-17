@@ -1,4 +1,4 @@
-package com.icio.sportakuz.controller;
+package com.icio.sportakuz.controller.security;
 
 import com.icio.sportakuz.dto.UserForm;
 import com.icio.sportakuz.entity.User;
@@ -6,7 +6,7 @@ import com.icio.sportakuz.entity.UserRole;
 import com.icio.sportakuz.repo.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.crypto.password.PasswordEncoder; // IMPORT
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,7 +23,6 @@ public class UserController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder; // POTRZEBNE DO HASŁA
 
-    // Wstrzykujemy PasswordEncoder w konstruktorze
     public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;

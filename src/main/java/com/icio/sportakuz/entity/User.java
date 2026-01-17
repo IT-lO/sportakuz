@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.OffsetDateTime; // Lub LocalDateTime, zależy jak masz w bazie ustawione
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "users",
@@ -19,10 +19,10 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private String email; // Login
+    private String email;
 
     @Column(nullable = false)
-    private String password; // Hash hasła, nie czysty tekst!
+    private String password;
 
     @Column(name = "first_name")
     private String firstName;
@@ -30,7 +30,6 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    // To pole zastępuje starą tabelę Instructor - teraz to po prostu rola
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
@@ -38,7 +37,7 @@ public class User {
     private String phone;
 
     @Column(columnDefinition = "text")
-    private String bio; // Tylko dla instruktorów, dla Usera będzie null
+    private String bio;
 
     @Column(nullable = false)
     private boolean active = true;

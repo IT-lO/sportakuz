@@ -2,8 +2,8 @@ package com.icio.sportakuz.controller;
 
 import com.icio.sportakuz.entity.*;
 import com.icio.sportakuz.repo.*;
-import com.icio.sportakuz.dto.ActivitySeriesForm; // Zakładam, że DTO też zmienisz nazwę, ale zostawiam wg importu
-import com.icio.sportakuz.repo.ClassStatus; // Lub ActivityStatus zależnie od enuma
+import com.icio.sportakuz.dto.ActivitySeriesForm;
+import com.icio.sportakuz.repo.ClassStatus;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class ActivitySeriesController {
     private static final Logger log = LoggerFactory.getLogger(ActivitySeriesController.class);
 
     private final ActivitySeriesRepository activitySeriesRepository;
-    private final ActivityRepository activityRepository; // Dawne ClassOccurrenceRepository
+    private final ActivityRepository activityRepository;
     private final ActivityTypeRepository activityTypeRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
@@ -241,15 +241,39 @@ public class ActivitySeriesController {
         }
     }
 
-    /** Usunięcie (soft delete - tylko wyłączenie serii) */
+    /** Usunięcie serii wraz z wystąpieniami w statusie PLANNED; pozostałe odłączane od serii */
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable("id") Long id, RedirectAttributes ra){
         var s = activitySeriesRepository.findById(id).orElse(null);
-        if(s != null && s.isActive()){
-            s.setActive(false);
-            activitySeriesRepository.save(s);
-            ra.addFlashAttribute("success", "Seria zdezaktywowana.");
+        if (s == null) {
+            ra.addFlashAttribute("error", "Seria nie znaleziona.");
+            return "redirect:/activity-series";
         }
+
+        var occurrences = activityRepository.findBySeries_Id(id);
+        int deletedOccurrences = 0;
+        int detachedOccurrences = 0;
+
+        for (var oc : occurrences) {
+            if (oc.getStatus() == ClassStatus.PLANNED) {
+                // Usuń zaplanowane wystąpienia
+                activityRepository.delete(oc);
+                deletedOccurrences++;
+            } else {
+                // Pozostałe wystąpienia zostają w historii, ale bez powiązania z serią
+                oc.setSeries(null);
+                activityRepository.save(oc);
+                detachedOccurrences++;
+            }
+        }
+
+        activitySeriesRepository.delete(s);
+
+        String msg = "Usunięto serię oraz " + deletedOccurrences + " zaplanowanych wystąpień.";
+        if (detachedOccurrences > 0) {
+            msg += " Odłączono " + detachedOccurrences + " istniejących wystąpień od serii.";
+        }
+        ra.addFlashAttribute("success", msg);
         return "redirect:/activity-series";
     }
 
@@ -329,7 +353,8 @@ public class ActivitySeriesController {
 
     private void addLookups(Model model){
         model.addAttribute("types", activityTypeRepository.findAll());
-        model.addAttribute("instructors", userRepository.findAll());
+        // tylko instruktorzy, nie wszyscy użytkownicy
+        model.addAttribute("instructors", userRepository.findByRole(UserRole.ROLE_INSTRUCTOR));
         model.addAttribute("rooms", roomRepository.findAll());
         model.addAttribute("patterns", RecurrencePattern.values());
     }

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org"
+      th:replace="fragments :: base('SportakUZ – Mój Panel', ~{::content})">
+<div th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/panels.css}" />
+
+    <section class="space-y-12">
+
+        <div class="home-hero relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg">
+            <div class="absolute inset-0 opacity-30 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/diagmonds.png')]"></div>
+            <div class="px-6 py-12 sm:px-10 lg:px-14 relative">
+                <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">System Rezerwacji Zajęć</h1>
+                <p class="max-w-2xl text-blue-100 text-sm sm:text-base leading-relaxed">
+                    Zarządzaj harmonogramem zajęć, monitoruj obłożenie sal i dodawaj nowe aktywności dla użytkowników klubu.
+                    Wszystko w jednym przejrzystym panelu.
+                </p>
+                <div class="mt-6 flex flex-wrap gap-4">
+                    <a th:href="@{/activities}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
+                        <span class="text-lg">📅</span> Przeglądaj zajęcia
+                    </a>
+                    <a th:href="@{/activities/new}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-indigo-500 hover:bg-indigo-400 font-semibold shadow text-white transition">
+                        <span class="text-lg">➕</span> Dodaj zajęcia
+                    </a>
+                    <a th:href="@{/rooms/new}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-indigo-500 hover:bg-indigo-400 font-semibold shadow text-white transition">
+                        <span class="text-lg">🏟️</span> Dodaj salę
+                    </a>
+                    <a th:href="@{/rooms}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
+                        <span class="text-lg">🚪</span> Lista sal
+                    </a>
+                    <a th:href="@{/activitytypes/new}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-indigo-500 hover:bg-indigo-400 font-semibold shadow text-white transition">
+                        <span class="text-lg">⧉</span> Dodaj typ zajęć
+                    </a>
+                    <a th:href="@{/activitytypes}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
+                        <span class="text-lg">📚</span> Lista typów zajęć
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="home-card bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-medium tracking-wider text-gray-500 uppercase">Do poprowadzenia</span>
+                    <span class="text-blue-600">📅</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-800" th:text="${stats_active_bookings}">0</div>
+                <p class="mt-1 text-xs text-gray-500">Nadchodzące zajęcia</p>
+            </div>
+
+            <div class="home-card bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm flex flex-col">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-medium tracking-wider text-gray-500 uppercase">Odbyte (30 dni)</span>
+                    <span class="text-indigo-600">✓</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-800" th:text="${stats_completed_30days}">0</div>
+                <p class="mt-1 text-xs text-gray-500">Zajęcia w tym miesiącu</p>
+            </div>
+        </div>
+
+        <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
+            <span>🔜</span>Nadchodzące zajęcia
+        </h2>
+
+        <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3" th:if="${not #lists.isEmpty(upcoming)}">
+            <div th:each="c : ${upcoming}" class="home-card group relative bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition flex flex-col gap-3">
+                <div class="flex items-start justify-between">
+                    <h3 class="font-semibold text-gray-800" th:text="${c.type.activityName}">Typ</h3>
+                    <span th:text="${#temporals.format(c.startTime.atZoneSameInstant(userZone), 'dd.MM HH:mm')}"
+                          class="text-xs font-medium px-2 py-1 rounded bg-blue-50 text-blue-700"></span>
+                </div>
+                <p class="text-sm text-gray-600"
+                   th:text="${c.instructor.firstName + ' ' + c.instructor.lastName}">Instruktor</p>
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span th:text="${c.room.name}" class="font-medium text-gray-700"></span>
+                    <span th:text="${c.capacity + ' miejsc'}"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span th:text="${c.status}"
+                          th:class="${'inline-flex w-fit items-center px-2.5 py-1 rounded-full text-xs font-semibold ' +
+                                    (c.status.name()=='PLANNED' ? 'bg-yellow-100 text-yellow-800' :
+                                     (c.status.name()=='CANCELLED' ? 'bg-red-100 text-red-700' :
+                                      (c.status.name()=='DONE' ? 'bg-green-100 text-green-700' :
+                                       'bg-gray-100 text-gray-700')))}"></span>
+                    <span th:if="${c.startTime <= now and c.endTime > now}"
+                          class="inline-flex items-center px-2 py-1 rounded-full bg-green-600 text-white text-[10px] font-bold tracking-wide animate-pulse">
+                        LIVE
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(upcoming)}"
+             class="p-8 rounded-lg border border-dashed border-gray-300 bg-indigo/60 text-center text-white-500 text-sm">
+            Brak nadchodzących zajęć.
+        </div>
+
+    </section>
+</div>
+</html>

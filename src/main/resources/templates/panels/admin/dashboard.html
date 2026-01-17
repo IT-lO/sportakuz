@@ -92,7 +92,7 @@
             <div th:each="c : ${upcoming}" class="home-card group relative bg-white/90 backdrop-blur border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition flex flex-col gap-3">
                 <div class="flex items-start justify-between">
                     <h3 class="font-semibold text-gray-800" th:text="${c.type.activityName}">Typ</h3>
-                    <span th:text="${#temporals.format(c.startTime, 'dd.MM HH:mm')}"
+                    <span th:text="${#temporals.format(c.startTime.atZoneSameInstant(userZone), 'dd.MM HH:mm')}"
                           class="text-xs font-medium px-2 py-1 rounded bg-blue-50 text-blue-700"></span>
                 </div>
                 <p class="text-sm text-gray-600"
@@ -155,6 +155,15 @@
                     <a th:href="@{/activities}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-indigo-500 text-white font-semibold shadow hover:bg-indigo-400 transition">
                         📅 Pełna lista zajęć
                     </a>
+                    <a th:href="@{/calendar}"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
+                        <span class="text-lg">📅</span> Przeglądaj grafik
+                    </a>
+                    <a th:href="@{/my/bookings}"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-white text-blue-700 font-semibold shadow hover:bg-blue-50 transition">
+                        <span class="text-lg">🎟️</span> Moje rezerwacje
+                    </a>
+
                 </div>
             </div>
         </div>
