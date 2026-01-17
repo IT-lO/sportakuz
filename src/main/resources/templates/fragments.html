@@ -203,18 +203,6 @@
         const isDark = document.documentElement.classList.contains('dark');
         applyTheme(isDark ? 'light' : 'dark');
     }
-    function toggleLanguage() {
-        const flagElement = document.getElementById('current-lang-flag');
-        const currentLang = flagElement.getAttribute('data-lang') || 'pl';
-
-        const newLang = currentLang === 'pl' ? 'en' : 'pl';
-
-        const urlParams = new URLSearchParams(window.location.search);
-
-        urlParams.set('lang', newLang);
-
-        window.location.search = urlParams.toString();
-    }
     document.addEventListener('DOMContentLoaded', () => {
         const saved = localStorage.getItem('theme');
         if (saved) {
