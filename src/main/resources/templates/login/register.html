@@ -4,28 +4,30 @@
     <meta charset="UTF-8">
     <title>SportakUZ – Rejestracja</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/forms.css}" />
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
+
     <script th:src="@{'https://www.google.com/recaptcha/api.js?hl=' + ${#locale.language}}" async defer></script>
 </head>
 <body class="bg-gray-100">
 
 <main class="flex items-center justify-center min-h-screen p-4">
     <div class="w-full max-w-md p-8 space-y-6 bg-white shadow-xl rounded-2xl border border-gray-200">
-        <div class="absolute top-4 right-4 z-50 flex items-center gap-2">
+        <div class="corner-controls">
 
             <button type="button"
                     onclick="toggleTheme()"
-                    class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition focus:outline-none"
+                    class="corner-btn"
                     title="Przełącz motyw">
-                <span id="theme-icon" class="text-xl">🌙</span>
+                <span id="theme-icon" class="corner-icon">🌙</span>
             </button>
 
             <a th:href="@{''(lang=${#locale.language == 'pl' ? 'en' : 'pl'})}"
-               class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition focus:outline-none no-underline flex items-center justify-center"
+               class="corner-btn"
                title="Zmień język / Switch language">
-                <span class="text-xl" th:text="${#locale.language == 'pl' ? '🇬🇧' : '🇵🇱'}">🇬🇧</span>
+                <span class="corner-icon" th:text="${#locale.language == 'pl' ? '🇬🇧' : '🇵🇱'}">🇬🇧</span>
             </a>
-
         </div>
 
 
@@ -192,3 +194,35 @@
 
     </div>
 </main>
+
+<script>
+    function applyTheme(theme) {
+        const root = document.documentElement;
+        const icon = document.getElementById('theme-icon');
+
+        if (theme === 'dark') {
+            root.classList.add('dark');
+            if(icon) icon.textContent = '☀️';
+        } else {
+            root.classList.remove('dark');
+            if(icon) icon.textContent = '🌙';
+        }
+        localStorage.setItem('theme', theme);
+    }
+
+    function toggleTheme() {
+        const isDark = document.documentElement.classList.contains('dark');
+        applyTheme(isDark ? 'light' : 'dark');
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const saved = localStorage.getItem('theme');
+        if (saved) {
+            applyTheme(saved);
+        } else {
+            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(systemDark ? 'dark' : 'light');
+        }
+    });
+</script>
+</body>
+</html>

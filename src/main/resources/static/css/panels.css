@@ -105,3 +105,16 @@ html.dark .home-hero a {
 html.dark .home-hero a:hover {
     background-color:#6366f1 !important;
 }
+
+/* ===== Panels: empty state w DARK ===== */
+html.dark .bg-white\/60.text-gray-500 {
+    background: rgba(42, 51, 59, 0.75) !important; /* ciemna "karta" */
+    color: #e5e7eb !important;                      /* czytelny tekst */
+    border-color: #3a444d !important;
+}
+
+/* jeśli border jest osobno łapany */
+html.dark .border-gray-300 {
+    border-color: #3a444d !important;
+}
+

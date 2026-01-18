@@ -252,3 +252,41 @@ html.dark footer.bg-white\/70 .text-gray-500 {
     th,td {padding:.45rem .5rem; font-size:.8rem;}
     .form-grid {grid-template-columns:1fr;}
 }
+
+/* ===== Tailwind header/footer overrides w DARK (żeby nie było białe) ===== */
+
+html.dark header.bg-white\/90,
+html.dark header.bg-white\/70,
+html.dark header.bg-white,
+html.dark header[class*="bg-white"]{
+    background: rgba(15, 23, 42, 0.95) !important; /* slate-900-ish */
+    border-color: #374151 !important;
+}
+
+html.dark header a,
+html.dark header span,
+html.dark header button{
+    color: #e5e7eb !important;
+}
+
+/* badge "ONLINE" (bg-blue-100 + text-blue-600) */
+html.dark header .bg-blue-100{
+    background: rgba(59,130,246,0.18) !important;
+}
+html.dark header .text-blue-600{
+    color: #bfdbfe !important;
+}
+
+/* tło strony (bo masz body z tailwindowym gradientem) */
+html.dark body{
+    background: linear-gradient(135deg,#1e2429,#202b33) !important;
+    color: #eef2f5 !important;
+}
+
+/* stopka */
+html.dark footer.bg-white\/70,
+html.dark footer.bg-white,
+html.dark footer[class*="bg-white"]{
+    background: rgba(15, 23, 42, 0.95) !important;
+    border-color: #374151 !important;
+}
