@@ -11,11 +11,13 @@
 
             <div class="relative px-6 py-20 sm:px-12 sm:py-24 lg:py-32">
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 drop-shadow-md">
-                    Twoja forma zaczyna się <br class="hidden sm:block" />
-                    <span class="text-blue-300">tutaj i teraz.</span>
+                    <span th:text="#{hero.title.start}">Twoja forma zaczyna się</span>
+                    <br class="hidden sm:block" />
+                    <span class="text-blue-300" th:text="#{hero.title.end}">tutaj i teraz.</span>
                 </h1>
 
-                <p class="mx-auto max-w-2xl text-lg sm:text-xl text-indigo-100 mb-10 leading-relaxed">
+                <p class="mx-auto max-w-2xl text-lg sm:text-xl text-indigo-100 mb-10 leading-relaxed"
+                   th:text="#{hero.desc}">
                     SportakUZ to nowoczesny system zarządzania Twoim treningiem.
                     Rezerwuj sale, zapisuj się na zajęcia grupowe i śledź swoje postępy w jednym miejscu.
                 </p>
@@ -24,84 +26,97 @@
 
                     <div sec:authorize="isAnonymous()" class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                         <a th:href="@{/login}"
-                           class="w-full sm:w-auto px-8 py-4 rounded-lg bg-white text-indigo-700 font-bold text-lg shadow-lg hover:bg-indigo-50 hover:scale-105 transition transform duration-200">
+                           class="w-full sm:w-auto px-8 py-4 rounded-lg bg-white text-indigo-700 font-bold text-lg shadow-lg hover:bg-indigo-50 hover:scale-105 transition transform duration-200"
+                           th:text="#{hero.btn.login}">
                             Zaloguj się
                         </a>
                         <a th:href="@{/register}"
-                           class="w-full sm:w-auto px-8 py-4 rounded-lg bg-indigo-500/20 border border-white/30 backdrop-blur-sm text-white font-semibold text-lg hover:bg-indigo-500/40 hover:border-white/50 transition">
+                           class="w-full sm:w-auto px-8 py-4 rounded-lg bg-indigo-500/20 border border-white/30 backdrop-blur-sm text-white font-semibold text-lg hover:bg-indigo-500/40 hover:border-white/50 transition"
+                           th:text="#{hero.btn.register}">
                             Załóż konto
                         </a>
                     </div>
 
                     <div sec:authorize="isAuthenticated()" class="flex flex-col items-center gap-3">
-                        <p class="text-indigo-200 text-sm">Witaj ponownie, <span sec:authentication="name" class="font-bold text-white"></span>!</p>
+                        <p class="text-indigo-200 text-sm">
+                            <span th:text="#{hero.welcome_back}">Witaj ponownie,</span>
+                            <span sec:authentication="name" class="font-bold text-white"></span>!
+                        </p>
+
                         <a sec:authorize="hasRole('ROLE_ADMIN')"
                            th:href="@{/panel/admin}"
                            class="px-8 py-4 rounded-lg bg-green-500 text-white font-bold text-lg shadow-lg hover:bg-green-400 hover:scale-105 transition transform duration-200 flex items-center gap-2">
-                            Przejdź do Panelu 🚀
+                            <span th:text="#{hero.btn.panel}">Przejdź do Panelu</span> 🚀
                         </a>
                         <a sec:authorize="hasRole('ROLE_INSTRUCTOR')"
                            th:href="@{/panel/instructor}"
                            class="px-8 py-4 rounded-lg bg-green-500 text-white font-bold text-lg shadow-lg hover:bg-green-400 hover:scale-105 transition transform duration-200 flex items-center gap-2">
-                            Przejdź do Panelu 🚀
+                            <span th:text="#{hero.btn.panel}">Przejdź do Panelu</span> 🚀
                         </a>
                         <a sec:authorize="hasRole('ROLE_USER')"
                            th:href="@{/panel/user}"
                            class="px-8 py-4 rounded-lg bg-green-500 text-white font-bold text-lg shadow-lg hover:bg-green-400 hover:scale-105 transition transform duration-200 flex items-center gap-2">
-                            Przejdź do Panelu 🚀
+                            <span th:text="#{hero.btn.panel}">Przejdź do Panelu</span> 🚀
                         </a>
 
                     </div>
                 </div>
             </div>
         </div>
+
         <a th:href="@{/top-picks}" class="w-full group">
-            <div class="h-full p-6  bg-white rounded-xl shadow-sm border border-yellow-200 hover:shadow-lg hover:border-yellow-400 transition text-left relative overflow-hidden">
+            <div class="h-full p-6 bg-white rounded-xl shadow-sm border border-yellow-200 hover:shadow-lg hover:border-yellow-400 transition text-left relative overflow-hidden">
                 <div class="absolute -right-4 -top-4 text-9xl opacity-10 select-none pointer-events-none">⭐</div>
 
                 <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
                     🏆
                 </div>
-                <h3 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-orange-600">
+                <h3 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-orange-600"
+                    th:text="#{home.top10.title}">
                     Nasze Top 10
                 </h3>
-                <p class="text-gray-700 mt-2 font-medium">
+                <p class="text-gray-700 mt-2 font-medium" th:text="#{home.top10.desc}">
                     Wybrane zajęcia, które musisz sprawdzić.
                 </p>
-                <p class="text-black-500 text-sm mt-1">
+                <p class="text-black-500 text-sm mt-1" th:text="#{home.top10.sub}">
                     Kliknij, aby zobaczyć rekomendacje trenerów.
                 </p>
             </div>
         </a>
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl px-4">
             <div class="p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition text-left">
                 <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-2xl mb-4">
                     📅
                 </div>
-                <h3 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-80 transition">Łatwe rezerwacje</h3>
-                <p class="text-gray-600">Przeglądaj grafik zajęć w czasie rzeczywistym i zapisuj się jednym kliknięciem. Żadnych telefonów.</p>
+                <h3 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-80 transition"
+                    th:text="#{feature.easy_booking.title}">Łatwe rezerwacje</h3>
+                <p class="text-gray-600" th:text="#{feature.easy_booking.desc}">Przeglądaj grafik zajęć w czasie rzeczywistym i zapisuj się jednym kliknięciem. Żadnych telefonów.</p>
             </div>
 
             <div class="p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition text-left">
                 <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-2xl mb-4">
                     💪
                 </div>
-                <h3 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-80 transition">Najlepsi trenerzy</h3>
-                <p class="text-gray-600">Nasi instruktorzy to profesjonaliści z pasją. Sprawdź ich profile i wybierz zajęcia dla siebie.</p>
+                <h3 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-80 transition"
+                    th:text="#{feature.trainers.title}">Najlepsi trenerzy</h3>
+                <p class="text-gray-600" th:text="#{feature.trainers.desc}">Nasi instruktorzy to profesjonaliści z pasją. Sprawdź ich profile i wybierz zajęcia dla siebie.</p>
             </div>
 
             <div class="p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition text-left">
                 <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-2xl mb-4">
                     ⚡
                 </div>
-                <h3 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-80 transition">Szybki dostęp</h3>
-                <p class="text-gray-600">Dostęp do sal i sprzętu w zasięgu ręki. Zarządzaj swoim karnetem online 24/7.</p>
+                <h3 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-80 transition"
+                    th:text="#{feature.fast_access.title}">Szybki dostęp</h3>
+                <p class="text-gray-600" th:text="#{feature.fast_access.desc}">Dostęp do sal i sprzętu w zasięgu ręki. Zarządzaj swoim karnetem online 24/7.</p>
             </div>
         </div>
 
         <div class="text-gray-400 text-sm pb-10">
-            &copy; 2024 SportakUZ. Wszystkie prawa zastrzeżone. <br>
-            <a href="#" class="hover:text-blue-600">Regulamin</a> • <a href="#" class="hover:text-blue-600">Kontakt</a>
+            &copy; 2024 SportakUZ. <span th:text="#{footer.rights}">Wszystkie prawa zastrzeżone.</span> <br>
+            <a href="#" class="hover:text-blue-600" th:text="#{footer.terms}">Regulamin</a> •
+            <a href="#" class="hover:text-blue-600" th:text="#{footer.contact}">Kontakt</a>
         </div>
 
     </div>

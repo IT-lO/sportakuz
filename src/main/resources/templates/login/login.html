@@ -5,41 +5,61 @@
     <title>SportakUZ – Logowanie</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script th:src="@{'https://www.google.com/recaptcha/api.js?hl=' + ${#locale.language}}" async defer></script>
 </head>
 <body class="bg-gray-100">
 
 <main class="flex items-center justify-center min-h-screen p-4">
     <div class="w-full max-w-md p-8 space-y-6 bg-white shadow-xl rounded-2xl border border-gray-200">
+        <div class="absolute top-4 right-4 z-50 flex items-center gap-2">
+
+            <button type="button"
+                    onclick="toggleTheme()"
+                    class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition focus:outline-none"
+                    title="Przełącz motyw">
+                <span id="theme-icon" class="text-xl">🌙</span>
+            </button>
+
+            <a th:href="@{''(lang=${#locale.language == 'pl' ? 'en' : 'pl'})}"
+               class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition focus:outline-none no-underline flex items-center justify-center"
+               title="Zmień język / Switch language">
+                <span class="text-xl" th:text="${#locale.language == 'pl' ? '🇬🇧' : '🇵🇱'}">🇬🇧</span>
+            </a>
+
+        </div>
 
         <div class="text-center">
             <h1 class="text-3xl font-bold tracking-tight text-gray-900">
-                Witaj w <span class="text-indigo-600">SportakUZ</span>
+                <span th:text="#{login.welcome}">Witaj w</span>
+                <span class="text-indigo-600">SportakUZ</span>
             </h1>
-            <p class="mt-2 text-sm text-gray-600">
+            <p class="mt-2 text-sm text-gray-600" th:text="#{login.subtitle}">
                 Zaloguj się, aby zarządzać swoimi zajęciami
             </p>
         </div>
+
+        <!-- Alerty -->
         <div th:if="${param.error}" class="p-4 text-sm text-red-700 bg-red-100 border border-red-200 rounded-lg">
-            Błędny email lub hasło. Spróbuj ponownie.
-        </div>
-        <div th:if="${param.logout}" class="p-4 text-sm text-green-700 bg-green-100 border border-green-200 rounded-lg">
-            Wylogowano pomyślnie.
-        </div>
-        <div th:if="${param.success}" class="p-4 text-sm text-green-700 bg-green-100 border border-green-200 rounded-lg">
-            Rejestracja udana! Możesz się zalogować.
-        </div>
-        <div th:if="${param.captchaError}" class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
-            <span class="font-medium">Błąd!</span> Potwierdź, że nie jesteś robotem.
+            <span class="font-medium" th:text="#{general.error}">Błąd!</span>
+            <span th:text="#{login.badlogin}">Nieprawidłowy login lub hasło.</span>
         </div>
 
-        <div th:if="${param.error}" class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
-            <span class="font-medium">Błąd!</span> Nieprawidłowy login lub hasło.
+        <div th:if="${param.logout}" class="p-4 text-sm text-green-700 bg-green-100 border border-green-200 rounded-lg" th:text="#{login.logoutsuccess}">
+            Wylogowano pomyślnie.
+        </div>
+
+        <div th:if="${param.success}" class="p-4 text-sm text-green-700 bg-green-100 border border-green-200 rounded-lg" th:text="#{login.registersuccess}">
+            Rejestracja udana! Możesz się zalogować.
+        </div>
+
+        <div th:if="${param.captchaError}" class="p-4 text-sm text-red-700 bg-red-100 border border-red-200 rounded-lg">
+            <span class="font-medium" th:text="#{general.error}">Błąd!</span>
+            <span th:text="#{login.captcha}">Potwierdź, że nie jesteś robotem.</span>
         </div>
 
         <form th:action="@{/login}" method="post" class="space-y-6">
             <div>
-                <label for="username" class="block text-sm font-medium text-gray-700">Adres email</label>
+                <label for="username" class="block text-sm font-medium text-gray-700" th:text="#{general.email}">Adres email</label>
                 <div class="mt-1 relative rounded-md shadow-sm">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -48,12 +68,12 @@
                     </div>
                     <input type="email" name="username" id="username" required autofocus
                            class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                           placeholder="jan@przyklad.pl">
+                           th:placeholder="#{login.email.placeholder}">
                 </div>
             </div>
 
             <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">Hasło</label>
+                <label for="password" class="block text-sm font-medium text-gray-700" th:text="#{general.password}">Hasło</label>
                 <div class="mt-1 relative rounded-md shadow-sm">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,7 +105,7 @@
             <div>
                 <button type="submit"
                         class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 rounded-md bg-indigo-600 hover:bg-indigo-700 font-semibold shadow text-white transition ease-in-out duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Zaloguj się
+                    <span th:text="#{login.button}">Zaloguj się</span>
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                     </svg>
@@ -95,8 +115,8 @@
 
         <div class="mt-6 text-center border-t border-gray-200 pt-4">
             <p class="text-sm text-gray-600">
-                Nie masz jeszcze konta?
-                <a th:href="@{/register}" class="font-medium text-indigo-600 hover:text-indigo-500 transition hover:underline">
+                <span th:text="#{login.noaccount}">Nie masz jeszcze konta?</span>
+                <a th:href="@{/register}" class="font-medium text-indigo-600 hover:text-indigo-500 transition hover:underline" th:text="#{login.register}">
                     Zarejestruj się
                 </a>
             </p>

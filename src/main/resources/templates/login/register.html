@@ -5,55 +5,72 @@
     <title>SportakUZ – Rejestracja</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script th:src="@{'https://www.google.com/recaptcha/api.js?hl=' + ${#locale.language}}" async defer></script>
 </head>
 <body class="bg-gray-100">
 
 <main class="flex items-center justify-center min-h-screen p-4">
     <div class="w-full max-w-md p-8 space-y-6 bg-white shadow-xl rounded-2xl border border-gray-200">
+        <div class="absolute top-4 right-4 z-50 flex items-center gap-2">
+
+            <button type="button"
+                    onclick="toggleTheme()"
+                    class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition focus:outline-none"
+                    title="Przełącz motyw">
+                <span id="theme-icon" class="text-xl">🌙</span>
+            </button>
+
+            <a th:href="@{''(lang=${#locale.language == 'pl' ? 'en' : 'pl'})}"
+               class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition focus:outline-none no-underline flex items-center justify-center"
+               title="Zmień język / Switch language">
+                <span class="text-xl" th:text="${#locale.language == 'pl' ? '🇬🇧' : '🇵🇱'}">🇬🇧</span>
+            </a>
+
+        </div>
+
 
         <div class="text-center">
             <h1 class="text-3xl font-bold tracking-tight text-gray-900">
-                Dołącz do <span class="text-indigo-600">SportakUZ</span>
+                <span th:text="#{register.join}">Dołącz do</span>
+                <span class="text-indigo-600">SportakUZ</span>
             </h1>
-            <p class="mt-2 text-sm text-gray-600">
+            <p class="mt-2 text-sm text-gray-600" th:text="#{register.subtitle}">
                 Utwórz nowe konto, aby rezerwować zajęcia
             </p>
         </div>
-
         <div th:if="${error}" class="p-4 text-sm text-red-700 bg-red-100 border border-red-200 rounded-lg flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
             </svg>
-            <span th:text="${error}">Błąd rejestracji</span>
+            <span th:text="${error} ?: #{register.error}">Błąd rejestracji</span>
         </div>
 
         <form th:action="@{/register}" th:object="${user}" method="post" class="space-y-5">
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Imię</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" th:text="#{register.firstName}">Imię</label>
                     <input th:field="*{firstName}" type="text" required
                            class="w-full px-4 py-2.5 transition duration-150 ease-in-out border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                           placeholder="Jan">
+                           th:placeholder="#{register.placeholder.firstName}">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nazwisko</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" th:text="#{register.lastName}">Nazwisko</label>
                     <input th:field="*{lastName}" type="text" required
                            class="w-full px-4 py-2.5 transition duration-150 ease-in-out border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                           placeholder="Kowalski">
+                           th:placeholder="#{register.placeholder.lastName}">
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Adres Email</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1" th:text="#{general.email}">Adres Email</label>
                 <input th:field="*{email}" type="email" required
                        class="w-full px-4 py-2.5 transition duration-150 ease-in-out border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                       placeholder="jan.kowalski@example.com">
+                       th:placeholder="#{register.placeholder.email}">
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Hasło</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1" th:text="#{general.password}">Hasło</label>
 
                 <div class="relative">
                     <input th:field="*{password}"
@@ -61,7 +78,7 @@
                            id="passwordInput"
                            required
                            class="w-full pl-4 pr-10 py-2.5 transition duration-150 ease-in-out border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                           placeholder="••••••••">
+                           th:placeholder="#{register.placeholder.password}">
 
                     <button type="button" id="togglePasswordBtn"
                             class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-indigo-600 focus:outline-none cursor-pointer">
@@ -78,22 +95,22 @@
                 <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="mt-1 text-sm text-red-600 font-medium"></p>
 
                 <div class="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <p class="text-xs text-red-500 font-semibold mb-2 uppercase">Wymagania hasła:</p>
+                    <p class="text-xs text-red-500 font-semibold mb-2 uppercase" th:text="#{register.password.title}">Wymagania hasła:</p>
                     <ul class="text-xs space-y-1 text-red-500">
                         <li id="rule-length" class="flex items-center gap-2 transition-colors duration-200">
-                            <span class="icon text-gray-400">❌</span> <span>Minimum 8 znaków</span>
+                            <span class="icon text-gray-400">❌</span> <span th:text="#{register.rule.length}">Minimum 8 znaków</span>
                         </li>
                         <li id="rule-upper" class="flex items-center gap-2 transition-colors duration-200">
-                            <span class="icon text-gray-400">❌</span> <span>Duża litera</span>
+                            <span class="icon text-gray-400">❌</span> <span th:text="#{register.rule.upper}">Duża litera</span>
                         </li>
                         <li id="rule-lower" class="flex items-center gap-2 transition-colors duration-200">
-                            <span class="icon text-gray-400">❌</span> <span>Mała litera</span>
+                            <span class="icon text-gray-400">❌</span> <span th:text="#{register.rule.lower}">Mała litera</span>
                         </li>
                         <li id="rule-digit" class="flex items-center gap-2 transition-colors duration-200">
-                            <span class="icon text-gray-400">❌</span> <span>Cyfra</span>
+                            <span class="icon text-gray-400">❌</span> <span th:text="#{register.rule.digit}">Cyfra</span>
                         </li>
                         <li id="rule-special" class="flex items-center gap-2 transition-colors duration-200">
-                            <span class="icon text-gray-400">❌</span> <span>Znak specjalny (@#$%^&+=!_.*-)</span>
+                            <span class="icon text-gray-400">❌</span> <span th:text="#{register.rule.special}">Znak specjalny (@#$%^&+=!_.*-)</span>
                         </li>
                     </ul>
                 </div>
@@ -150,23 +167,24 @@
                         eyeClosed.classList.remove('hidden');
                     }
                 });
-
             </script>
+
             <div class="flex justify-center mb-4">
                 <div class="g-recaptcha" data-sitekey="6LerzT8sAAAAAM8-EBj4_rQga4CB8ZFwuSLeGEqi"></div>
             </div>
             <div>
                 <button type="submit"
                         class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 rounded-md bg-indigo-600 hover:bg-indigo-700 font-semibold shadow text-white transition ease-in-out duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Utwórz konto
+                    <span th:text="#{register.button}">Utwórz konto</span>
                 </button>
             </div>
         </form>
 
         <div class="mt-6 text-center border-t border-gray-200 pt-4">
             <p class="text-sm text-gray-600">
-                Masz już konto?
-                <a th:href="@{/login}" class="font-medium text-indigo-600 hover:text-indigo-500 transition hover:underline">
+                <span th:text="#{register.account_question}">Masz już konto?</span>
+                <a th:href="@{/login}" class="font-medium text-indigo-600 hover:text-indigo-500 transition hover:underline"
+                   th:text="#{login.button}">
                     Zaloguj się
                 </a>
             </p>
@@ -174,6 +192,3 @@
 
     </div>
 </main>
-
-</body>
-</html>

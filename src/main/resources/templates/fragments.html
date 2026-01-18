@@ -51,7 +51,6 @@
         html.dark .bg-white { background-color: #1e293b; border-color: #334155; }
     </style>
 </head>
-
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col transition-colors duration-300">
 
 <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200 shadow-sm transition-colors duration-300">
@@ -62,57 +61,83 @@
                 SportakUZ
             </a>
             <span sec:authorize="isAuthenticated()"
-                  class="hidden sm:inline-block text-[10px] uppercase tracking-wider font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
+                  class="hidden sm:inline-block text-[10px] uppercase tracking-wider font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full"
+                  th:text="#{nav.status.online}">
                 Online
             </span>
         </div>
 
         <nav class="flex items-center gap-2 sm:gap-4 text-sm">
 
-            <a th:href="@{/}" class="hidden md:block px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100 dark:hover:bg-slate-700 transition">
+            <a th:href="@{/}"
+               class="hidden md:block px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100 dark:hover:bg-slate-700 transition"
+               th:text="#{nav.home}">
                 Start
             </a>
 
             <th:block sec:authorize="hasAnyRole('USER', 'INSTRUCTOR')">
-                <a th:href="@{/calendar}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700 transition">
+                <a th:href="@{/calendar}"
+                   class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700 transition"
+                   th:text="#{nav.schedule}">
                     Grafik
                 </a>
-                <a th:href="@{/my/bookings}" class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700 transition">
+                <a th:href="@{/my/bookings}"
+                   class="px-3 py-2 rounded-md font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700 transition"
+                   th:text="#{nav.my_bookings}">
                     Moje rezerwacje
                 </a>
             </th:block>
 
-            <button type="button"
-                    onclick="toggleTheme()"
-                    class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition focus:outline-none"
-                    title="Przełącz motyw">
-                <span id="theme-icon" class="text-xl">🌙</span>
-            </button>
+            <div class="flex items-center gap-2">
+
+                <button type="button"
+                        onclick="toggleTheme()"
+                        class="group flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition focus:outline-none dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700"
+                        th:title="#{nav.theme.toggle}"
+                        title="Przełącz motyw">
+                    <span id="theme-icon" class="text-xl text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white transition">🌙</span>
+                </button>
+
+                <a th:href="@{''(lang=${#locale.language == 'pl' ? 'en' : 'pl'})}"
+                   class="group flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition focus:outline-none no-underline dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700"
+                   th:title="#{nav.lang.toggle}"
+                   title="Przełącz język">
+
+                    <span class="text-xl" th:text="${#locale.language == 'pl' ? '🇬🇧' : '🇵🇱'}">🇬🇧</span>
+                </a>
+
+            </div>
 
             <div sec:authorize="isAuthenticated()" class="flex items-center gap-3 ml-2">
 
                 <a sec:authorize="hasRole('ADMIN')" th:href="@{/panel/admin}"
-                   class="px-4 py-2 rounded-md font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-md transition transform hover:scale-105">
+                   class="px-4 py-2 rounded-md font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-md transition transform hover:scale-105"
+                   th:text="#{nav.panel}">
                     Panel
                 </a>
 
                 <a sec:authorize="hasRole('INSTRUCTOR')" th:href="@{/panel/instructor}"
-                   class="hidden sm:inline-block px-4 py-2 rounded-md font-semibold text-white bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 shadow-md transition transform hover:scale-105">
+                   class="hidden sm:inline-block px-4 py-2 rounded-md font-semibold text-white bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 shadow-md transition transform hover:scale-105"
+                   th:text="#{nav.panel}">
                     Panel
                 </a>
 
                 <a sec:authorize="hasRole('USER')" th:href="@{/panel/user}"
-                   class="hidden sm:inline-block px-4 py-2 rounded-md font-semibold text-white bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 shadow-md transition transform hover:scale-105">
+                   class="hidden sm:inline-block px-4 py-2 rounded-md font-semibold text-white bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 shadow-md transition transform hover:scale-105"
+                   th:text="#{nav.panel}">
                     Panel
                 </a>
 
                 <div class="hidden md:flex flex-col items-end leading-tight border-l pl-3 border-gray-300 dark:border-gray-600 ml-1">
-                    <span class="text-xs text-gray-500 dark:text-gray-400">Witaj</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400" th:text="#{nav.welcome}">Witaj</span>
                     <span class="font-bold text-gray-800 dark:text-gray-200 max-w-[100px] truncate" sec:authentication="name">User</span>
                 </div>
 
                 <form th:action="@{/logout}" method="post" class="m-0">
-                    <button type="submit" class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-full transition" title="Wyloguj się">
+                    <button type="submit"
+                            class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-full transition"
+                            th:title="#{nav.logout}"
+                            title="Wyloguj się">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                         </svg>
@@ -121,13 +146,17 @@
             </div>
 
             <div sec:authorize="isAnonymous()" class="flex items-center gap-2">
-                <a th:href="@{/login}" class="px-4 py-2 rounded-md font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition">
+                <a th:href="@{/login}"
+                   class="px-4 py-2 rounded-md font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition"
+                   th:text="#{nav.login}">
                     Logowanie
                 </a>
                 <a th:href="@{/login}" class="sm:hidden p-2 text-indigo-600 bg-indigo-50 rounded-md">
                     🔑
                 </a>
-                <a th:href="@{/register}" class="px-4 py-2 rounded-md font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition">
+                <a th:href="@{/register}"
+                   class="px-4 py-2 rounded-md font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition"
+                   th:text="#{nav.register}">
                     Dołącz
                 </a>
             </div>
@@ -142,14 +171,17 @@
 <footer class="border-t border-gray-200 bg-white/70 backdrop-blur mt-auto dark:border-gray-700 transition-colors duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 dark:text-gray-400">
         <div>
-            &copy; 2025 SportakUZ. Wszystkie prawa zastrzeżone.
+            &copy; 2025 SportakUZ. <span th:text="#{footer.rights}">Wszystkie prawa zastrzeżone.</span>
         </div>
         <div class="flex gap-4 mt-2 md:mt-0">
-            <a href="#" class="hover:text-blue-600 transition">Regulamin</a>
-            <a href="#" class="hover:text-blue-600 transition">Polityka Prywatności</a>
-            <a href="#" class="hover:text-blue-600 transition">Kontakt</a>
+            <a href="#" class="hover:text-blue-600 transition" th:text="#{footer.terms}">Regulamin</a>
+            <a href="#" class="hover:text-blue-600 transition" th:text="#{footer.privacy}">Polityka Prywatności</a>
+            <a href="#" class="hover:text-blue-600 transition" th:text="#{footer.contact}">Kontakt</a>
         </div>
     </div>
+</footer>
+
+</body>
 </footer>
 
 <script>
@@ -171,7 +203,6 @@
         const isDark = document.documentElement.classList.contains('dark');
         applyTheme(isDark ? 'light' : 'dark');
     }
-
     document.addEventListener('DOMContentLoaded', () => {
         const saved = localStorage.getItem('theme');
         if (saved) {

@@ -3,96 +3,95 @@
       th:replace="fragments :: base(${pageTitle}, ~{::content})">
 <div th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/forms.css}" />
-<section>
-    <div class="max-w-3xl mx-auto">
+    <section>
+        <div class="max-w-3xl mx-auto">
 
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold tracking-tight" th:text="${pageTitle}">
-                Edytuj typ zajęć
-            </h1>
-            <a th:href="@{/activitytypes}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                ← Wróć do listy
-            </a>
-        </div>
-
-        <form th:action="@{/activitytypes/edit/{id}(id=${activityTypeId})}"
-              th:object="${activityTypeForm}"
-              method="post"
-              class="form-card">
-
-            <!-- Nazwa typu zajęć -->
-            <div class="form-group">
-                <label for="activityName">Nazwa typu zajęć</label>
-                <input type="text"
-                       id="activityName"
-                       th:field="*{activityName}"
-                       aria-describedby="activityName-error">
-                <p th:if="${#fields.hasErrors('activityName')}"
-                   th:errors="*{activityName}"
-                   id="activityName-error"
-                   class="error"></p>
-            </div>
-
-            <!-- Domyślny czas trwania -->
-            <div class="form-group">
-                <label for="duration">Domyślny czas trwania (w minutach)</label>
-                <input type="number"
-                       id="duration"
-                       th:field="*{duration}"
-                       aria-describedby="duration-error">
-                <p class="muted">Np. „60” (w minutach). Wymagane – minimum 1 minuta.</p>
-                <p th:if="${#fields.hasErrors('duration')}"
-                   th:errors="*{duration}"
-                   id="duration-error"
-                   class="error"></p>
-            </div>
-
-            <!-- Poziom trudności -->
-            <div class="form-group">
-                <label for="difficulty">Poziom trudności</label>
-                <select id="difficulty"
-                        th:field="*{difficulty}"
-                        aria-describedby="difficulty-error">
-                    <option value="">-- Wybierz poziom --</option>
-                    <option th:each="level : ${difficultyLevels}"
-                            th:value="${level}"
-                            th:text="${level.displayName}">
-                        Dla początkujących
-                    </option>
-                </select>
-                <p class="muted">Wybierz poziom trudności z listy.</p>
-                <p th:if="${#fields.hasErrors('difficulty')}"
-                   th:errors="*{difficulty}"
-                   id="difficulty-error"
-                   class="error"></p>
-            </div>
-
-            <!-- Opis -->
-            <div class="form-group">
-                <label for="description">Opis (opcjonalnie)</label>
-                <textarea id="description"
-                          th:field="*{description}"
-                          rows="5"
-                          aria-describedby="description-error"></textarea>
-                <p class="muted">Rozszerzony opis typu zajęć, widoczny dla użytkowników.</p>
-                <p th:if="${#fields.hasErrors('description')}"
-                   th:errors="*{description}"
-                   id="description-error"
-                   class="error"></p>
-            </div>
-
-            <!-- Przyciski -->
-            <div class="actions" style="justify-content: flex-end; border-top: 1px solid var(--border); padding-top: .75rem; margin-top:.5rem;">
-                <a th:href="@{/activitytypes}" class="btn btn-secondary">
-                    Anuluj
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-3xl font-bold tracking-tight"
+                    th:text="#{activity.edit.title}">
+                    Edytuj typ zajęć
+                </h1>
+                <a th:href="@{/activitytypes}"
+                   class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                   th:text="#{link.back_to_list}">
+                    ← Wróć do listy
                 </a>
-                <button type="submit" class="btn">
-                    <span class="text-lg">💾</span> Zapisz zmiany
-                </button>
             </div>
 
-        </form>
-    </div>
-</section>
+            <form th:action="@{/activitytypes/edit/{id}(id=${activityTypeId})}"
+                  th:object="${activityTypeForm}"
+                  method="post"
+                  class="form-card">
+
+                <div class="form-group">
+                    <label for="activityName" th:text="#{activity.label.name}">Nazwa typu zajęć</label>
+                    <input type="text"
+                           id="activityName"
+                           th:field="*{activityName}"
+                           aria-describedby="activityName-error">
+                    <p th:if="${#fields.hasErrors('activityName')}"
+                       th:errors="*{activityName}"
+                       id="activityName-error"
+                       class="error"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration" th:text="#{activity.label.duration}">Domyślny czas trwania (w minutach)</label>
+                    <input type="number"
+                           id="duration"
+                           th:field="*{duration}"
+                           aria-describedby="duration-error">
+                    <p class="muted" th:text="#{activity.help.duration}">Np. „60” (w minutach). Wymagane – minimum 1 minuta.</p>
+                    <p th:if="${#fields.hasErrors('duration')}"
+                       th:errors="*{duration}"
+                       id="duration-error"
+                       class="error"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="difficulty" th:text="#{activity.label.difficulty}">Poziom trudności</label>
+                    <select id="difficulty"
+                            th:field="*{difficulty}"
+                            aria-describedby="difficulty-error">
+                        <option value="" th:text="#{activity.select.level}">-- Wybierz poziom --</option>
+
+                        <option th:each="level : ${difficultyLevels}"
+                                th:value="${level}"
+                                th:text="#{'activity.difficulty.' + ${level}}">
+                            Dla początkujących
+                        </option>
+                    </select>
+                    <p class="muted" th:text="#{activity.help.difficulty}">Wybierz poziom trudności z listy.</p>
+                    <p th:if="${#fields.hasErrors('difficulty')}"
+                       th:errors="*{difficulty}"
+                       id="difficulty-error"
+                       class="error"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="description" th:text="#{activity.label.description}">Opis (opcjonalnie)</label>
+                    <textarea id="description"
+                              th:field="*{description}"
+                              rows="5"
+                              aria-describedby="description-error"></textarea>
+                    <p class="muted" th:text="#{activity.help.description}">Rozszerzony opis typu zajęć, widoczny dla użytkowników.</p>
+                    <p th:if="${#fields.hasErrors('description')}"
+                       th:errors="*{description}"
+                       id="description-error"
+                       class="error"></p>
+                </div>
+
+                <div class="actions" style="justify-content: flex-end; border-top: 1px solid var(--border); padding-top: .75rem; margin-top:.5rem;">
+                    <a th:href="@{/activitytypes}" class="btn btn-secondary" th:text="#{btn.cancel}">
+                        Anuluj
+                    </a>
+                    <button type="submit" class="btn">
+                        <span class="text-lg">💾</span> <span th:text="#{btn.save_changes}">Zapisz zmiany</span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </section>
 </div>
 </html>
